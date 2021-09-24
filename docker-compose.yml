@@ -7,6 +7,7 @@ services:
     entrypoint: pipenv run bot
     environment:
       MONGODB_URL: mongodb://notpjatk:notThatExample1!@mongol:27017/
+      VERIFICATION_URL: https://verify.kpostek.dev/
     env_file:
       - .env
   webpage:
@@ -14,7 +15,7 @@ services:
     container_name: webpage
     entrypoint: pipenv run webpage
     ports:
-      - '8000:8000'
+      - '9093:8000'
     environment:
       MONGODB_URL: mongodb://notpjatk:notThatExample1!@mongol:27017/
     env_file:

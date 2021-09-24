@@ -18,6 +18,7 @@ env = os.environ
 mongo = MongoClient(env.get("MONGODB_URL"))
 db = mongo["verifications"]
 codes = db["codes"]
+registered = db["registered"]
 rest = RESTApp()
 
 
@@ -44,6 +45,8 @@ class VerificationGate(HTTPEndpoint):
         ) as client:
             user = await client.fetch_user(trusted_code.user_id)
             await user.send("Zweryfikowano i dodano rangę!")
+
+            registered.insert_one({"student_id": trusted_code.who, "discord_id": user.id})
 
         return PlainTextResponse("ok")
 

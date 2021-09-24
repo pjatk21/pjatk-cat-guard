@@ -19,6 +19,8 @@ bot = Bot(token=env.get("DISCORD_TOKEN"), slash_commands_only=True)
 sg = SendGridAPIClient(env.get("SENDGRID_APIKEY"))
 mongo = MongoClient(env.get("MONGODB_URL"))
 db = mongo["verifications"]
+registered = db["registered"]
+codes = db["codes"]
 
 
 class VerifyCommand(SlashCommand):
@@ -33,14 +35,18 @@ class VerifyCommand(SlashCommand):
             await context.respond("Twój numer studenta nie jest poprawny!")
             return
 
-        student_index = match.string
+        student_id = match.string
 
-        target_email = f"{student_index}@pjwstk.edu.pl"
+        if registered.find_one({"student_id": student_id}) is not None or registered.find_one({"discord_id": context.author.id}):
+            await context.respond("Te konto lub numer studenta już były wykorzystywane do rejestracji!")
+            return
+
+        target_email = f"{student_id}@pjwstk.edu.pl"
 
         validation_code = VerificationCode.create(
             str(context.author), target_email, context.author.id
         )
-        codes = db["codes"]
+
         codes.insert_one(asdict(validation_code))
 
         mail = Mail(
@@ -48,7 +54,7 @@ class VerifyCommand(SlashCommand):
             to_emails=[target_email],
         )
         mail.dynamic_template_data = {
-            "verificationUrl": f"http://127.0.0.1:8000/{validation_code.code}",
+            "verificationUrl": f"{env.get('VERIFICATION_URL')}{validation_code.code}",
             "verificationCode": validation_code.code,
             "discordTag": context.author.username,
         }
@@ -69,10 +75,13 @@ class FallbackVerification(SlashCommand):
     code: str = Option('Verification code')
 
     async def callback(self, context: SlashCommandContext):
-        codes = db["codes"]
         code = context.options["code"].value
 
         trusted_code = codes.find_one({"code": code})
+
+        if trusted_code is None:
+            await context.author.send("Kod nie istnieje!")
+            return
 
         del trusted_code["_id"]
         trusted_code = VerificationCode(**trusted_code)
@@ -81,10 +90,12 @@ class FallbackVerification(SlashCommand):
             await context.author.send("Kod wygasł, spróbuj ponownie!")
             return
 
+        await context.respond("Zweryfikowano i dodano rangę!")
+
         codes.delete_many({"who": trusted_code.who})
         codes.delete_many({"email": trusted_code.email})
 
-        await context.author.send("Zweryfikowano i dodano rangę!")
+        registered.insert_one({"student_id": trusted_code.who, "discord_id": context.author.id})
 
 
 bot.add_slash_command(VerifyCommand)
