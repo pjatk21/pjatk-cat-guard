@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+hikari = "*"
+hikari-lightbulb = "*"
+sendgrid = "*"
+starlette = "*"
+pymongo = "*"
+uvicorn = "*"
+python-dotenv = "*"
+
+[dev-packages]
+black = "*"
+
+[requires]
+python_version = "3.9"
+
+[pipenv]
+allow_prereleases = true
+
+[scripts]
+bot = "python discord_janitor/bot.py"
+webpage = "uvicorn web_janitor:app --host 0.0.0.0"

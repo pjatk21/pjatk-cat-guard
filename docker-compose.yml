@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  bot:
+    build: .
+    container_name: bot
+    entrypoint: pipenv run bot
+    environment:
+      MONGODB_URL: mongodb://notpjatk:notThatExample1!@mongol:27017/
+    env_file:
+      - .env
+  webpage:
+    build: .
+    container_name: webpage
+    entrypoint: pipenv run webpage
+    ports:
+      - '8000:8000'
+    environment:
+      MONGODB_URL: mongodb://notpjatk:notThatExample1!@mongol:27017/
+    env_file:
+      - .env
+  monogol:
+    image: mongo:latest
+    container_name: database
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: notpjatk
+      MONGO_INITDB_ROOT_PASSWORD: notThatExample1!
+      MONGO_INITDB_DATABASE: verifications
