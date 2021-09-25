@@ -63,7 +63,7 @@ class VerifyCommand(SlashCommand):
         sg.send(mail)
 
         embed = embed_info("Wysłano email z linkiem potwierdzającym weryfikację!")
-
+        await context.author.send(f"UWAGA MAŁY `*****`! MASZ 15 MINUT, ŻEBY OTWORZYĆ {target_email} I KLIKNĄĆ W TEN `*******` LINK")
         await context.respond(embed=embed)
 
     checks = [unverified_only]

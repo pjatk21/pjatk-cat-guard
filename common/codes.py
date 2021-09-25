@@ -14,7 +14,7 @@ class VerificationCode:
 
     @property
     def has_expired(self):
-        return datetime.now() - self.created > timedelta(minutes=5)
+        return datetime.now() - self.created > timedelta(minutes=15)
 
     @staticmethod
     def create(username: str, email: str, user_id: int, guild_id: int):
