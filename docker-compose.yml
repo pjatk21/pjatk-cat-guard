@@ -12,6 +12,7 @@ services:
     depends_on:
       - mongol
       - webgate
+    restart: always
   webgate:
     build: .
     entrypoint: pipenv run webpage
