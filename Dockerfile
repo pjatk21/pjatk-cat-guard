@@ -1,6 +1,6 @@
 FROM python:3-alpine
 
-RUN apk add build-base
+RUN apk add build-base openssl-dev libffi-dev
 
 RUN pip3 install pipenv
 
@@ -11,12 +11,14 @@ COPY Pipfile.lock .
 
 RUN pipenv install
 
-RUN apk del build-base
+RUN apk del build-base openssl-dev libffi-dev
 
 COPY common/ /pjatk/common/
 
-COPY discord_janitor/ /pjatk/discord_janitor/
+COPY discordcat/ /pjatk/discordcat/
 
-COPY web_janitor/ /pjatk/web_janitor/
+COPY webgate/ /pjatk/webgate/
+
+COPY templates/ /pjatk/templates/
 
 ENV PYTHONPATH "${PYTHONPATH}:/pjatk"

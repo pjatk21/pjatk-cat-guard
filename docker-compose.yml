@@ -10,6 +10,9 @@ services:
       VERIFICATION_URL: https://verify.kpostek.dev/
     env_file:
       - .env
+    depends_on:
+      - monogol
+      - webpage
   webpage:
     build: .
     container_name: webpage
@@ -20,6 +23,8 @@ services:
       MONGODB_URL: mongodb://notpjatk:notThatExample1!@mongol:27017/
     env_file:
       - .env
+    depends_on:
+      - monogol
   monogol:
     image: mongo:latest
     container_name: database

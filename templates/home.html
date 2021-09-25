@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block tile %}
+    <title>PJATK cat guard</title>
+    {% endblock %}
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/shards-ui@latest/dist/css/shards.min.css">
+</head>
+<body>
+{% block body %}
+<div class="container text-center">
+    <div style="margin-top: 250px">
+        <h1>Pr... out 😩</h1>
+        <p>
+            <a href="{{ invitation }}">
+                <button type="button" class="btn btn-primary btn-pill">Dodaj mnie do swojego serwera 😎</button>
+            </a>
+        </p>
+        <p>
+            Stworzone przez <a href="https://github.com/kpostekk">@kpostekk</a>, <3 open source (<a href="https://github.com/kpostekk/pjatk-cat-guard">github</a>)
+        </p>
+    </div>
+</div>
+{% endblock %}
+</body>
+</html>

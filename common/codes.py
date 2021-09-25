@@ -1,5 +1,5 @@
 import uuid
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 
 
@@ -10,17 +10,19 @@ class VerificationCode:
     who: str
     email: str
     user_id: int
+    target_guild: int
 
     @property
     def has_expired(self):
         return datetime.now() - self.created > timedelta(minutes=5)
 
     @staticmethod
-    def create(username: str, email: str, user_id: int):
+    def create(username: str, email: str, user_id: int, guild_id: int):
         return VerificationCode(
             uuid.uuid4().__str__().split("-")[0][::-1],  # reversed first part of uuid
             datetime.now(),
             username,
             email,
             user_id,
+            guild_id,
         )

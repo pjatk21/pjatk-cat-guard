@@ -4,13 +4,18 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-hikari = "*"
+# Bot related dependencies
+hikari = {extras = ["speedups"], version = "*"}
 hikari-lightbulb = "*"
+# User related dependencies
 sendgrid = "*"
 starlette = "*"
+# Other (backend, db, networking)
 pymongo = "*"
 uvicorn = "*"
 python-dotenv = "*"
+jinja2 = "*"
+aiohttp = "*"
 
 [dev-packages]
 black = "*"
@@ -22,5 +27,5 @@ python_version = "3.9"
 allow_prereleases = true
 
 [scripts]
-bot = "python discord_janitor/bot.py"
-webpage = "uvicorn web_janitor:app --host 0.0.0.0"
+bot = "python -OO discordcat/bot.py"
+webpage = "uvicorn webgate:app --host 0.0.0.0"
