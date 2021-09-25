@@ -22,6 +22,11 @@ registered = db["registered"]
 rest = RESTApp()
 
 
+class InviteEndpoint(HTTPEndpoint):
+    async def get(self, request: Request):
+        return RedirectResponse(env.get('INVITATION'))
+
+
 class VerificationGate(HTTPEndpoint):
     async def get(self, request: Request):
         code = request.path_params["code"]
@@ -51,5 +56,5 @@ class VerificationGate(HTTPEndpoint):
         return PlainTextResponse("ok")
 
 
-routes = [Route("/{code}", VerificationGate)]
+routes = [Route('/', InviteEndpoint), Route("/{code}", VerificationGate)]
 app = Starlette(routes=routes)
