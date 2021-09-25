@@ -1,9 +1,8 @@
 version: "3.9"
 
 services:
-  bot:
+  discordcat:
     build: .
-    container_name: bot
     entrypoint: pipenv run bot
     environment:
       MONGODB_URL: mongodb://notpjatk:notThatExample1!@mongol:27017/
@@ -12,10 +11,9 @@ services:
       - .env
     depends_on:
       - monogol
-      - webpage
-  webpage:
+      - webgate
+  webgate:
     build: .
-    container_name: webpage
     entrypoint: pipenv run webpage
     ports:
       - '9093:8000'
@@ -27,7 +25,6 @@ services:
       - monogol
   monogol:
     image: mongo:latest
-    container_name: database
     ports:
       - '27017:27017'
     environment:
