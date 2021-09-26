@@ -2,13 +2,14 @@ import re
 from dataclasses import asdict
 from datetime import datetime, timedelta, timezone
 
+from hikari import User
 from lightbulb import guild_only
 from lightbulb.slash_commands import SlashCommand, Option, SlashCommandContext
 from sendgrid import Mail, From
 
 from common.codes import VerificationCode
-from .checks import verified_only, unverified_only, superusers_only, guild_configured
-from .embed_factory import embed_info
+from .checks import verified_only, unverified_only, superusers_only, guild_configured, operator_only
+from .embed_factory import embed_info, embed_success
 from .services import db, sg, env
 
 verified = db["verified"]
@@ -18,8 +19,8 @@ manual_verification = db["manual_verification"]
 
 class VerifyCommand(SlashCommand):
     name = "verify"
-    description = "Verifies you"
-    s: str = Option("Your index number (like s21337)")
+    description = "Weryfikuje twoje konto"
+    s: str = Option("Twój numer studenta (np. s73120)")
 
     async def callback(self, context: SlashCommandContext):
         match = re.match(r"^s\d{5}$", context.options["s"].value)
@@ -70,3 +71,39 @@ class VerifyCommand(SlashCommand):
         await context.respond(embed=embed)
 
     checks = [guild_only, guild_configured, unverified_only]
+
+
+class VerifyForceCommand(SlashCommand):
+    name = 'verify-force'
+    description = 'Wymusza weryfikację użytkownika'
+
+    user: User = Option("Użytkownik")
+    s: str = Option("Numer studenta")
+
+    async def callback(self, context: SlashCommandContext):
+        user = context.options["user"].value
+        s = context.options["s"].value
+        when = datetime.now()
+        s_mail = f"{s}@pjwstk.edu.pl"
+
+        db["verified"].insert_one(
+            {
+                "student_mail": s_mail,
+                "discord_id": user,
+                "when": when,
+            }
+        )
+
+        verfied_role = db["roles"].find_one({"guild_id": context.guild_id})
+        await context.bot.rest.add_role_to_member(
+            context.guild_id, user, verfied_role["role_id"]
+        )
+
+        embed = embed_success("Pomyślnie zweryfikowano! Możesz zarządzać weryfikacją poprzez komendę /manage")
+        embed.add_field("Serwer weryfikukący", str(await context.get_guild()))
+        embed.add_field("Data weryfikacji", when.isoformat())
+        embed.add_field("Powiązany email", s_mail)
+
+        await (await context.bot.rest.fetch_user(user)).send(embed=embed)
+
+    checks = [operator_only]
