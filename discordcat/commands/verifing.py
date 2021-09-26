@@ -8,9 +8,9 @@ from lightbulb.slash_commands import SlashCommand, Option, SlashCommandContext
 from sendgrid import Mail, From
 
 from common.codes import VerificationCode
-from .checks import verified_only, unverified_only, superusers_only, guild_configured, operator_only
-from .embed_factory import embed_info, embed_success
-from .services import db, sg, env
+from discordcat.checks import verified_only, unverified_only, superusers_only, guild_configured, operator_only
+from discordcat.embed_factory import embed_info, embed_success
+from discordcat.services import db, sg, env
 
 verified = db["verified"]
 codes = db["codes"]

@@ -4,8 +4,8 @@ from datetime import datetime
 
 from lightbulb import SlashCommand, SlashCommandContext
 
-from .checks import superusers_only
-from .services import db
+from ..checks import superusers_only
+from ..services import db
 
 
 class SystemCheckCommand(SlashCommand):

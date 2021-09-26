@@ -9,9 +9,9 @@ from lightbulb.slash_commands import (
     Option,
 )
 
-from .checks import superusers_only, operator_only
-from .embed_factory import embed_info
-from .services import db
+from ..checks import superusers_only, operator_only
+from ..embed_factory import embed_info
+from ..services import db
 
 roles = db["roles"]
 verifiers = db["verifiers"]
