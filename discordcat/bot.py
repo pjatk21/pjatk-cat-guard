@@ -1,13 +1,12 @@
 from lightbulb import Bot
 
-from .configure import SetupCommand
+from .commands.configure import SetupCommand
 from .services import env
-from .verifing import VerifyCommand, VerifyForceCommand
-from .manage import ManageGroup
-from .system import SystemCheckCommand
+from .commands.verifing import VerifyCommand, VerifyForceCommand
+from .commands.manage import ManageGroup
+from .commands.system import SystemCheckCommand
 
 bot = Bot(token=env.get("DISCORD_TOKEN"), slash_commands_only=True, banner=None, logs="DEBUG")
-
 
 bot.add_slash_command(SetupCommand)
 bot.add_slash_command(VerifyCommand)
