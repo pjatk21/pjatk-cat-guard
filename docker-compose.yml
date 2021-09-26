@@ -30,6 +30,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: notpjatk
       MONGO_INITDB_ROOT_PASSWORD: notThatExample1!
+    ports:
+      - 27017:27017
   mongo-express:
     image: mongo-express
     restart: always

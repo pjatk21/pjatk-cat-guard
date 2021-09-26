@@ -3,6 +3,7 @@ from lightbulb import SlashSubCommand, SlashCommandGroup, Option, SlashCommandCo
 
 from .checks import operator_only, verified_only
 from .services import db
+from .embed_factory import embed_user_audit
 
 
 class ManageGroup(SlashCommandGroup):
@@ -22,9 +23,14 @@ class ManageSelfCommand(SlashSubCommand):
 
         if action == 'remove':
             db["verified"].delete_many({"discord_id": context.author.id})
-            await context.respond("Usunięto.")
+            verified_role = db["roles"].find_one({"guild_id": context.guild_id})["role_id"]
+            context.member.remove_role(verified_role)
+            await context.respond("Wycofano weryfikację.")
         elif action == 'info':
-            await context.respond("w dowodzie se sprawdź")
+            user_data = db["verified"].find_one({"discord_id": context.author.id, "guild_id": context.get_guild().id})
+            embed = embed_user_audit(user_data, str(context.author))
+
+            await context.respond(embed=embed)
         else:
             await context.respond("ayo???")
 
@@ -37,7 +43,7 @@ class ManageSomeone(SlashSubCommand):
     description = "Zarządzaj innym użytkownikiem"
 
     user: User = Option('Użytkownik')
-    action: str = Option('Operacja', choices=['remove', 'info'])
+    action: str = Option('Operacja', choices=['info', 'remove'])
 
     async def callback(self, context: SlashCommandContext):
         user = context.options['user'].value
@@ -45,8 +51,18 @@ class ManageSomeone(SlashSubCommand):
 
         if action == 'remove':
             db["verified"].delete_many({"discord_id": user})
-            await context.respond("Unieważniono weryfikację użytkownika.")
+            verified_role = db["roles"].find_one({"guild_id": context.guild_id})["role_id"]
+            await context.bot.rest.remove_role_from_member(
+                context.guild_id,
+                user,
+                verified_role
+            )
+            await context.respond("Wycofano weryfikację.")
         elif action == 'info':
-            await context.respond("idk")
+            user_data = db["verified"].find_one({"discord_id": context.author.id, "guild_id": context.get_guild().id})
+            username = str(await context.bot.rest.fetch_user(user))
+            embed = embed_user_audit(user_data, username)
+
+            await context.respond(embed=embed)
 
     checks = [operator_only]
