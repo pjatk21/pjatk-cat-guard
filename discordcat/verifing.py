@@ -59,7 +59,6 @@ class VerifyCommand(SlashCommand):
         )
         mail.dynamic_template_data = {
             "verificationUrl": f"{env.get('VERIFICATION_URL')}verify/{validation_code.code}",
-            "verificationCode": validation_code.code,
             "discordTag": context.author.username,
         }
         mail.template_id = "d-589f1fd50a244a189b8b1539e688a41c"
@@ -86,12 +85,20 @@ class VerifyForceCommand(SlashCommand):
         when = datetime.now()
         s_mail = f"{s}@pjwstk.edu.pl"
 
-        db["verified"].insert_one(
-            {
+        db["verified"].update_one(
+            {"discord_id": user},
+            {"$set": {
                 "student_mail": s_mail,
                 "discord_id": user,
                 "when": when,
-            }
+                "guild_id": context.guild_id,
+                "verified_by": "operator",
+                "operator": {
+                    "name": str(context.author),
+                    "id": context.author.id
+                }
+            }},
+            upsert=True
         )
 
         verfied_role = db["roles"].find_one({"guild_id": context.guild_id})
@@ -99,11 +106,13 @@ class VerifyForceCommand(SlashCommand):
             context.guild_id, user, verfied_role["role_id"]
         )
 
-        embed = embed_success("Pomyślnie zweryfikowano! Możesz zarządzać weryfikacją poprzez komendę /manage")
-        embed.add_field("Serwer weryfikukący", str(await context.get_guild()))
+        embed = embed_success("Pomyślnie zweryfikowano! Możesz zarządzać weryfikacją poprzez komendę `/manage self` ")
+        embed.add_field("Serwer", context.get_guild().name)
         embed.add_field("Data weryfikacji", when.isoformat())
-        embed.add_field("Powiązany email", s_mail)
+        embed.add_field("Operator weryfikacji", str(context.author))
 
         await (await context.bot.rest.fetch_user(user)).send(embed=embed)
+
+        await context.respond("Zweryfikowano użytkownika.")
 
     checks = [operator_only]
