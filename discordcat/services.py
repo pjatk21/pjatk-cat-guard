@@ -10,4 +10,4 @@ env = os.environ
 
 sg = SendGridAPIClient(env.get("SENDGRID_APIKEY"))
 mongo = MongoClient(env.get("MONGODB_URL"))
-db = mongo["verifications"]
+db = mongo["catguard"]

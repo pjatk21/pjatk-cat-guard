@@ -20,7 +20,7 @@ env = os.environ
 
 
 mongo = MongoClient(env.get("MONGODB_URL"))
-db = mongo["verifications"]
+db = mongo["catguard"]
 codes = db["codes"]
 verified = db["verified"]
 rest = RESTApp()
