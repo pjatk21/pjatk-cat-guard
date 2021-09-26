@@ -22,3 +22,5 @@ COPY webgate/ /pjatk/webgate/
 COPY templates/ /pjatk/templates/
 
 ENV PYTHONPATH "${PYTHONPATH}:/pjatk"
+
+ENV TZ "Europe/Warsaw"
