@@ -33,7 +33,7 @@ async def verified_only(context: SlashCommandContext):
         return True
 
     verified = db["verified"]
-    verification = verified.find_one({"discord_id": context.author.id})
+    verification = verified.find_one({"discord_id": context.author.id, "guild_id": context.guild_id})
     if verification is None:
         await context.respond(
             embed=embed_error(
