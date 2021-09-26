@@ -26,13 +26,12 @@ class VerifyCommand(SlashCommand):
         match = re.match(r"^s\d{5}$", context.options["s"].value)
 
         if match is None:
-            await context.respond("Twój numer studenta nie jest poprawny! Czy dodałeś ****")
+            await context.respond("Twój numer studenta nie jest poprawny! Czy dodałeś **s**")
             return
 
         if datetime.now(timezone.utc) - context.author.created_at < timedelta(weeks=24):
             await context.respond(
-                "Twoje konto jest podejrzanie świeże. Twoje konto wymaga manualnej weryfikacji!. "
-                "Skontaktuj się z administracją!"
+                "Konta młodsze niż 6 miesięcy wymagają dodatkowej weryfikacji. Skontaktuj się z administracją."
             )
             manual_verification.insert_one(
                 {
