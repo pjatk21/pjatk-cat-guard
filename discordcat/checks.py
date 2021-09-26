@@ -14,6 +14,16 @@ async def superusers_only(context: SlashCommandContext):
         return False
 
 
+async def operator_only(context: SlashCommandContext):
+    if context.member.permissions.MANAGE_GUILD:
+        return True
+
+    if await superusers_only(context):
+        return True
+
+    return False
+
+
 async def verified_only(context: SlashCommandContext):
     verified_role_id = db["roles"].find_one({"guild_id": context.guild_id})["role_id"]
 
@@ -48,3 +58,14 @@ async def unverified_only(context: SlashCommandContext):
         return False
     else:
         return True
+
+
+async def guild_configured(context: SlashCommandContext):
+    target_role = db['roles'].find_one({"guild_id": context.guild_id})
+
+    if target_role is None:
+        await context.respond(embed=embed_error("Na tym serwerze jeszcze nie ustawiono rangi weryfikacyjnej. "
+                                                "Skontaktuj się z administracją. (exec `/setup role`)"))
+        return False
+
+    return True

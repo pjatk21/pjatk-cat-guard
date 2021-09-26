@@ -9,7 +9,7 @@ from lightbulb.slash_commands import (
     Option,
 )
 
-from .checks import superusers_only
+from .checks import superusers_only, operator_only
 from .embed_factory import embed_info
 from .services import db
 
@@ -51,7 +51,7 @@ class SetupVerifiedRoleCommand(SlashSubCommand):
             embed=embed_info(f"Przypisano {role_object.name} jako grupę zweryfikowaną")
         )
 
-    checks = [superusers_only]
+    checks = [operator_only]
 
 
 @SetupCommand.subcommand()
@@ -76,36 +76,7 @@ class SetupVerifierCommand(SlashSubCommand):
         )
         await context.respond(f"Dodano {user_object.mention} do verifiers")
 
-    checks = [superusers_only]
-
-
-@SetupCommand.subcommand()
-class SetupAuditCommand(SlashSubCommand):
-    name = "audit"
-    description = "chujemuje"
-
-    async def callback(self, context: SlashCommandContext):
-        role = roles.find_one({"guild_id": context.guild_id})
-        verifiers_audited_ids = verifiers.find({"guild_id": context.guild_id})
-
-        guild_roles = await context.bot.rest.fetch_roles(role["guild_id"])
-        role = next(filter(lambda x: x.id == role["role_id"], guild_roles))
-        verifiers_audited = []
-
-        for user_id in map(lambda x: x["user_id"], verifiers_audited_ids):
-            user = await context.bot.rest.fetch_user(user_id)
-            verifiers_audited.append(
-                {
-                    "nickname": user.username,
-                }
-            )
-
-        await context.respond("Wysłano audyt na DM")
-        await context.author.send(
-            f'```json\n{json.dumps({"role": role.name, "verifiers": verifiers_audited})}\n```'
-        )
-
-    checks = [superusers_only]
+    checks = [operator_only]
 
 
 @SetupCommand.subcommand()

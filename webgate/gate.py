@@ -11,6 +11,7 @@ from starlette.requests import Request
 from starlette.responses import RedirectResponse, Response
 from starlette.routing import Route
 from starlette.templating import Jinja2Templates
+from discordcat.embed_factory import embed_success
 
 from common.codes import VerificationCode
 
@@ -49,26 +50,14 @@ class VerificationGate(HTTPEndpoint):
         if trusted_code.has_expired:
             return RedirectResponse(env.get("FAIL_REDIRECT"))
 
-        async with ClientSession(
-            headers={
-                "Authorization": "Bearer a87bc15a4e3fd1",
-                "Accept": "application/json",
-            }
-        ) as client:
-            async with client.get(
-                f"https://ipinfo.io/{request.client.host}"
-            ) as response:
-                about_ip = await response.json()
-
         async with rest.acquire(env.get("DISCORD_TOKEN"), "Bot") as client:
             user = await client.fetch_user(trusted_code.user_id)
-
+            when = datetime.now()
             verified.insert_one(
                 {
                     "student_mail": trusted_code.email,
                     "discord_id": user.id,
-                    "when": datetime.now(),
-                    "about-ip": about_ip,
+                    "when": when,
                 }
             )
 
@@ -76,10 +65,13 @@ class VerificationGate(HTTPEndpoint):
             await client.add_role_to_member(
                 trusted_code.target_guild, trusted_code.user_id, verfied_role["role_id"]
             )
-            await user.send(
-                f"Zweryfikowano na serwerze {(await client.fetch_guild(trusted_code.target_guild)).name}"
-                f" i dodano rangę dla zweryfikowanych użytkowników!"
-            )
+
+            embed = embed_success("Pomyślnie zweryfikowano! Możesz zarządzać weryfikacją poprzez komendę /")
+            embed.add_field("Serwer weryfikukący", str(await client.fetch_guild(trusted_code.target_guild)))
+            embed.add_field("Data weryfikacji", when.isoformat())
+            embed.add_field("Powiązany email", trusted_code.email)
+
+            await user.send(embed=embed)
 
         codes.delete_many({"who": trusted_code.who})
         codes.delete_many({"email": trusted_code.email})
