@@ -19,5 +19,5 @@ for slash_cmd in [
     bot.add_slash_command(slash_cmd)
 
 # Subscribers
-for subscription in [CheckUser, NewUserJoined]:
+for subscription in [NewUserJoined]:
     bot.subscribe(subscription.event, subscription.callback)
