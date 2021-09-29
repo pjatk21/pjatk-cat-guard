@@ -8,7 +8,13 @@ from lightbulb.slash_commands import SlashCommand, Option, SlashCommandContext
 from sendgrid import Mail, From
 
 from common.codes import VerificationCode
-from discordcat.checks import verified_only, unverified_only, superusers_only, guild_configured, operator_only
+from discordcat.checks import (
+    verified_only,
+    unverified_only,
+    superusers_only,
+    guild_configured,
+    operator_only,
+)
 from discordcat.embed_factory import embed_info, embed_success
 from discordcat.services import db, sg, env
 
@@ -26,7 +32,9 @@ class VerifyCommand(SlashCommand):
         match = re.match(r"^s\d{5}$", context.options["s"].value)
 
         if match is None:
-            await context.respond("Twój numer studenta nie jest poprawny! Czy dodałeś **s**")
+            await context.respond(
+                "Twój numer studenta nie jest poprawny! Czy dodałeś **s**"
+            )
             return
 
         if datetime.now(timezone.utc) - context.author.created_at < timedelta(weeks=24):
@@ -63,8 +71,10 @@ class VerifyCommand(SlashCommand):
         mail.template_id = "d-589f1fd50a244a189b8b1539e688a41c"
         sg.send(mail)
 
-        embed = embed_info("Sprawdź swojego **studenckiego** maila! "
-                           "**Masz 15 minut** na kliknięcie w link!")
+        embed = embed_info(
+            "Sprawdź swojego **studenckiego** maila! "
+            "**Masz 15 minut** na kliknięcie w link!"
+        )
         embed.title = "Wysłano email z linkiem potwierdzającym weryfikację!"
         await context.respond(embed=embed)
 
@@ -72,8 +82,8 @@ class VerifyCommand(SlashCommand):
 
 
 class VerifyForceCommand(SlashCommand):
-    name = 'verify-force'
-    description = 'Wymusza weryfikację użytkownika'
+    name = "verify-force"
+    description = "Wymusza weryfikację użytkownika"
 
     user: User = Option("Użytkownik")
     s: str = Option("Numer studenta")
@@ -86,18 +96,17 @@ class VerifyForceCommand(SlashCommand):
 
         db["verified"].update_one(
             {"discord_id": user},
-            {"$set": {
-                "student_mail": s_mail,
-                "discord_id": user,
-                "when": when,
-                "guild_id": context.guild_id,
-                "verified_by": "operator",
-                "operator": {
-                    "name": str(context.author),
-                    "id": context.author.id
+            {
+                "$set": {
+                    "student_mail": s_mail,
+                    "discord_id": user,
+                    "when": when,
+                    "guild_id": context.guild_id,
+                    "verified_by": "operator",
+                    "operator": {"name": str(context.author), "id": context.author.id},
                 }
-            }},
-            upsert=True
+            },
+            upsert=True,
         )
 
         verfied_role = db["roles"].find_one({"guild_id": context.guild_id})
@@ -105,7 +114,9 @@ class VerifyForceCommand(SlashCommand):
             context.guild_id, user, verfied_role["role_id"]
         )
 
-        embed = embed_success("Pomyślnie zweryfikowano! Możesz zarządzać weryfikacją poprzez komendę `/manage self` ")
+        embed = embed_success(
+            "Pomyślnie zweryfikowano! Możesz zarządzać weryfikacją poprzez komendę `/manage self` "
+        )
         embed.add_field("Serwer", context.get_guild().name)
         embed.add_field("Data weryfikacji", when.isoformat())
         embed.add_field("Operator weryfikacji", str(context.author))

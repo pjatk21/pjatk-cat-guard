@@ -9,5 +9,5 @@ class NewUserJoined(Subscription):
     async def callback(event: MemberCreateEvent):
         await event.member.send(
             "uwu, na tym serwerze obowiązuje weryfikacja!\n"
-            "Sprawdź kanał \"#✋weryfikacja-członków\" aby dowiedzieć się więcej uwu"
+            'Sprawdź kanał "#✋weryfikacja-członków" aby dowiedzieć się więcej uwu'
         )

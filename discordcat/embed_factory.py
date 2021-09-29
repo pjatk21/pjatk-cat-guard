@@ -39,15 +39,15 @@ def embed_success(message: str) -> Embed:
 
 def embed_user_audit(user_data, username):
     embed = Embed()
-    embed.title = f'Dane o {username}'
+    embed.title = f"Dane o {username}"
     embed.color = Color.of("#64de9f")
     embed.add_field("Data weryfikacji", user_data["when"].isoformat())
     embed.add_field("Połączony numer studenta", user_data["student_mail"][:6])
 
-    if user_data["verified_by"] == 'self-verified':
+    if user_data["verified_by"] == "self-verified":
         embed.add_field("Metoda weryfikacji", "link dostarczony email'em")
 
-    if user_data["verified_by"] == 'operator':
+    if user_data["verified_by"] == "operator":
         embed.add_field("Metoda weryfikacji", "weryfikacja ręczna przez operatora")
         embed.add_field("Operator", user_data["operator"]["name"])
 

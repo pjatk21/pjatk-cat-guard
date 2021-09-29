@@ -33,7 +33,9 @@ async def verified_only(context: SlashCommandContext):
         return True
 
     verified = db["verified"]
-    verification = verified.find_one({"discord_id": context.author.id, "guild_id": context.guild_id})
+    verification = verified.find_one(
+        {"discord_id": context.author.id, "guild_id": context.guild_id}
+    )
     if verification is None:
         await context.respond(
             embed=embed_error(
@@ -61,11 +63,15 @@ async def unverified_only(context: SlashCommandContext):
 
 
 async def guild_configured(context: SlashCommandContext):
-    target_role = db['roles'].find_one({"guild_id": context.guild_id})
+    target_role = db["roles"].find_one({"guild_id": context.guild_id})
 
     if target_role is None:
-        await context.respond(embed=embed_error("Na tym serwerze jeszcze nie ustawiono rangi weryfikacyjnej. "
-                                                "Skontaktuj się z administracją. (exec `/setup role`)"))
+        await context.respond(
+            embed=embed_error(
+                "Na tym serwerze jeszcze nie ustawiono rangi weryfikacyjnej. "
+                "Skontaktuj się z administracją. (exec `/setup role`)"
+            )
+        )
         return False
 
     return True

@@ -59,7 +59,7 @@ class VerificationGate(HTTPEndpoint):
                     "discord_id": user.id,
                     "when": when,
                     "guild_id": trusted_code.target_guild,
-                    "verified_by": "self-verified"
+                    "verified_by": "self-verified",
                 }
             )
 
@@ -68,8 +68,12 @@ class VerificationGate(HTTPEndpoint):
                 trusted_code.target_guild, trusted_code.user_id, verfied_role["role_id"]
             )
 
-            embed = embed_success("Pomyślnie zweryfikowano! Możesz zarządzać weryfikacją poprzez komendę `/manage self`")
-            embed.add_field("Serwer", str(await client.fetch_guild(trusted_code.target_guild)))
+            embed = embed_success(
+                "Pomyślnie zweryfikowano! Możesz zarządzać weryfikacją poprzez komendę `/manage self`"
+            )
+            embed.add_field(
+                "Serwer", str(await client.fetch_guild(trusted_code.target_guild))
+            )
             embed.add_field("Data weryfikacji", when.isoformat())
             embed.add_field("Powiązany email", trusted_code.email)
 
