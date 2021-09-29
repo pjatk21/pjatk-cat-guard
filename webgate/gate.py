@@ -42,13 +42,15 @@ class VerificationGate(HTTPEndpoint):
         trusted_code = codes.find_one({"code": code})
 
         if trusted_code is None:
-            return RedirectResponse(env.get("FAIL_REDIRECT"))
+            return templates.TemplateResponse("rick.html", {"request": request, "issue": "Taki kod nie istnieje"})
 
         del trusted_code["_id"]
         trusted_code = VerificationCode(**trusted_code)
 
         if trusted_code.has_expired:
-            return RedirectResponse(env.get("FAIL_REDIRECT"))
+            return templates.TemplateResponse(
+                "rick.html", {"request": request, "issue": "Twój kod wygasł, wywołaj komendę jeszcze raz"}
+            )
 
         async with rest.acquire(env.get("DISCORD_TOKEN"), "Bot") as client:
             user = await client.fetch_user(trusted_code.user_id)
