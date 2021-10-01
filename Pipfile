@@ -11,6 +11,7 @@ hikari-lightbulb = "*"
 sendgrid = "*"
 starlette = "*"
 # Other (backend, db, networking)
+pipenv = "*"
 pymongo = "*"
 uvicorn = "*"
 python-dotenv = "*"
