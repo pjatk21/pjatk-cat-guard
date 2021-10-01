@@ -19,7 +19,7 @@ class ManageSelfCommand(SlashSubCommand):
     action: str = Option("Operacja", choices=["remove", "info"])
 
     async def callback(self, context: SlashCommandContext):
-        action = context.options["action"].value
+        action = context.options.action
 
         if action == "remove":
             db["verified"].delete_many({"discord_id": context.author.id})
@@ -50,8 +50,8 @@ class ManageSomeone(SlashSubCommand):
     action: str = Option("Operacja", choices=["info", "remove"])
 
     async def callback(self, context: SlashCommandContext):
-        user = context.options["user"].value
-        action = context.options["action"].value
+        user = context.options.user
+        action = context.options.action
 
         if action == "remove":
             db["verified"].delete_many({"discord_id": user})

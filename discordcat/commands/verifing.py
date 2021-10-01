@@ -29,7 +29,7 @@ class VerifyCommand(SlashCommand):
     s: str = Option("Twój numer studenta (np. s73120)")
 
     async def callback(self, context: SlashCommandContext):
-        match = re.match(r"^s\d{5}$", context.options["s"].value)
+        match = re.match(r"^s\d{5}$", context.options.s)
 
         if match is None:
             await context.respond(
@@ -89,8 +89,8 @@ class VerifyForceCommand(SlashCommand):
     s: str = Option("Numer studenta")
 
     async def callback(self, context: SlashCommandContext):
-        user = context.options["user"].value
-        s = context.options["s"].value
+        user = context.options.user
+        s = context.options.s
         when = datetime.now()
         s_mail = f"{s}@pjwstk.edu.pl"
 

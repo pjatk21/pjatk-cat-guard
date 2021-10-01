@@ -29,7 +29,7 @@ class SetupVerifiedRoleCommand(SlashSubCommand):
     role: Role = Option("Rola, która ma być przyznawana po weryfikacji.")
 
     async def callback(self, context: SlashCommandContext):
-        target_role = context.options["role"].value
+        target_role = context.options.role
         role_object = next(
             filter(
                 lambda x: x.id == target_role,
@@ -54,45 +54,45 @@ class SetupVerifiedRoleCommand(SlashSubCommand):
     checks = [operator_only]
 
 
-@SetupCommand.subcommand()
-class SetupVerifierCommand(SlashSubCommand):
-    name = "verifier"
-    description = "Ustawia osobę, która będzie mogła werifikować użytkowników."
-    user: User = Option("Osoba, która cośtam cośtam")
+# @SetupCommand.subcommand()
+# class SetupVerifierCommand(SlashSubCommand):
+#     name = "verifier"
+#     description = "Ustawia osobę, która będzie mogła werifikować użytkowników."
+#     user: User = Option("Osoba, która cośtam cośtam")
+#
+#     async def callback(self, context: SlashCommandContext):
+#         target_user = context.options["user"].value
+#         user_object = await context.bot.rest.fetch_user(target_user)
+#         roles.update_one(
+#             {"guild_id": context.guild_id, "user_id": target_user},
+#             {
+#                 "$set": {
+#                     "user_id": target_user,
+#                     "when": datetime.now(),
+#                     "who": context.author.id,
+#                 }
+#             },
+#             upsert=True,
+#         )
+#         await context.respond(f"Dodano {user_object.mention} do verifiers")
+#
+#     checks = [operator_only]
 
-    async def callback(self, context: SlashCommandContext):
-        target_user = context.options["user"].value
-        user_object = await context.bot.rest.fetch_user(target_user)
-        roles.update_one(
-            {"guild_id": context.guild_id, "user_id": target_user},
-            {
-                "$set": {
-                    "user_id": target_user,
-                    "when": datetime.now(),
-                    "who": context.author.id,
-                }
-            },
-            upsert=True,
-        )
-        await context.respond(f"Dodano {user_object.mention} do verifiers")
 
-    checks = [operator_only]
-
-
-@SetupCommand.subcommand()
-class SetupSuperuserCommand(SlashSubCommand):
-    name = "superuser"
-    description = "papież"
-    user: User = Option("nie wiedział o pedofilii")
-
-    async def callback(self, context: SlashCommandContext):
-        user = context.options["user"].value
-        user_object = await context.bot.rest.fetch_user(user)
-        db["superusers"].update_one(
-            {"discord_id": user},
-            {"$set": {"discord_id": user, "when": datetime.now()}},
-            upsert=True,
-        )
-        await context.respond(f"Dodano {user_object.mention} do superusesrs")
-
-    checks = [superusers_only]
+# @SetupCommand.subcommand()
+# class SetupSuperuserCommand(SlashSubCommand):
+#     name = "superuser"
+#     description = "papież"
+#     user: User = Option("nie wiedział o pedofilii")
+#
+#     async def callback(self, context: SlashCommandContext):
+#         user = context.options.user
+#         user_object = await context.bot.rest.fetch_user(user)
+#         db["superusers"].update_one(
+#             {"discord_id": user},
+#             {"$set": {"discord_id": user, "when": datetime.now()}},
+#             upsert=True,
+#         )
+#         await context.respond(f"Dodano {user_object.mention} do superusesrs")
+#
+#     checks = [superusers_only]
