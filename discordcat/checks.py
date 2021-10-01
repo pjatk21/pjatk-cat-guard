@@ -2,18 +2,16 @@ from lightbulb.slash_commands import SlashCommandContext
 
 from .embed_factory import embed_error, embed_warn
 from .services import db
+from .decorators.auditing import audit_check
 
 
+@audit_check()
 async def superusers_only(context: SlashCommandContext):
-    if context.author.id == 285146237613899776:  # hehe lilpostian
+    if context.author.id in context.bot.owner_ids:
         return True
 
-    if db["superusers"].find_one({"discord_id": context.author.id}) is not None:
-        return True
-    else:
-        return False
 
-
+@audit_check()
 async def operator_only(context: SlashCommandContext):
     if context.member.permissions.MANAGE_GUILD:
         return True
@@ -24,6 +22,7 @@ async def operator_only(context: SlashCommandContext):
     return False
 
 
+@audit_check()
 async def verified_only(context: SlashCommandContext):
     verified_role_id = db["roles"].find_one({"guild_id": context.guild_id})["role_id"]
 
@@ -48,6 +47,7 @@ async def verified_only(context: SlashCommandContext):
         return True
 
 
+@audit_check()
 async def unverified_only(context: SlashCommandContext):
     verified = db["verified"]
     verification = verified.find_one({"discord_id": context.author.id})

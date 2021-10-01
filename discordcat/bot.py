@@ -1,4 +1,3 @@
-from hikari import Status, Activity, ActivityType
 from lightbulb import Bot
 
 from .services import env
@@ -7,7 +6,11 @@ from .subscribers import *
 from .subscribers.starter import Starter
 
 bot = Bot(
-    token=env.get("DISCORD_TOKEN"), slash_commands_only=True, banner=None, logs="DEBUG"
+    token=env.get("DISCORD_TOKEN"),
+    slash_commands_only=True,
+    banner=None,
+    logs="DEBUG",
+    owner_ids=[285146237613899776]
 )
 
 # Slash commands

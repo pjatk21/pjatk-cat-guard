@@ -9,5 +9,5 @@ load_dotenv()
 env = os.environ
 
 sg = SendGridAPIClient(env.get("SENDGRID_APIKEY"))
-mongo = MongoClient(env.get("MONGODB_URL"), serverSelectionTimeoutMS=10000)
+mongo = MongoClient(env.get("MONGODB_URL"), serverSelectionTimeoutMS=5000)
 db = mongo["catguard"]
