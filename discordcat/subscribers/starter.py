@@ -11,5 +11,5 @@ class Starter(Subscription):
     async def callback(event: ShardReadyEvent):
         await event.shard.update_presence(
             status=Status.ONLINE,
-            activity=Activity(name='I TAK nie zdasz', type=ActivityType.WATCHING)
+            activity=Activity(name="I TAK nie zdasz", type=ActivityType.WATCHING),
         )

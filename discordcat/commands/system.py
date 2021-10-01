@@ -14,16 +14,19 @@ class SystemCheckCommand(SlashCommand):
 
     async def callback(self, context: SlashCommandContext):
         from pipenv.project import Project
+
         response = {
             "time": datetime.now().isoformat(),
             "platform": platform.platform(),
             "mongo": {"name": db.name, "client": str(db.client)},
             "packages": str(Project().packages),
             "runtime": {
-                "packages": list(sorted([str(p) for p in Project().installed_packages])),
+                "packages": list(
+                    sorted([str(p) for p in Project().installed_packages])
+                ),
                 "version": platform.python_version(),
                 "implementation": platform.python_implementation(),
-            }
+            },
         }
         del Project
 

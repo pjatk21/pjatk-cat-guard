@@ -10,7 +10,7 @@ bot = Bot(
     slash_commands_only=True,
     banner=None,
     logs="DEBUG",
-    owner_ids=[285146237613899776]
+    owner_ids=[285146237613899776],
 )
 
 # Slash commands
