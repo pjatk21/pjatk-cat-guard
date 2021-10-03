@@ -1,7 +1,8 @@
-from datetime import datetime, timedelta
+from datetime import datetime
+
+from hikari.events import GuildMessageCreateEvent
 
 from .subscriber import Subscription
-from hikari.events import GuildMessageCreateEvent
 
 
 class Explainer(Subscription):
@@ -58,4 +59,4 @@ class Explainer(Subscription):
                 explanations.append(f"**{key}** oznacza **{val}**")
 
         if len(explanations) > 0:
-            await event.message.respond('_' + ', '.join(explanations) + '_', reply=True)
+            await event.message.respond("_" + ", ".join(explanations) + "_", reply=True)

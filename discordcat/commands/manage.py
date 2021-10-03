@@ -2,8 +2,8 @@ from hikari import User
 from lightbulb import SlashSubCommand, SlashCommandGroup, Option, SlashCommandContext
 
 from ..checks import operator_only, verified_only
-from ..services import db
 from ..embed_factory import embed_user_audit
+from ..services import db
 
 
 class ManageGroup(SlashCommandGroup):

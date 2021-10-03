@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from hikari.events import Event
 from lightbulb import Bot
 

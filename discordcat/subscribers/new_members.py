@@ -1,6 +1,7 @@
 import logging
 
 from hikari.events import MemberCreateEvent
+
 from .subscriber import Subscription
 
 

@@ -1,8 +1,8 @@
 from lightbulb.slash_commands import SlashCommandContext
 
+from .audit.decorators import audit_check
 from .embed_factory import embed_error, embed_warn
 from .services import db
-from .audit.decorators import audit_check
 
 
 @audit_check()

@@ -10,9 +10,7 @@ from sendgrid import Mail, From
 
 from common.codes import VerificationCode
 from discordcat.checks import (
-    verified_only,
     unverified_only,
-    superusers_only,
     guild_configured,
     operator_only,
 )
@@ -116,8 +114,12 @@ class VerifyForceCommand(SlashCommand):
                 context.guild_id, user, verfied_role["role_id"]
             )
         except ForbiddenError:
-            await context.respond(embed=embed_error("Uprawnienia bota, są poniżej nadawanej rangi! "
-                                                    "Rola bota powinna być nad grupą nadawaną"))
+            await context.respond(
+                embed=embed_error(
+                    "Uprawnienia bota, są poniżej nadawanej rangi! "
+                    "Rola bota powinna być nad grupą nadawaną"
+                )
+            )
             return
 
         embed = embed_success(

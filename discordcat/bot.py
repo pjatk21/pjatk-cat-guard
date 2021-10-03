@@ -1,8 +1,8 @@
 from hikari import Intents
 from lightbulb import Bot
 
-from .services import env
 from .commands import *
+from .services import env
 from .subscribers import *
 from .subscribers.explain import Explainer
 from .subscribers.interactions import ExceptionReporter
@@ -14,7 +14,7 @@ bot = Bot(
     banner=None,
     logs="DEBUG",
     owner_ids=[285146237613899776],
-    intents=Intents.ALL_UNPRIVILEGED | Intents.GUILD_MEMBERS
+    intents=Intents.ALL_UNPRIVILEGED | Intents.GUILD_MEMBERS,
 )
 
 # Slash commands

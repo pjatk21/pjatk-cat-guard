@@ -1,10 +1,7 @@
-from hikari import CommandInteraction
-
-from .subscriber import Subscription
 from hikari.events import InteractionCreateEvent, ExceptionEvent
 
+from .subscriber import Subscription
 from ..audit.error_reporting import report_interaction_exception
-from ..embed_factory import embed_error
 
 
 class ExceptionReporter(Subscription):

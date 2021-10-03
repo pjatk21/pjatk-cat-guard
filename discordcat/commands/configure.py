@@ -1,7 +1,6 @@
-import json
 from datetime import datetime
 
-from hikari import Role, User
+from hikari import Role
 from lightbulb.slash_commands import (
     SlashCommandGroup,
     SlashSubCommand,
@@ -9,7 +8,7 @@ from lightbulb.slash_commands import (
     Option,
 )
 
-from ..checks import superusers_only, operator_only
+from ..checks import operator_only
 from ..embed_factory import embed_info
 from ..services import db
 
