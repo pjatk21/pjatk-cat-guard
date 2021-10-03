@@ -41,6 +41,9 @@ class Explainer(Subscription):
         if event.author.is_bot or event.author.is_system or event.message.content is None:
             return
 
+        if event.message.content == 'sudo raise exception test':
+            raise Exception('Test exception!')
+
         action_words = {"co to jest", "czym jest", "co oznacza", "o co chodzi z"}
         action_flag = False
 

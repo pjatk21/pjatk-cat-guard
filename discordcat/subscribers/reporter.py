@@ -13,7 +13,7 @@ class ExceptionReporter(Subscription):
     event = ExceptionEvent
 
     async def callback(self, event: ExceptionEvent):
-        report_doc = db["exceptions"].insert_one(
+        exception_report = db["exceptions"].insert_one(
             {
                 "occurred_at": datetime.now(),
                 "event": str(event.failed_event),
@@ -30,8 +30,14 @@ class ExceptionReporter(Subscription):
             }
         )
 
+        if hasattr(event.failed_event, 'author'):
+            db["exceptions"].update_one(
+                {"_id": exception_report.inserted_id},
+                {"$set": {"author": str(event.failed_event.author)}}
+            )
+
         for oid in self.bot.owner_ids:
             owner = await self.bot.rest.fetch_user(oid)
             await owner.send(
-                f"Wystąpił błąd! ```json\n{json.dumps({'id': report_doc.inserted_id, 'exception': repr(event.exception)}, indent=2)}\n```"
+                f"Wystąpił błąd! ```json\n{json.dumps({'id': str(exception_report.inserted_id), 'exception': repr(event.exception)}, indent=2)}\n```"
             )
