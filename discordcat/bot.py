@@ -4,6 +4,7 @@ from lightbulb import Bot
 from .services import env
 from .commands import *
 from .subscribers import *
+from .subscribers.explain import Explainer
 from .subscribers.interactions import ExceptionReporter
 from .subscribers.starter import Starter
 
@@ -27,6 +28,6 @@ for slash_cmd in [
     bot.add_slash_command(slash_cmd)
 
 # Subscribers
-for subscription in [Starter, NewUserJoined, ExceptionReporter]:
+for subscription in [Starter, NewUserJoined, ExceptionReporter, Explainer]:
     initialised_subscriber = subscription(bot)
     bot.subscribe(initialised_subscriber.event, initialised_subscriber.callback)
