@@ -3,6 +3,7 @@ from dataclasses import asdict
 from datetime import datetime, timedelta, timezone
 
 from hikari import User
+from hikari.errors import ForbiddenError
 from lightbulb import guild_only
 from lightbulb.slash_commands import SlashCommand, Option, SlashCommandContext
 from sendgrid import Mail, From
@@ -15,7 +16,7 @@ from discordcat.checks import (
     guild_configured,
     operator_only,
 )
-from discordcat.embed_factory import embed_info, embed_success
+from discordcat.embed_factory import embed_info, embed_success, embed_error
 from discordcat.services import db, sg, env
 
 verified = db["verified"]
@@ -110,9 +111,14 @@ class VerifyForceCommand(SlashCommand):
         )
 
         verfied_role = db["roles"].find_one({"guild_id": context.guild_id})
-        await context.bot.rest.add_role_to_member(
-            context.guild_id, user, verfied_role["role_id"]
-        )
+        try:
+            await context.bot.rest.add_role_to_member(
+                context.guild_id, user, verfied_role["role_id"]
+            )
+        except ForbiddenError:
+            await context.respond(embed=embed_error("Uprawnienia bota, są poniżej nadawanej rangi! "
+                                                    "Rola bota powinna być nad grupą nadawaną"))
+            return
 
         embed = embed_success(
             "Pomyślnie zweryfikowano! Możesz zarządzać weryfikacją poprzez komendę `/manage self` "
