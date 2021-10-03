@@ -12,7 +12,7 @@ services:
     depends_on:
       - mongol
       - webgate
-    restart: always
+    restart: unless-stopped
   webgate:
     build: .
     image: kpostekk/discordcat:latest
@@ -25,6 +25,7 @@ services:
       - .production.env
     depends_on:
       - mongol
+    restart: unless-stopped
   mongol:
     image: mongo:latest
     environment:
@@ -32,3 +33,4 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: notThatExample1!
     ports:
       - 27017:27017
+    restart: unless-stopped
