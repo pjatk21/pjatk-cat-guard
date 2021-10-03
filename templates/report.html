@@ -1,0 +1,12 @@
+{% extends 'home.html' %}
+{% block body %}
+    <div class="container" style="margin-top: 50px">
+        <h3>{{ exception.exception.repr }}</h3>
+        <h5>{{ exception._id }}</h5>
+        <pre>{{ exception.event }}</pre>
+        <pre style="white-space: pre-wrap">
+            {{ exception.exception.traceback }}
+        </pre>
+        <p>{{ exception.occurred_at }}</p>
+    </div>
+{% endblock %}

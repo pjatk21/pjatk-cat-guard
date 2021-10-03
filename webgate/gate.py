@@ -5,11 +5,13 @@ from aiohttp import ClientSession
 from dotenv import load_dotenv
 from hikari import RESTApp
 from pymongo import MongoClient
+from bson import ObjectId
 from starlette.applications import Starlette
 from starlette.endpoints import HTTPEndpoint
 from starlette.requests import Request
 from starlette.responses import RedirectResponse, Response
 from starlette.routing import Route
+from starlette.exceptions import HTTPException
 from starlette.templating import Jinja2Templates
 from discordcat.embed_factory import embed_success
 
@@ -93,8 +95,19 @@ class VerificationGate(HTTPEndpoint):
         return templates.TemplateResponse("verified.html", {"request": request})
 
 
+class ExceptionsPreviewer(HTTPEndpoint):
+    async def get(self, request: Request):
+        exception = db["exceptions"].find_one({"_id": ObjectId(request.path_params["_id"])})
+
+        if exception is None:
+            raise HTTPException(status_code=404)
+
+        return templates.TemplateResponse("report.html", {"request": request, "exception": exception})
+
+
 routes = [
     Route("/", InviteEndpoint),
     Route("/verify/{code}", VerificationGate),
+    Route("/exceptions/{_id}", ExceptionsPreviewer),
 ]
 app = Starlette(routes=routes)

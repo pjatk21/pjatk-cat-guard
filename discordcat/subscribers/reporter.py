@@ -6,7 +6,7 @@ from hikari.events import InteractionCreateEvent, ExceptionEvent
 
 from .subscriber import Subscription
 from ..audit.error_reporting import report_interaction_exception
-from ..services import db
+from ..services import db, env
 
 
 class ExceptionReporter(Subscription):
@@ -39,5 +39,5 @@ class ExceptionReporter(Subscription):
         for oid in self.bot.owner_ids:
             owner = await self.bot.rest.fetch_user(oid)
             await owner.send(
-                f"Wystąpił błąd! ```json\n{json.dumps({'id': str(exception_report.inserted_id), 'exception': repr(event.exception)}, indent=2)}\n```"
+                f"Wystąpił błąd! {env.get('VERIFICATION_URL')}exceptions/{exception_report.inserted_id} ```json\n{json.dumps({'id': str(exception_report.inserted_id), 'exception': repr(event.exception)}, indent=2)}\n```"
             )
