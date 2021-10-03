@@ -10,7 +10,7 @@ class CheckUser(Subscription):
     event = GuildMessageCreateEvent
 
     async def callback(self, event: GuildMessageCreateEvent):
-        if event.author.is_bot:
+        if event.author.is_bot or event.author.is_system:
             return
 
         verification = db["verified"].find_one(
