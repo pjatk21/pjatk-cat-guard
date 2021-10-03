@@ -5,7 +5,7 @@ from .commands import *
 from .services import env
 from .subscribers import *
 from .subscribers.explain import Explainer
-from .subscribers.interactions import ExceptionReporter
+from .subscribers.reporter import ExceptionReporter
 from .subscribers.starter import Starter
 
 bot = Bot(
