@@ -9,8 +9,7 @@ from discordcat.subscribers.subscriber import Subscription
 class CheckUser(Subscription):
     event = GuildMessageCreateEvent
 
-    @staticmethod
-    async def callback(event: GuildMessageCreateEvent):
+    async def callback(self, event: GuildMessageCreateEvent):
         if event.author.is_bot:
             return
 

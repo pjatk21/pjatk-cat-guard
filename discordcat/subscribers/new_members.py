@@ -7,8 +7,7 @@ from .subscriber import Subscription
 class NewUserJoined(Subscription):
     event = MemberCreateEvent
 
-    @staticmethod
-    async def callback(event: MemberCreateEvent):
+    async def callback(self, event: MemberCreateEvent):
         logging.getLogger("new-member").debug(
             f"New member {event.member} joined, sending welcome message."
         )

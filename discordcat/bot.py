@@ -27,4 +27,5 @@ for slash_cmd in [
 
 # Subscribers
 for subscription in [Starter, NewUserJoined]:
-    bot.subscribe(subscription.event, subscription.callback)
+    initialised_subscriber = subscription(bot)
+    bot.subscribe(initialised_subscriber.event, initialised_subscriber.callback)
