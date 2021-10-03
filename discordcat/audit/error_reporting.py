@@ -7,7 +7,7 @@ from lightbulb import Bot
 from discordcat.services import db
 
 
-async def report_exception_event(event: ExceptionEvent, bot: Optional[Bot] = None):
+async def report_interaction_exception(event: ExceptionEvent, bot: Optional[Bot] = None):
     interaction: CommandInteraction = event.failed_event.interaction
     report_doc = db['exceptions'].insert_one(
         {
@@ -41,7 +41,4 @@ async def report_exception_event(event: ExceptionEvent, bot: Optional[Bot] = Non
     if bot is not None:
         for oid in bot.owner_ids:
             owner = await bot.rest.fetch_user(oid)
-            await owner.send(
-                f"Zgłoszono nowy błąd `{report_doc.inserted_id}`, interakcja `{interaction.id}`, kanał `#{interaction.get_channel().name}`"
-            )
-            await owner.send(f"```\n{event.exception.__repr__()}\n```")
+            await owner.send(f"```{event.exception}``````{event.failed_event}``````{report_doc.inserted_id}```")
