@@ -38,7 +38,7 @@ class Explainer(Subscription):
     }
 
     async def callback(self, event: GuildMessageCreateEvent):
-        if event.author.is_bot or event.author.is_system:
+        if event.author.is_bot or event.author.is_system or event.message.content is None:
             return
 
         action_words = {"co to jest", "czym jest", "co oznacza", "o co chodzi z"}
