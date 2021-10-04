@@ -39,6 +39,7 @@ class Explainer(Subscription):
         "SFTP": "Super frajerski typ połączenia",
         "anime": "A można pisać o anime?",
         "VPN": "tunel do szkoły, wysyła się nim dzieci do gułagu",
+        "PJATK": "z pol. PJAIT: People Just Apply for ITn"
     }
 
     async def callback(self, event: GuildMessageCreateEvent):
