@@ -35,6 +35,10 @@ class Explainer(Subscription):
         "PRI": "Projektowanie systemów informacyjnych",
         "PPB": "Prawne podstawy działalności gospodarczej",
         "MUL": "Multimedia",
+        "FTP": "Frajerski typ połączenia",
+        "SFTP": "Super frajerski typ połączenia",
+        "anime": "A można pisać o anime?",
+        "VPN": "tunel do szkoły, wysyła się nim dzieci do gułagu",
     }
 
     async def callback(self, event: GuildMessageCreateEvent):
