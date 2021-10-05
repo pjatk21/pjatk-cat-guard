@@ -17,6 +17,7 @@ uvicorn = "*"
 python-dotenv = "*"
 jinja2 = "*"
 aiohttp = "*"
+google-api-python-client = "*"
 
 [dev-packages]
 black = "*"
