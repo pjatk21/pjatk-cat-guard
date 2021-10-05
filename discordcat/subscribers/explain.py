@@ -35,9 +35,9 @@ class Explainer(Subscription):
         "PRI": "Projektowanie systemów informacyjnych",
         "PPB": "Prawne podstawy działalności gospodarczej",
         "MUL": "Multimedia",
-        "FTP": "Frajerski typ połączenia",
+        "FTP": "https://cdn.discordapp.com/attachments/872492755501350944/894572941772193812/eftep.mp4",
         "SFTP": "Super frajerski typ połączenia",
-        "anime": "A można pisać o anime?",
+        "anime": "A można pisać o JAPONIIIIIIIIIII?",
         "VPN": "tunel do szkoły, wysyła się nim dzieci do gułagu",
     }
 
