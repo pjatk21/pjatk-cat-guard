@@ -18,10 +18,7 @@ def audit_check():
                 logger.warning(
                     f"{str(context.author)} has failed {func.__name__} check!"
                 )
-                owner = await context.bot.rest.fetch_user(285146237613899776)
-                await owner.send(
-                    f"{str(context.author)} has failed {func.__name__} check!"
-                )
+                await context.author.send(f"Próbujesz wywołać komendę, ale kontekst wywołania nie jest poprawny! Test, który zwrócił wartość `False`: {func.__name__}.")
             return result
 
         return wrapped
