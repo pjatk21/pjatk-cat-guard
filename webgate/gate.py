@@ -9,7 +9,7 @@ from bson import ObjectId
 from starlette.applications import Starlette
 from starlette.endpoints import HTTPEndpoint
 from starlette.requests import Request
-from starlette.responses import RedirectResponse, Response
+from starlette.responses import RedirectResponse, Response, PlainTextResponse
 from starlette.routing import Route
 from starlette.exceptions import HTTPException
 from starlette.templating import Jinja2Templates
@@ -105,8 +105,18 @@ class ExceptionsPreviewer(HTTPEndpoint):
         return templates.TemplateResponse("report.html", {"request": request, "exception": exception})
 
 
+class LoginGate(HTTPEndpoint):
+    async def get(self, request: Request):
+        return templates.TemplateResponse("login.html", {"request": request})
+
+    async def post(self, request: Request):
+        print(await request.form())
+        return PlainTextResponse(str(request))
+
+
 routes = [
     Route("/", InviteEndpoint),
+    Route("/login", LoginGate),
     Route("/verify/{code}", VerificationGate),
     Route("/exceptions/{_id}", ExceptionsPreviewer),
 ]
