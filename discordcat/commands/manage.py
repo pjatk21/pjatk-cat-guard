@@ -66,6 +66,10 @@ class ManageSomeone(SlashSubCommand):
             user_data = db["verified"].find_one(
                 {"discord_id": user, "guild_id": context.get_guild().id}
             )
+            if user_data is None:
+                await context.respond("Nie znaleziono takiego usera")
+                return
+
             username = str(await context.bot.rest.fetch_user(user))
             embed = embed_user_audit(user_data, username)
 
