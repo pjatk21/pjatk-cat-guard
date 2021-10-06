@@ -1,21 +1,18 @@
-import re
-from dataclasses import asdict
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 
 from hikari import User
 from hikari.errors import ForbiddenError
 from lightbulb import guild_only
 from lightbulb.slash_commands import SlashCommand, Option, SlashCommandContext
-from sendgrid import Mail, From
+from random_word import RandomWords
 
-from common.codes import VerificationCode
 from discordcat.checks import (
     unverified_only,
     guild_configured,
     operator_only,
 )
-from discordcat.embed_factory import embed_info, embed_success, embed_error
-from discordcat.services import db, sg, env
+from discordcat.embed_factory import embed_success, embed_error
+from discordcat.services import db, env
 
 verified = db["verified"]
 codes = db["codes"]
@@ -25,57 +22,30 @@ manual_verification = db["manual_verification"]
 class VerifyCommand(SlashCommand):
     name = "verify"
     description = "Weryfikuje twoje konto"
-    s: str = Option("Twój numer studenta (np. s73120)")
 
     async def callback(self, context: SlashCommandContext):
-        match = re.match(r"^s\d{5}$", context.options.s)
+        linking_secret = "-".join(
+            RandomWords().get_random_words(limit=3, minLength=4, maxLength=9)
+        )
 
-        if match is None:
-            await context.respond(
-                "Twój numer studenta nie jest poprawny! Czy dodałeś **s**"
-            )
-            return
-
-        if datetime.now(timezone.utc) - context.author.created_at < timedelta(weeks=24):
-            await context.respond(
-                "Konta młodsze niż 6 miesięcy wymagają dodatkowej weryfikacji. Skontaktuj się z administracją."
-            )
-            manual_verification.insert_one(
-                {
-                    "discord_id": context.author.id,
-                    "discord_name": str(context.author),
-                    "account_created": context.author.created_at,
+        db["link"].update_one(
+            {
+                "discord_id": context.author.id,
+                "guild_id": context.guild_id,
+            },
+            {
+                "$set": {
+                    "secret": linking_secret,
                 }
-            )
-            return
-
-        student_id = match.string
-
-        target_email = f"{student_id}@pjwstk.edu.pl"
-
-        validation_code = VerificationCode.create(
-            str(context.author), target_email, context.author.id, context.guild_id
+            },
+            upsert=True,
         )
 
-        codes.insert_one(asdict(validation_code))
-
-        mail = Mail(
-            from_email=From("catguard@kpostek.dev", name="ガード猫"),
-            to_emails=[target_email],
+        await context.author.send(
+            f"Link do logowania: {env.get('VERIFICATION_URL')}oauth/{linking_secret}"
         )
-        mail.dynamic_template_data = {
-            "verificationUrl": f"{env.get('VERIFICATION_URL')}verify/{validation_code.code}",
-            "discordTag": context.author.username,
-        }
-        mail.template_id = "d-589f1fd50a244a189b8b1539e688a41c"
-        sg.send(mail)
 
-        embed = embed_info(
-            "Sprawdź swojego **studenckiego** maila! "
-            "**Masz 15 minut** na kliknięcie w link!"
-        )
-        embed.title = "Wysłano email z linkiem potwierdzającym weryfikację!"
-        await context.respond(embed=embed)
+        await context.respond("Wysłano link do logowania na DM.")
 
     checks = [guild_only, guild_configured, unverified_only]
 

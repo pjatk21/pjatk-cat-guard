@@ -6,35 +6,47 @@ from ..checks import operator_only
 
 
 class FindBy(SlashCommandGroup):
-    name = 'find-by'
-    description = 'przeszukuje baze danych'
+    name = "find-by"
+    description = "przeszukuje baze danych"
 
 
 @FindBy.subcommand()
 class Discord(SlashSubCommand):
-    name = 'discord'
-    description = 'discord'
+    name = "discord"
+    description = "discord"
 
-    user: User = Option(description='user ds')
+    user: User = Option(description="user ds")
 
     async def callback(self, context: SlashCommandContext):
-        await context.respond(str(db['verified'].find_one({
-            "guild_id": context.get_guild().id, "discord_id": context.options.user
-        })))
+        await context.respond(
+            str(
+                db["verified"].find_one(
+                    {
+                        "guild_id": context.get_guild().id,
+                        "discord_id": context.options.user,
+                    }
+                )
+            )
+        )
 
 
 @FindBy.subcommand()
 class Eska(SlashSubCommand):
-    name = 'eska'
-    description = 'eska'
+    name = "eska"
+    description = "eska"
 
-    eska: str = Option(description='eska lub mail')
+    eska: str = Option(description="eska lub mail")
 
     async def callback(self, context: SlashCommandContext):
-        await context.respond(str(db['verified'].find_one({
-            "guild_id": context.get_guild().id, "student_mail": {"$regex": context.options.eska}
-        })))
+        await context.respond(
+            str(
+                db["verified"].find_one(
+                    {
+                        "guild_id": context.get_guild().id,
+                        "student_mail": {"$regex": context.options.eska},
+                    }
+                )
+            )
+        )
 
-    checks = [
-        operator_only
-    ]
+    checks = [operator_only]

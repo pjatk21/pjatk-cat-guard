@@ -2,10 +2,9 @@ import json
 import traceback
 from datetime import datetime
 
-from hikari.events import InteractionCreateEvent, ExceptionEvent
+from hikari.events import ExceptionEvent
 
 from .subscriber import Subscription
-from ..audit.error_reporting import report_interaction_exception
 from ..services import db, env
 
 
@@ -30,10 +29,10 @@ class ExceptionReporter(Subscription):
             }
         )
 
-        if hasattr(event.failed_event, 'author'):
+        if hasattr(event.failed_event, "author"):
             db["exceptions"].update_one(
                 {"_id": exception_report.inserted_id},
-                {"$set": {"author": str(event.failed_event.author)}}
+                {"$set": {"author": str(event.failed_event.author)}},
             )
 
         for oid in self.bot.owner_ids:

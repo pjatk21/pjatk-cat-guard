@@ -51,4 +51,7 @@ def embed_user_audit(user_data, username):
         embed.add_field("Metoda weryfikacji", "weryfikacja ręczna przez operatora")
         embed.add_field("Operator", user_data["operator"]["name"])
 
+    if user_data["verified_by"] == "oauth-verified":
+        embed.add_field("Metoda weryfikacji", "logowanie się przez Google")
+
     return embed

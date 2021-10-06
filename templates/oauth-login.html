@@ -1,0 +1,32 @@
+{% extends 'home.html' %}
+{% block body %}
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <div class="container" style="margin-top: 100px">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-5 text-center">
+                <h2>Logowańsko</h2>
+                <p>Pamiętaj aby używać konta studenckiego</p>
+                <div id="g_id_onload"
+                     data-client_id="415405805208-n7irpdbl5go8cs5jf15i8005gd53iume.apps.googleusercontent.com"
+                     data-context="signup"
+                     data-ux_mode="popup"
+                     data-state="{{ secret }}"
+                     data-login_uri="{{ redirect }}"
+                     data-auto_prompt="false">
+                </div>
+
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="pill"
+                     data-theme="filled_black"
+                     data-text="continue_with"
+                     data-size="large"
+                     data-logo_alignment="left">
+                </div>
+            </div>
+            <div class="col"></div>
+        </div>
+
+    </div>
+{% endblock %}
