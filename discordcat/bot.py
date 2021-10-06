@@ -25,7 +25,7 @@ for slash_cmd in [
     VerifyForceCommand,
     ManageGroup,
     SystemCheckCommand,
-    FindBy
+    FindBy,
 ]:
     bot.add_slash_command(slash_cmd)
 
