@@ -1,6 +1,10 @@
 import os
 from datetime import datetime
 
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
+import random_word
 from aiohttp import ClientSession
 from dotenv import load_dotenv
 from hikari import RESTApp
@@ -9,7 +13,7 @@ from bson import ObjectId
 from starlette.applications import Starlette
 from starlette.endpoints import HTTPEndpoint
 from starlette.requests import Request
-from starlette.responses import RedirectResponse, Response
+from starlette.responses import RedirectResponse, Response, PlainTextResponse
 from starlette.routing import Route
 from starlette.exceptions import HTTPException
 from starlette.templating import Jinja2Templates
@@ -37,77 +41,104 @@ class InviteEndpoint(HTTPEndpoint):
         )
 
 
-class VerificationGate(HTTPEndpoint):
+class ExceptionsPreviewer(HTTPEndpoint):
     async def get(self, request: Request):
-        code = request.path_params["code"]
+        exception = db["exceptions"].find_one(
+            {"_id": ObjectId(request.path_params["_id"])}
+        )
 
-        trusted_code = codes.find_one({"code": code})
+        if exception is None:
+            raise HTTPException(status_code=404)
 
-        if trusted_code is None:
-            return templates.TemplateResponse(
-                "rick.html", {"request": request, "issue": "Taki kod nie istnieje"}
+        return templates.TemplateResponse(
+            "report.html", {"request": request, "exception": exception}
+        )
+
+
+class LoginGate(HTTPEndpoint):
+    async def get(self, request: Request):
+        secret = request.path_params["secret"]
+        return templates.TemplateResponse(
+            "oauth-login.html",
+            {
+                "request": request,
+                "secret": secret,
+                "redirect": f"{env.get('VERIFICATION_URL')}login",
+            },
+        )
+
+    async def post(self, request: Request):
+        form = await request.form()
+        secret = form["state"]
+        credential = form["credential"]
+        link_data = db["link"].find_one({"secret": secret})
+
+        try:
+            idinfo = id_token.verify_oauth2_token(
+                credential,
+                requests.Request(),
+                "415405805208-n7irpdbl5go8cs5jf15i8005gd53iume.apps.googleusercontent.com",
             )
+            assert idinfo.get("sub") is not None
+        except ValueError:
+            # Invalid token
+            return PlainTextResponse("Fuck you", status_code=400)
 
-        del trusted_code["_id"]
-        trusted_code = VerificationCode(**trusted_code)
+        previous_verification = verified.find_one(
+            {
+                "$or": [
+                    {"discord_id": link_data["discord_id"]},
+                    {"student_mail": idinfo["email"]},
+                ]
+            }
+        )
 
-        if trusted_code.has_expired:
-            return templates.TemplateResponse(
-                "rick.html",
-                {
-                    "request": request,
-                    "issue": "Twój kod wygasł, wywołaj komendę jeszcze raz",
-                },
+        if previous_verification is not None:
+            return PlainTextResponse(
+                f"Te dane już są połączone z {previous_verification}"
             )
 
         async with rest.acquire(env.get("DISCORD_TOKEN"), "Bot") as client:
-            user = await client.fetch_user(trusted_code.user_id)
+            user = await client.fetch_user(link_data["discord_id"])
             when = datetime.now()
-            verified.insert_one(
-                {
-                    "student_mail": trusted_code.email,
-                    "discord_id": user.id,
-                    "when": when,
-                    "guild_id": trusted_code.target_guild,
-                    "verified_by": "self-verified",
-                }
+
+            verfied_role = db["roles"].find_one({"guild_id": link_data["guild_id"]})
+            await client.add_role_to_member(
+                link_data["guild_id"], link_data["discord_id"], verfied_role["role_id"]
             )
 
-            verfied_role = db["roles"].find_one({"guild_id": trusted_code.target_guild})
-            await client.add_role_to_member(
-                trusted_code.target_guild, trusted_code.user_id, verfied_role["role_id"]
+            verified.insert_one(
+                {
+                    "student_mail": idinfo["email"],
+                    "discord_id": user.id,
+                    "when": when,
+                    "guild_id": link_data["guild_id"],
+                    "verified_by": "oauth-verified",
+                    "oauth": idinfo | {"credential": credential},
+                }
             )
 
             embed = embed_success(
                 "Pomyślnie zweryfikowano! Możesz zarządzać weryfikacją poprzez komendę `/manage self`"
             )
             embed.add_field(
-                "Serwer", str(await client.fetch_guild(trusted_code.target_guild))
+                "Serwer", str(await client.fetch_guild(link_data["guild_id"]))
             )
             embed.add_field("Data weryfikacji", when.isoformat())
-            embed.add_field("Powiązany email", trusted_code.email)
+            embed.add_field("Powiązany email", idinfo["email"])
+            embed.add_field("Metoda weryfikacji", "OAuth")
 
             await user.send(embed=embed)
 
-        codes.delete_many({"who": trusted_code.who})
-        codes.delete_many({"email": trusted_code.email})
+            db["link"].delete_many({"discord_id": user.id})
 
         return templates.TemplateResponse("verified.html", {"request": request})
 
 
-class ExceptionsPreviewer(HTTPEndpoint):
-    async def get(self, request: Request):
-        exception = db["exceptions"].find_one({"_id": ObjectId(request.path_params["_id"])})
-
-        if exception is None:
-            raise HTTPException(status_code=404)
-
-        return templates.TemplateResponse("report.html", {"request": request, "exception": exception})
-
-
 routes = [
     Route("/", InviteEndpoint),
-    Route("/verify/{code}", VerificationGate),
+    Route("/oauth/{secret}", LoginGate),
+    Route("/login", LoginGate),
     Route("/exceptions/{_id}", ExceptionsPreviewer),
 ]
 app = Starlette(routes=routes)

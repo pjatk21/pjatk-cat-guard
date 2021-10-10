@@ -18,7 +18,9 @@ def audit_check():
                 logger.warning(
                     f"{str(context.author)} has failed {func.__name__} check!"
                 )
-                await context.author.send(f"Próbujesz wywołać komendę, ale kontekst wywołania nie jest poprawny! Test, który zwrócił wartość `False`: {func.__name__}.")
+                await context.author.send(
+                    f"Próbujesz wywołać komendę, ale kontekst wywołania nie jest poprawny! Test, który zwrócił wartość `False`: {func.__name__}."
+                )
             return result
 
         return wrapped

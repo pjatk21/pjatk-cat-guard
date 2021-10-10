@@ -39,15 +39,19 @@ class Explainer(Subscription):
         "SFTP": "Super frajerski typ połączenia",
         "anime": "A można pisać o JAPONIIIIIIIIIII?",
         "VPN": "tunel do szkoły, wysyła się nim dzieci do gułagu",
-        "PJATK": "z pol. PJAIT: People Just Apply for ITn"
+        "PJATK": "z pol. PJAIT: People Just Apply for ITn",
     }
 
     async def callback(self, event: GuildMessageCreateEvent):
-        if event.author.is_bot or event.author.is_system or event.message.content is None:
+        if (
+            event.author.is_bot
+            or event.author.is_system
+            or event.message.content is None
+        ):
             return
 
-        if event.message.content == 'sudo raise exception test':
-            raise Exception('Test exception!')
+        if event.message.content == "sudo raise exception test":
+            raise Exception("Test exception!")
 
         action_words = {"co to jest", "czym jest", "co oznacza", "o co chodzi z"}
         action_flag = False

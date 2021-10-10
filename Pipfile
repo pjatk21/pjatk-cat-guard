@@ -10,6 +10,7 @@ hikari-lightbulb = "*"
 # User related dependencies
 sendgrid = "*"
 starlette = "*"
+python-multipart = "*"
 # Other (backend, db, networking)
 pipenv = "*"
 pymongo = "*"
@@ -17,6 +18,9 @@ uvicorn = "*"
 python-dotenv = "*"
 jinja2 = "*"
 aiohttp = "*"
+google-api-python-client = "*"
+random-word = "*"
+pyyaml = "*"
 
 [dev-packages]
 black = "*"

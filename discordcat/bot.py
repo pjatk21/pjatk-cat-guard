@@ -2,6 +2,7 @@ from hikari import Intents
 from lightbulb import Bot
 
 from .commands import *
+from .commands.findby import FindBy
 from .services import env
 from .subscribers import *
 from .subscribers.explain import Explainer
@@ -24,6 +25,7 @@ for slash_cmd in [
     VerifyForceCommand,
     ManageGroup,
     SystemCheckCommand,
+    FindBy,
 ]:
     bot.add_slash_command(slash_cmd)
 
