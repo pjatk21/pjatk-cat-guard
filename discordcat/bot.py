@@ -15,7 +15,7 @@ bot = Bot(
     banner=None,
     logs="DEBUG",
     owner_ids=[285146237613899776],
-    intents=Intents.ALL_UNPRIVILEGED | Intents.GUILD_MEMBERS,
+    intents=Intents.ALL_UNPRIVILEGED | Intents.GUILD_MEMBERS
 )
 
 # Slash commands
