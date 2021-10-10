@@ -29,6 +29,8 @@ class Discord(SlashSubCommand):
             )
         )
 
+    checks = [operator_only]
+
 
 @FindBy.subcommand()
 class Eska(SlashSubCommand):
