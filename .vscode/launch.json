@@ -5,11 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Bot",
+            "name": "Python: Bot",
             "type": "python",
             "request": "launch",
-            "module": "discordcat",
-            "envFile": "${workspaceFolder}/.env"
-        },
+            "program": "${workspaceFolder}/discordcat/__main__.py",
+            "console": "integratedTerminal"
+        }
     ]
 }
