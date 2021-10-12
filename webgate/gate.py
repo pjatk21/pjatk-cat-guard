@@ -19,7 +19,6 @@ from starlette.exceptions import HTTPException
 from starlette.templating import Jinja2Templates
 from discordcat.embed_factory import embed_success
 
-from common.codes import VerificationCode
 
 load_dotenv()
 
