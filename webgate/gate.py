@@ -18,11 +18,8 @@ from starlette.routing import Route
 from starlette.exceptions import HTTPException
 from starlette.templating import Jinja2Templates
 from discordcat.embed_factory import embed_success
-<<<<<<< HEAD
-from webgate.invites import gen_guild_invite
-=======
 
->>>>>>> 7a0d3e668b41435fded0b7d0a404adbf9aff2821
+from webgate.invites import gen_guild_invite
 
 load_dotenv()
 
