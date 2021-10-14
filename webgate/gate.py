@@ -18,13 +18,11 @@ from starlette.routing import Route
 from starlette.exceptions import HTTPException
 from starlette.templating import Jinja2Templates
 from discordcat.embed_factory import embed_success
-
-from common.codes import VerificationCode
+from webgate.invites import gen_guild_invite
 
 load_dotenv()
 
 env = os.environ
-
 
 mongo = MongoClient(env.get("MONGODB_URL"))
 db = mongo["catguard"]
@@ -34,7 +32,7 @@ rest = RESTApp()
 templates = Jinja2Templates(directory="templates")
 
 
-class InviteEndpoint(HTTPEndpoint):
+class AboutPage(HTTPEndpoint):
     async def get(self, request: Request):
         return templates.TemplateResponse(
             "home.html", {"request": request, "invitation": env.get("INVITATION")}
@@ -135,10 +133,31 @@ class LoginGate(HTTPEndpoint):
         return templates.TemplateResponse("verified.html", {"request": request})
 
 
+class GuildInviteEndpoint(HTTPEndpoint):
+    def get(self, request: Request):
+        return templates.TemplateResponse("guild-invite.html", {"request": request})
+
+    async def post(self, request: Request):
+        async with ClientSession() as cs:
+            async with cs.post(
+                'https://www.google.com/recaptcha/api/siteverify',
+                data={
+                    'secret': env.get('RECAPTCHA_SECRET'),
+                    'response': (await request.form()).get('g-recaptcha-response')
+                }
+            ) as response:
+                if (await response.json())['success']:
+                    return templates.TemplateResponse(
+                        'guild-invited.html',
+                        {"request": request, "invitation_url": str(await gen_guild_invite(874612942623113216))}
+                    )
+
+
 routes = [
-    Route("/", InviteEndpoint),
+    Route("/", AboutPage),
     Route("/oauth/{secret}", LoginGate),
     Route("/login", LoginGate),
     Route("/exceptions/{_id}", ExceptionsPreviewer),
+    Route("/join/pjatk2021", GuildInviteEndpoint),
 ]
 app = Starlette(routes=routes)

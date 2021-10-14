@@ -1,0 +1,20 @@
+{% extends 'home.html' %}
+{% block body %}
+    <div class="container text-center" style="margin-top: 100px">
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <script>
+            function auto_submit() {
+                document.getElementById("recaptcha-form").submit()
+            }
+        </script>
+        <p>Dołącz do serwera "PJATK Informatyka 2021-2025"</p>
+        <form id="recaptcha-form" method="POST">
+            <div
+                    class="g-recaptcha"
+                    data-sitekey="6LeuVM4cAAAAAKngKl5rsVi7cvYYR2noj4ikwM06"
+                    style="display: inline-block;"
+                    data-callback="auto_submit"
+            ></div>
+        </form>
+    </div>
+{% endblock %}

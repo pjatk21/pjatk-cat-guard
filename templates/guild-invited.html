@@ -1,0 +1,17 @@
+{% extends 'home.html' %}
+{% block body %}
+    <div class="container" style="text-align: center; margin-top: 100px">
+        <p>Oto twoje zaproszenie, będzie działać przez następne 5 minut.</p>
+        <a href="{{ invitation_url }}">
+            <p style="font-weight: bold" class="text-monospace">{{ invitation_url }}</p>
+        </a>
+        <p>
+            <button
+                    id="copybtn"
+                    class="btn btn-primary"
+                    onclick="navigator.clipboard.writeText('{{ invitation_url }}'); document.getElementById('copybtn').innerText = 'Skopiowano!'">
+                Kopiuj do schowka
+            </button>
+        </p>
+    </div>
+{% endblock %}
