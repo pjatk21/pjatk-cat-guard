@@ -23,7 +23,7 @@ class ExceptionReporter(Subscription):
                             etype=type(event.exception),
                             value=event.exception,
                             tb=event.exception.__traceback__,
-                        )
+                        )[:5]
                     ),
                 },
             }

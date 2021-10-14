@@ -1,6 +1,8 @@
 from hikari import Intents
 from lightbulb import Bot
 
+from discordcat.commands.setup.bot_init import init_bot_guild
+
 from .commands import *
 from .commands.findby import FindBy
 from .services import env
@@ -11,12 +13,17 @@ from .subscribers.starter import Starter
 
 bot = Bot(
     token=env.get("DISCORD_TOKEN"),
-    slash_commands_only=True,
+    prefix='gadoneko ',
     banner=None,
     logs="DEBUG",
     owner_ids=[285146237613899776],
-    intents=Intents.ALL_UNPRIVILEGED | Intents.GUILD_MEMBERS,
+    intents=Intents.ALL_UNPRIVILEGED | Intents.GUILD_MEMBERS
 )
+
+for legacy_cmd, invc_name in [
+    (init_bot_guild, 'init')
+]:
+    bot.add_command(legacy_cmd, name=invc_name)
 
 # Slash commands
 for slash_cmd in [
