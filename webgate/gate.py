@@ -1,24 +1,22 @@
 import os
 from datetime import datetime
 
-from google.oauth2 import id_token
-from google.auth.transport import requests
-
-import random_word
 from aiohttp import ClientSession
+from bson import ObjectId
 from dotenv import load_dotenv
+from google.auth.transport import requests
+from google.oauth2 import id_token
 from hikari import RESTApp
 from pymongo import MongoClient
-from bson import ObjectId
 from starlette.applications import Starlette
 from starlette.endpoints import HTTPEndpoint
-from starlette.requests import Request
-from starlette.responses import RedirectResponse, Response, PlainTextResponse
-from starlette.routing import Route
 from starlette.exceptions import HTTPException
+from starlette.requests import Request
+from starlette.responses import PlainTextResponse
+from starlette.routing import Route
 from starlette.templating import Jinja2Templates
-from discordcat.embed_factory import embed_success
 
+from discordcat.embed_factory import embed_success
 from webgate.invites import gen_guild_invite
 
 load_dotenv()
@@ -141,16 +139,21 @@ class GuildInviteEndpoint(HTTPEndpoint):
     async def post(self, request: Request):
         async with ClientSession() as cs:
             async with cs.post(
-                'https://www.google.com/recaptcha/api/siteverify',
+                "https://www.google.com/recaptcha/api/siteverify",
                 data={
-                    'secret': env.get('RECAPTCHA_SECRET'),
-                    'response': (await request.form()).get('g-recaptcha-response')
-                }
+                    "secret": env.get("RECAPTCHA_SECRET"),
+                    "response": (await request.form()).get("g-recaptcha-response"),
+                },
             ) as response:
-                if (await response.json())['success']:
+                if (await response.json())["success"]:
                     return templates.TemplateResponse(
-                        'guild-invited.html',
-                        {"request": request, "invitation_url": str(await gen_guild_invite(874612942623113216))}
+                        "guild-invited.html",
+                        {
+                            "request": request,
+                            "invitation_url": str(
+                                await gen_guild_invite(874612942623113216)
+                            ),
+                        },
                     )
 
 
