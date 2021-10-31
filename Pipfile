@@ -19,7 +19,6 @@ python-dotenv = "*"
 jinja2 = "*"
 aiohttp = "*"
 google-api-python-client = "*"
-random-word = "*"
 pyyaml = "*"
 
 [dev-packages]

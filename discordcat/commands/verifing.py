@@ -1,10 +1,11 @@
+import random
+import hashlib
 from datetime import datetime
 
 from hikari import User
 from hikari.errors import ForbiddenError
 from lightbulb import guild_only
 from lightbulb.slash_commands import SlashCommand, Option, SlashCommandContext
-from random_word import RandomWords
 
 from discordcat.checks import (
     unverified_only,
@@ -24,9 +25,9 @@ class VerifyCommand(SlashCommand):
     description = "Weryfikuje twoje konto"
 
     async def callback(self, context: SlashCommandContext):
-        linking_secret = "-".join(
-            RandomWords().get_random_words(limit=3, minLength=4, maxLength=9)
-        )
+        linking_secret_hash = hashlib.sha256()
+        linking_secret_hash.update(random.randbytes(512))
+        linking_secret = linking_secret_hash.hexdigest()[:4] + "-" + linking_secret_hash.hexdigest()[4:8]
 
         db["link"].update_one(
             {
