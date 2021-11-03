@@ -9,7 +9,7 @@ WORKDIR /pjatk
 COPY Pipfile .
 COPY Pipfile.lock .
 
-RUN pipenv install --skip-lock
+RUN pipenv install
 
 RUN apk del build-base openssl-dev libffi-dev
 
