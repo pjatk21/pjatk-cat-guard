@@ -4,6 +4,7 @@ from lightbulb import Bot
 from discordcat.commands.setup.bot_init import init_bot_guild
 from .commands import *
 from .commands.findby import FindBy
+from .commands.verifing import test_form
 from .services import env
 from .subscribers import *
 from .subscribers.explain import Explainer
@@ -19,14 +20,14 @@ bot = Bot(
     intents=Intents.ALL_UNPRIVILEGED | Intents.GUILD_MEMBERS,
 )
 
-for legacy_cmd, invc_name in [(init_bot_guild, "init")]:
+for legacy_cmd, invc_name in [(init_bot_guild, "init"), (test_form, "tf")]:
     bot.add_command(legacy_cmd, name=invc_name)
 
 # Slash commands
 for slash_cmd in [
     SetupCommand,
     VerifyCommand,
-    VerifyForceCommand,
+    # VerifyForceCommand,
     ManageGroup,
     SystemCheckCommand,
     FindBy,

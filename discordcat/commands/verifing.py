@@ -4,7 +4,7 @@ from datetime import datetime
 
 from hikari import User
 from hikari.errors import ForbiddenError
-from lightbulb import guild_only
+from lightbulb import guild_only, Command, Context as CommandContext
 from lightbulb.slash_commands import SlashCommand, Option, SlashCommandContext
 
 from discordcat.checks import (
@@ -14,6 +14,7 @@ from discordcat.checks import (
 )
 from discordcat.embed_factory import embed_success, embed_error
 from discordcat.services import db, env
+from discordcat.util.form import send_form, FormQuestion
 
 verified = db["verified"]
 codes = db["codes"]
@@ -105,3 +106,17 @@ class VerifyForceCommand(SlashCommand):
         await context.respond("Zweryfikowano użytkownika.")
 
     checks = [operator_only]
+
+
+async def test_form(context: CommandContext):
+    form = await send_form(
+        context.bot,
+        context.channel_id,
+        {
+            "name": FormQuestion('Imię'),
+            "lastname": FormQuestion('Nazwisko'),
+            "front": FormQuestion('Przód legitymacji', 'attachment'),
+            "back": FormQuestion('Tył legitymacji', 'attachment'),
+        }
+    )
+    await context.respond(form)
