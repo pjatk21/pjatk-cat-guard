@@ -2,12 +2,14 @@
 {% block body %}
     <div class="container text-center" style="margin-top: 100px">
         <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <script async defer src="https://epacik.github.io/DziekanskaCaptcha/scripts/dzieCaptcha.js"></script>
         <script>
             function auto_submit() {
                 document.getElementById("recaptcha-form").submit()
             }
         </script>
         <p>Dołącz do serwera "PJATK Informatyka 2021-2025"</p>
+        <div id="dzieCAPTCHA" data-dziecaptcha="loadHere"></div>
         <form id="recaptcha-form" method="POST">
             <div
                     class="g-recaptcha"
