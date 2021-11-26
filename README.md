@@ -2,7 +2,7 @@
 Bot do weryfikacji studentów.
 
 ## Oficjalna instalacja
-[https://verify.kpostek.dev/](https://verify.kpostek.dev/)
+[https://free.itny.me/](https://free.itny.me/)
 
 ## Instalacja
  - git clone https://github.com/kpostekk/pjatk-cat-guard
