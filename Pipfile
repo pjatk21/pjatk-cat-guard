@@ -5,8 +5,8 @@ name = "pypi"
 
 [packages]
 # Bot related dependencies
-hikari = {editable = true, extras = ["speedups"], ref = "dependabot/pip/master/aiohttp-3.8.0", git = "https://github.com/hikari-py/hikari.git"}
-hikari-lightbulb = "*"
+hikari = {extras = ["speedups"]}
+hikari-lightbulb = "==1.5.2"
 # User related dependencies
 starlette = "*"
 python-multipart = "*"
