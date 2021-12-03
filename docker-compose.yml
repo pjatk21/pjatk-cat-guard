@@ -3,7 +3,7 @@ version: "3.9"
 services:
   discordcat:
     build: .
-    image: kpostekk/discordcat:latest
+    image: pjatk21/discordcat:latest
     entrypoint: pipenv run bot
     environment:
       MONGODB_URL: mongodb://notpjatk:notThatExample1!@mongol:27017/
@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
   webgate:
     build: .
-    image: kpostekk/discordcat:latest
+    image: pjatk21/discordcat:latest
     entrypoint: pipenv run webpage
     ports:
       - '9093:8000'
