@@ -2,9 +2,9 @@ import hashlib
 import os
 import random
 
-from lightbulb.context import Context
 from lightbulb import command, implements, commands, add_checks, Plugin, Check
 from lightbulb.checks import guild_only
+from lightbulb.context import Context
 
 from gadoneko.checks import untrusted_only
 from shared.documents import VerificationLink, UserIdentity

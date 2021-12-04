@@ -1,11 +1,10 @@
 from hikari import User
-from lightbulb import Plugin, commands, implements, command, add_checks, Check, guild_only, option
+from lightbulb import Plugin, commands, implements, command, add_checks, Check, option
 from lightbulb.context import Context
 
 from discordcat.embed_factory import embed_success
-from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod
-
 from gadoneko.checks import staff_only
+from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod
 
 plugin = Plugin('Admin')
 

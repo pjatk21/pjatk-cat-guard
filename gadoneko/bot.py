@@ -10,4 +10,3 @@ bot = BotApp(os.getenv('DISCORD_TOKEN'), intents=Intents.ALL_UNPRIVILEGED | Inte
 bot.load_extensions('gadoneko.plugins.admin')
 bot.load_extensions('gadoneko.plugins.erroring')
 bot.load_extensions('gadoneko.plugins.trust')
-
