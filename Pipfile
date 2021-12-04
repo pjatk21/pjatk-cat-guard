@@ -6,16 +6,17 @@ name = "pypi"
 [packages]
 # Bot related dependencies
 hikari = {extras = ["speedups"]}
-hikari-lightbulb = "==1.5.2"
+hikari-lightbulb = ">=2.0.0"
 # User related dependencies
 starlette = "*"
 python-multipart = "*"
 # Other (backend, db, networking)
+mongoengine = "*"
 pymongo = "*"
 uvicorn = "*"
 python-dotenv = "*"
 jinja2 = "*"
-aiohttp = "==3.8.0"
+aiohttp = "<4.0.0"
 google-api-python-client = "*"
 pyyaml = "*"
 
