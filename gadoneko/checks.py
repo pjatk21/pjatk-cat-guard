@@ -1,6 +1,5 @@
 from hikari.permissions import Permissions
 from lightbulb.context import Context
-from lightbulb.checks import has_guild_permissions
 from lightbulb.utils import permissions_for
 
 from shared.documents import TrustedUser

@@ -8,6 +8,7 @@ from mongoengine import Document, LongField, EnumField, DateTimeField, DynamicFi
 class VerificationMethod(Enum):
     OAUTH = 'oauth'  # user verified by OAuth flow
     ROLE_ASSIGNED = 'role'  # user verified manually by staff
+    ROLE_ENFORCED = 'enforced'  # staff has run command
     MIGRATED = 'migrated'  # user added to the collection due to migration
     CONTEXT_PROVIDED = 'context'  # user added to the collection, while checking his permissions
 
