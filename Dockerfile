@@ -13,7 +13,7 @@ RUN pipenv install
 
 RUN apk del build-base openssl-dev libffi-dev
 
-COPY common/ /pjatk/common/
+COPY shared/ /pjatk/common/
 
 COPY discordcat/ /pjatk/discordcat/
 
