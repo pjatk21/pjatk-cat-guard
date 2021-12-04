@@ -1,8 +1,8 @@
 from datetime import datetime
 from enum import Enum
 
-from mongoengine import Document, IntField, EnumField, DateTimeField, DynamicField, EmbeddedDocumentField, \
-    EmbeddedDocument, StringField, ReferenceField, NULLIFY
+from mongoengine import Document, LongField, EnumField, DateTimeField, DynamicField, EmbeddedDocumentField, \
+    EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument
 
 
 class VerificationMethod(Enum):
@@ -13,9 +13,9 @@ class VerificationMethod(Enum):
 
 
 class UserIdentity(EmbeddedDocument):
-    guild_id = IntField(required=True)
+    guild_id = LongField(required=True)
     guild_name = StringField(null=True)
-    user_id = IntField(required=True)
+    user_id = LongField(required=True)
     user_name = StringField(null=True)
 
 
@@ -27,9 +27,9 @@ class TrustedUser(Document):
     when = DateTimeField(default=datetime.now)
 
 
-class GuildConfiguration(Document):
-    created_by = UserIdentity(UserIdentity, required=True)
-    trusted_role_id = IntField(required=True)
+class GuildConfiguration(DynamicDocument):
+    managed_by = EmbeddedDocumentField(UserIdentity, required=True)
+    trusted_role_id = LongField(required=True)
 
 
 class VerificationLink(Document):
