@@ -2,12 +2,11 @@ import os
 from datetime import datetime
 
 from aiohttp import ClientSession
-from bson import ObjectId
 from dotenv import load_dotenv
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from hikari import RESTApp
-from mongoengine import Q, QuerySet
+from mongoengine import Q
 from starlette.applications import Starlette
 from starlette.endpoints import HTTPEndpoint
 from starlette.exceptions import HTTPException
@@ -120,7 +119,7 @@ class LoginGate(HTTPEndpoint):
                 "Pomyślnie zweryfikowano! Możesz zarządzać weryfikacją poprzez komendę `/manage self`"
             )
             embed.add_field("Data weryfikacji", when.isoformat())
-            embed.add_field("Powiązany numer studenta", id_info["email"])
+            embed.add_field("Powiązany numer studenta", trust.student_number)
             embed.add_field("Metoda weryfikacji", "OAuth login")
 
             await user.send(embed=embed)
@@ -140,7 +139,7 @@ class GuildInviteEndpoint(HTTPEndpoint):
             async with cs.post(
                 "https://www.google.com/recaptcha/api/siteverify",
                 data={
-                    "secret": env.get("RECAPTCHA_SECRET"),
+                    "secret": os.getenv("RECAPTCHA_SECRET"),
                     "response": (await request.form()).get("g-recaptcha-response"),
                 },
             ) as response:
