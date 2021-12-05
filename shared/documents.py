@@ -24,12 +24,12 @@ class TrustedUser(Document):
     identity = EmbeddedDocumentField(UserIdentity, unique=True, required=True)
     verification_method = EnumField(VerificationMethod, required=True)
     verification_context = DynamicField()
-    student_number = StringField(r's\d{5}', required=True)
+    student_number = StringField(r's\d{5}')
     when = DateTimeField(default=datetime.now)
 
 
 class GuildConfiguration(DynamicDocument):
-    managed_by = EmbeddedDocumentField(UserIdentity, required=True)
+    guild_id = LongField(required=True)
     trusted_role_id = LongField(required=True)
 
 
