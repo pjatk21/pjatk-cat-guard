@@ -7,7 +7,6 @@ from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, Veri
 
 async def trusted_only(ctx: Context):
     trust: TrustedUser = TrustedUser.objects(identity__user_id=ctx.user.id, identity__guild_id=ctx.guild_id).first()
-    print(trust)
 
     if trust is None:
         conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).first()
