@@ -2,7 +2,6 @@ from hikari import User, Role, Embed
 from lightbulb import Plugin, commands, implements, command, add_checks, Check, option
 from lightbulb.context import Context
 from mongoengine import Q
-# from gadoneko.util import ColorPalette
 
 from discordcat.embed_factory import embed_success
 from gadoneko.checks import staff_only

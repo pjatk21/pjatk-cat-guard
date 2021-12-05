@@ -1,11 +1,15 @@
 import hashlib
 import os
 import random
+from datetime import datetime
 
+from hikari import Guild, User, Embed
+from hikari.events import MemberCreateEvent
 from lightbulb import command, implements, commands, add_checks, Plugin, Check
 from lightbulb.context import Context
 
 from gadoneko.checks import untrusted_only, trusted_only, guild_configured
+from shared.colors import INFO
 from shared.documents import VerificationLink, UserIdentity, TrustedUser, GuildConfiguration
 
 plugin = Plugin('Trust')
@@ -19,26 +23,49 @@ def unload(bot):
     bot.remove_plugin(plugin)
 
 
-@plugin.command()
-@add_checks(Check(untrusted_only), Check(guild_configured))
-@command('verify', 'Przypisuje numer studenta do twojego konta discord')
-@implements(commands.SlashCommand)
-async def verify(ctx: Context):
+def start_verification_flow(guild: Guild, user: User):
     linking_secret_hash = hashlib.sha256()
     linking_secret_hash.update(random.randbytes(512))
     linking_secret = linking_secret_hash.hexdigest()[:4] + "-" + linking_secret_hash.hexdigest()[4:8]
 
     link = VerificationLink()
     link.identity = UserIdentity()
-    link.identity.guild_id = ctx.get_guild().id
-    link.identity.user_id = ctx.user.id
-    link.identity.user_name = str(ctx.user)
-    link.identity.guild_name = ctx.get_guild().name
+    link.identity.guild_id = guild.id
+    link.identity.user_id = user.id
+    link.identity.user_name = str(user)
+    link.identity.guild_name = guild.name
     link.secret_code = linking_secret
     link.save()
 
-    await ctx.author.send(f"Link do logowania: {os.getenv('VERIFICATION_URL')}oauth/{linking_secret}")
+    return link
+
+
+@plugin.command()
+@add_checks(Check(untrusted_only), Check(guild_configured))
+@command('verify', 'Przypisuje numer studenta do twojego konta discord')
+@implements(commands.SlashCommand)
+async def verify(ctx: Context):
+    link = start_verification_flow(ctx.get_guild(), ctx.user)
+
+    await ctx.author.send(f"Link do logowania: {os.getenv('VERIFICATION_URL')}oauth/{link.secret_code}")
     await ctx.respond("Wysłano link do logowania na DM.")
+
+
+@plugin.listener(MemberCreateEvent)
+async def auto_verify(event: MemberCreateEvent):
+    link = start_verification_flow(event.get_guild(), event.user)
+
+    embed = Embed(
+        title='Hej 👋',
+        description='Na tym serwerze jest wymagane, aby powiązać numer studencki z tożsamością na discordzie. '
+                    'Dopóki tego nie dokonasz, część kanałów zostanie przed tobą ukryta. '
+                    'Taki proces weryfikacji nie trwa dłużej niż minutę.',
+        color=INFO, timestamp=datetime.now().astimezone()
+    ).add_field(
+        'Twój link do weryfikacji', f"{os.getenv('VERIFICATION_URL')}oauth/{link.secret_code}"
+    )
+
+    await event.user.send(embed=embed)
 
 
 @plugin.command()

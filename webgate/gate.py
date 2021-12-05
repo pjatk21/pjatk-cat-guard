@@ -34,20 +34,6 @@ class AboutPage(HTTPEndpoint):
         )
 
 
-# class ExceptionsPreviewer(HTTPEndpoint):
-#     async def get(self, request: Request):
-#         exception = db["exceptions"].find_one(
-#             {"_id": ObjectId(request.path_params["_id"])}
-#         )
-#
-#         if exception is None:
-#             raise HTTPException(status_code=404)
-#
-#         return templates.TemplateResponse(
-#             "report.html", {"request": request, "exception": exception}
-#         )
-
-
 class LoginGate(HTTPEndpoint):
     async def get(self, request: Request):
         secret = request.path_params["secret"]

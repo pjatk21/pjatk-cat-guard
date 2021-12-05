@@ -1,7 +1,6 @@
 from hikari.permissions import Permissions
 from lightbulb.context import Context
 from lightbulb.utils import permissions_for
-from lightbulb.checks import owner_only
 
 from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod
 
