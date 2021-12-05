@@ -1,17 +1,41 @@
 from hikari.permissions import Permissions
 from lightbulb.context import Context
 from lightbulb.utils import permissions_for
+from lightbulb.checks import owner_only
 
-from shared.documents import TrustedUser
+from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod
 
 
-def trusted_only(ctx: Context):
+async def trusted_only(ctx: Context):
     trust: TrustedUser = TrustedUser.objects(identity__user_id=ctx.user.id, identity__guild_id=ctx.guild_id).first()
-    return bool(trust)
+    print(trust)
+
+    if trust is None:
+        conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).first()
+
+        # Missing record in db
+        if conf.trusted_role_id in ctx.member.role_ids:
+            trust = TrustedUser()
+            trust.identity = UserIdentity()
+            trust.identity.user_id = ctx.user.id
+            trust.identity.user_name = str(ctx.user)
+            trust.identity.guild_id = ctx.get_guild().id
+            trust.identity.guild_name = ctx.get_guild().name
+            trust.verification_method = VerificationMethod.CONTEXT_PROVIDED
+
+            await ctx.bot.rest.add_role_to_member(
+                trust.identity.guild_id, trust.identity.user_id, conf.trusted_role_id
+            )
+
+            trust.save()
+
+            return True
+        return False
+    return True
 
 
-def untrusted_only(ctx: Context):
-    return not trusted_only(ctx)
+async def untrusted_only(ctx: Context):
+    return not await trusted_only(ctx)
 
 
 def staff_only(ctx: Context):

@@ -1,9 +1,12 @@
-from hikari import User
+from hikari import User, Role, Embed
 from lightbulb import Plugin, commands, implements, command, add_checks, Check, option
 from lightbulb.context import Context
+from mongoengine import Q
+# from gadoneko.util import ColorPalette
 
 from discordcat.embed_factory import embed_success
 from gadoneko.checks import staff_only
+from shared.colors import RESULT
 from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod
 
 plugin = Plugin('Admin')
@@ -34,7 +37,7 @@ def admin():
 async def verify(ctx: Context):
     person: User = ctx.options.user
 
-    guild_conf: GuildConfiguration = GuildConfiguration.objects(managed_by__guild_id=ctx.guild_id).first()
+    guild_conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).first()
     await ctx.bot.rest.add_role_to_member(
         ctx.guild_id, person, guild_conf.trusted_role_id
     )
@@ -63,4 +66,38 @@ async def verify(ctx: Context):
     embed.set_footer("W przypadku niezgodności danych, zgłoś się do administracji")
 
     await person.send(embed=embed)
+    await ctx.respond(embed=embed)
+
+
+@admin.child()
+@option('trust', 'Rola dla zaufanych użytkowników', type=Role)
+@command('init', 'Dokonuje inicjalizacji')
+@implements(commands.SlashSubCommand)
+async def init(ctx: Context):
+    GuildConfiguration.objects(
+        guild_id=ctx.guild_id
+    ).update_one(
+        trusted_role_id=ctx.options.trust.id, upsert=True
+    )
+    conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).first()
+    await ctx.respond(f'Skonfigurowano!\n```json\n{conf.to_json()}```')
+
+
+@admin.child()
+@option('by_user', 'Szukaj według użytkownika', required=False, type=User)
+@option('by_ns', 'Szukaj według numeru studenta', required=False)
+# @option('after_date', 'Szukaj zweryfikowanych po wskazanej dacie (ISO format)', required=False)
+# @option('before_date', 'Szukaj zweryfikowanych przed wskazaną datą (ISO format)', required=False)
+@command('query', 'Zapytanie do bazy danych')
+@implements(commands.SlashSubCommand)
+async def query(ctx: Context):
+    qs = Q(identity__guild_id=ctx.guild_id)
+
+    if ctx.options.by_user:
+        qs &= Q(identity__user_id=ctx.options.by_user.id)
+    if ctx.options.by_ns:
+        qs &= Q(student_number=ctx.options.by_ns)
+
+    results = TrustedUser.objects(qs)
+    embed = Embed(description=f'```json\n{results.to_json(indent=2)}```', color=RESULT)
     await ctx.respond(embed=embed)

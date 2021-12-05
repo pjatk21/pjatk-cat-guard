@@ -3,11 +3,10 @@ import os
 import random
 
 from lightbulb import command, implements, commands, add_checks, Plugin, Check
-from lightbulb.checks import guild_only
 from lightbulb.context import Context
 
-from gadoneko.checks import untrusted_only
-from shared.documents import VerificationLink, UserIdentity
+from gadoneko.checks import untrusted_only, trusted_only, guild_configured
+from shared.documents import VerificationLink, UserIdentity, TrustedUser, GuildConfiguration
 
 plugin = Plugin('Trust')
 
@@ -21,7 +20,7 @@ def unload(bot):
 
 
 @plugin.command()
-@add_checks(Check(untrusted_only), guild_only)
+@add_checks(Check(untrusted_only), Check(guild_configured))
 @command('verify', 'Przypisuje numer studenta do twojego konta discord')
 @implements(commands.SlashCommand)
 async def verify(ctx: Context):
@@ -40,3 +39,22 @@ async def verify(ctx: Context):
 
     await ctx.author.send(f"Link do logowania: {os.getenv('VERIFICATION_URL')}oauth/{linking_secret}")
     await ctx.respond("Wysłano link do logowania na DM.")
+
+
+@plugin.command()
+@add_checks(Check(trusted_only), Check(guild_configured))
+@command('manage', 'Zarządzaj swoim numerem studenta')
+@implements(commands.SlashCommandGroup)
+async def manage(ctx: Context):
+    pass
+
+
+@manage.child()
+@command('sign-out', 'Wypisz swój numer studenta z bazy danych', inherit_checks=True)
+@implements(commands.SlashSubCommand)
+async def sign_out(ctx: Context):
+    conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).first()
+    trust: TrustedUser = TrustedUser.objects(identity__user_id=ctx.user.id).first()
+    trust.delete()
+    await ctx.member.remove_role(conf.trusted_role_id, reason='User requested sign out.')
+    await ctx.respond('Usunąłem twój numer studenta z naszej bazy danych.')
