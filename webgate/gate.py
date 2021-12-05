@@ -103,7 +103,7 @@ class LoginGate(HTTPEndpoint):
             when = datetime.now()
 
             guild_conf: GuildConfiguration = GuildConfiguration\
-                .objects(managed_by__guild_id=link_data.identity.guild_id).first()
+                .objects(guild_id=link_data.identity.guild_id).first()
             await client.add_role_to_member(
                 link_data.identity.guild_id, link_data.identity.user_id, guild_conf.trusted_role_id
             )
