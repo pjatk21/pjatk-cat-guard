@@ -17,3 +17,12 @@ def untrusted_only(ctx: Context):
 def staff_only(ctx: Context):
     is_manager = permissions_for(ctx.member) & Permissions.MANAGE_GUILD
     return is_manager or ctx.get_guild().owner_id == ctx.user.id
+
+
+def guild_configured(ctx: Context):
+    conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).first()
+    return bool(conf)
+
+
+def guild_not_configured(ctx: Context):
+    return not guild_configured(ctx)
