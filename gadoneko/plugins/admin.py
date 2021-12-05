@@ -8,6 +8,7 @@ from discordcat.embed_factory import embed_success
 from gadoneko.checks import staff_only
 from shared.colors import RESULT
 from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod
+from shared.formatting import code_block
 
 plugin = Plugin('Admin')
 
@@ -99,5 +100,5 @@ async def query(ctx: Context):
         qs &= Q(student_number=ctx.options.by_ns)
 
     results = TrustedUser.objects(qs)
-    embed = Embed(description=f'```json\n{results.to_json(indent=2)}```', color=RESULT)
+    embed = Embed(description=code_block(results.to_json(indent=2)), color=RESULT)
     await ctx.respond(embed=embed)
