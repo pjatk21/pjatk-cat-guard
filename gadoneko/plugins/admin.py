@@ -71,7 +71,7 @@ async def verify(ctx: Context):
 
 @admin.child()
 @option('trust', 'Rola dla zaufanych użytkowników', type=Role)
-@command('init', 'Dokonuje inicjalizacji')
+@command('init', 'Dokonuje inicjalizacji', inherit_checks=True)
 @implements(commands.SlashSubCommand)
 async def init(ctx: Context):
     GuildConfiguration.objects(
