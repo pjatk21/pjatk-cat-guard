@@ -88,7 +88,7 @@ async def init(ctx: Context):
 @option('by_ns', 'Szukaj według numeru studenta', required=False)
 # @option('after_date', 'Szukaj zweryfikowanych po wskazanej dacie (ISO format)', required=False)
 # @option('before_date', 'Szukaj zweryfikowanych przed wskazaną datą (ISO format)', required=False)
-@command('query', 'Zapytanie do bazy danych')
+@command('query', 'Zapytanie do bazy danych', inherit_checks=True)
 @implements(commands.SlashSubCommand)
 async def query(ctx: Context):
     qs = Q(identity__guild_id=ctx.guild_id)
