@@ -17,6 +17,10 @@ COPY shared/ /pjatk/common/
 
 COPY discordcat/ /pjatk/discordcat/
 
+COPY gadoneko/ /pjatk/gadoneko/
+
+COPY shared/ /pjatk/shared/
+
 COPY webgate/ /pjatk/webgate/
 
 COPY templates/ /pjatk/templates/

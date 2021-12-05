@@ -6,7 +6,7 @@ services:
     image: pjatk21/discordcat:latest
     entrypoint: pipenv run bot
     environment:
-      MONGODB_URL: mongodb://notpjatk:notThatExample1!@mongol:27017/
+      MONGODB_URL: mongodb://notpjatk:notThatExample1!@mongol/
     env_file:
       - .production.env
     depends_on:

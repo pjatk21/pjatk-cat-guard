@@ -1,3 +1,4 @@
+import logging
 import os
 
 from dotenv import load_dotenv
@@ -7,4 +8,5 @@ load_dotenv()
 
 
 def init_connection():
-    connect(host=os.getenv('MONGODB_URL'), db='catguard21')
+    logging.info(connect(host=os.getenv('MONGODB_URL'), db='catguard'))
+

@@ -32,5 +32,5 @@ python_version = "3.10"
 allow_prereleases = true
 
 [scripts]
-bot = "python -O -m discordcat"
+bot = "python -O -m gadoneko"
 webpage = "uvicorn webgate:app --host 0.0.0.0"
