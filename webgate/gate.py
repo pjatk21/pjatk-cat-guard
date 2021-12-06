@@ -5,7 +5,7 @@ from aiohttp import ClientSession
 from dotenv import load_dotenv
 from google.auth.transport import requests
 from google.oauth2 import id_token
-from hikari import RESTApp
+from hikari import RESTApp, Embed
 from mongoengine import Q
 from starlette.applications import Starlette
 from starlette.endpoints import HTTPEndpoint
@@ -15,8 +15,8 @@ from starlette.responses import PlainTextResponse
 from starlette.routing import Route
 from starlette.templating import Jinja2Templates
 
-from discordcat.embed_factory import embed_success
 from webgate.invites import gen_guild_invite
+from shared.colors import OK
 from shared.documents import VerificationLink, TrustedUser, GuildConfiguration, VerificationMethod
 from shared.db import init_connection
 
@@ -101,8 +101,10 @@ class LoginGate(HTTPEndpoint):
             trust.verification_context = id_info | {"credential": credential}
             trust.save()
 
-            embed = embed_success(
-                "Pomyślnie zweryfikowano! Możesz zarządzać weryfikacją poprzez komendę `/manage self`"
+            embed = Embed(
+                title='Zrobione!',
+                description="Pomyślnie zweryfikowano! Możesz zarządzać weryfikacją poprzez komendę `/manage sign-out`",
+                color=OK
             )
             embed.add_field("Data weryfikacji", when.isoformat())
             embed.add_field("Powiązany numer studenta", trust.student_number)
@@ -145,7 +147,6 @@ routes = [
     Route("/", AboutPage),
     Route("/oauth/{secret}", LoginGate),
     Route("/login", LoginGate),
-    # Route("/exceptions/{_id}", ExceptionsPreviewer),
     Route("/join/pjatk2021", GuildInviteEndpoint),
 ]
 app = Starlette(routes=routes)

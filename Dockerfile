@@ -13,10 +13,6 @@ RUN pipenv install
 
 RUN apk del build-base openssl-dev libffi-dev
 
-COPY shared/ /pjatk/common/
-
-COPY discordcat/ /pjatk/discordcat/
-
 COPY gadoneko/ /pjatk/gadoneko/
 
 COPY shared/ /pjatk/shared/

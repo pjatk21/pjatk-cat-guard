@@ -3,9 +3,8 @@ from lightbulb import Plugin, commands, implements, command, add_checks, Check, 
 from lightbulb.context import Context
 from mongoengine import Q
 
-from discordcat.embed_factory import embed_success
 from gadoneko.checks import staff_only
-from shared.colors import RESULT
+from shared.colors import RESULT, OK
 from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod
 from shared.formatting import code_block
 
@@ -56,8 +55,10 @@ async def verify(ctx: Context):
     }
     trust.save()
 
-    embed = embed_success(
-        "Pomyślnie zweryfikowano! Możesz zarządzać weryfikacją poprzez komendę `/manage self`"
+    embed = Embed(
+        title='Zrobione!',
+        description="Pomyślnie zweryfikowano! Możesz zarządzać weryfikacją poprzez komendę `/manage sign-out`",
+        color=OK
     )
     embed.add_field("Data weryfikacji", trust.when.isoformat())
     embed.add_field("Powiązany numer studenta", trust.student_number)
