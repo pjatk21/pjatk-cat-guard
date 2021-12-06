@@ -22,7 +22,7 @@ async def covid_mentioned(event: GuildMessageCreateEvent):
     if event.author.is_bot or event.author.is_system:
         return
 
-    if not os.getenv('APIFY_COVID') and 'statystyki covid' not in event.message.content.lower():
+    if (not os.getenv('APIFY_COVID')) or ('statystyki covid' not in event.message.content.lower()):
         return
 
     embed = Embed(
