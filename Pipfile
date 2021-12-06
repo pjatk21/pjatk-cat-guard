@@ -20,6 +20,7 @@ aiohttp = "<4.0.0"
 google-api-python-client = "*"
 pyyaml = "*"
 sentry-sdk = "*"
+millify = "*"
 
 [dev-packages]
 black = "*"
