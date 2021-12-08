@@ -1,3 +1,5 @@
+import subprocess
+
 from hikari import User, Role, Embed, Member
 from lightbulb import Plugin, commands, implements, command, add_checks, Check, option
 from lightbulb.checks import guild_only
@@ -148,3 +150,15 @@ async def query(ctx: Context):
     results = TrustedUser.objects(qs)
     embed = Embed(description=code_block(results.to_json(indent=2)), color=RESULT)
     await ctx.respond(embed=embed)
+
+
+@admin.child()
+@command('pkg', 'Pokazuje paczki bota', inherit_checks=True)
+@implements(commands.SlashSubCommand)
+async def env_info(ctx: Context):
+    em_pkg = Embed(color=RESULT)
+    em_pkg.description = code_block(
+        subprocess.check_output(
+            ['pip', 'list']
+        ).decode()[:4000])
+    await ctx.respond(embed=em_pkg)
