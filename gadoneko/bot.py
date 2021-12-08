@@ -1,4 +1,3 @@
-import logging
 import os
 
 from dotenv import load_dotenv
@@ -8,7 +7,11 @@ from lightbulb import BotApp
 
 load_dotenv()
 
-bot = BotApp(os.getenv('DISCORD_TOKEN'), intents=Intents.ALL_UNPRIVILEGED | Intents.GUILD_MEMBERS)
+if os.getenv('ENV') == 'dev':
+    bot = BotApp(os.getenv('DISCORD_TOKEN'), intents=Intents.ALL_UNPRIVILEGED | Intents.GUILD_MEMBERS, logs='DEBUG')
+else:
+    bot = BotApp(os.getenv('DISCORD_TOKEN'), intents=Intents.ALL_UNPRIVILEGED | Intents.GUILD_MEMBERS)
+
 bot.load_extensions_from('gadoneko/plugins')
 
 
