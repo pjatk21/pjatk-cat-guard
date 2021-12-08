@@ -1,4 +1,4 @@
-from hikari import User, Role, Embed
+from hikari import User, Role, Embed, Member
 from lightbulb import Plugin, commands, implements, command, add_checks, Check, option
 from lightbulb.context import Context
 from mongoengine import Q
@@ -82,6 +82,54 @@ async def init(ctx: Context):
     )
     conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).first()
     await ctx.respond(f'Skonfigurowano!\n```json\n{conf.to_json()}```')
+
+
+@admin.child()
+@command('staff', 'zarządza personelem', inherit_checks=True)
+@implements(commands.SlashSubGroup)
+def staff():
+    pass
+
+
+@staff.child()
+@option('member', 'Rola dla zaufanych użytkowników', type=Member, required=False)
+@option('role', 'Rola dla zaufanych użytkowników', type=Role, required=False)
+@command('add', 'przypisuje grupę lub użytkownika do personelu', inherit_checks=True)
+@implements(commands.SlashSubCommand)
+async def staff_add(ctx: Context):
+
+    conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).get()
+
+    if ctx.options.member:
+        conf.additional_staff.append(ctx.options.member.id)
+    elif ctx.options.role:
+        conf.additional_staff_roles.append(ctx.options.role.id)
+    else:
+        await ctx.respond('Nie podałeś żadnego argumentu cepie')
+        return
+
+    conf.save()
+    await ctx.respond('Zaktualizowano!')
+
+
+@staff.child()
+@option('member', 'Rola dla zaufanych użytkowników', type=Member, required=False)
+@option('role', 'Rola dla zaufanych użytkowników', type=Role, required=False)
+@command('del', 'przypisuje grupę lub użytkownika do personelu', inherit_checks=True)
+@implements(commands.SlashSubCommand)
+async def staff_remove(ctx: Context):
+    conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).get()
+
+    if ctx.options.member:
+        conf.additional_staff = [m for m in conf.additional_staff if m != ctx.options.member.id]
+    elif ctx.options.role:
+        conf.additional_staff_roles = [r for r in conf.additional_staff_roles if r != ctx.options.role.id]
+    else:
+        await ctx.respond('Nie podałeś żadnego argumentu cepie')
+        return
+
+    conf.save()
+    await ctx.respond('Zaktualizowano!')
 
 
 @admin.child()

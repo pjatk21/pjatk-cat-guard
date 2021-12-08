@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import Enum
 
 from mongoengine import Document, LongField, EnumField, DateTimeField, DynamicField, EmbeddedDocumentField, \
-    EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument
+    EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument, ListField
 
 
 class VerificationMethod(Enum):
@@ -31,6 +31,8 @@ class TrustedUser(Document):
 class GuildConfiguration(DynamicDocument):
     guild_id = LongField(required=True)
     trusted_role_id = LongField(required=True)
+    additional_staff = ListField(LongField())
+    additional_staff_roles = ListField(LongField())
 
 
 class VerificationLink(Document):
