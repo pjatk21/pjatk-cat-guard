@@ -37,8 +37,19 @@ async def untrusted_only(ctx: Context):
 
 
 def staff_only(ctx: Context):
+    conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).first()
+
+    if conf:
+        assign_based = ctx.user.id in conf.additional_staff
+        for user_role in ctx.member.role_ids:
+            for staff_role in conf.additional_staff_roles:
+                assign_based = True if staff_role == user_role else assign_based
+    else:
+        assign_based = False
+
     is_manager = permissions_for(ctx.member) & Permissions.MANAGE_GUILD
-    return is_manager or ctx.get_guild().owner_id == ctx.user.id
+    privileged_based = is_manager or ctx.get_guild().owner_id == ctx.user.id
+    return privileged_based or assign_based
 
 
 def guild_configured(ctx: Context):
