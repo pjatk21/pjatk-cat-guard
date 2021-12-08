@@ -5,7 +5,7 @@ from datetime import datetime
 
 from hikari import Guild, User, Embed
 from hikari.events import MemberCreateEvent
-from lightbulb import command, implements, commands, add_checks, Plugin, Check
+from lightbulb import command, implements, commands, add_checks, Plugin, Check, guild_only
 from lightbulb.context import Context
 
 from gadoneko.checks import untrusted_only, trusted_only, guild_configured
@@ -41,7 +41,7 @@ def start_verification_flow(guild: Guild, user: User):
 
 
 @plugin.command()
-@add_checks(Check(untrusted_only), Check(guild_configured))
+@add_checks(guild_only, Check(guild_configured), Check(untrusted_only))
 @command('verify', 'Przypisuje numer studenta do twojego konta discord')
 @implements(commands.SlashCommand)
 async def verify(ctx: Context):
@@ -69,7 +69,7 @@ async def auto_verify(event: MemberCreateEvent):
 
 
 @plugin.command()
-@add_checks(Check(trusted_only), Check(guild_configured))
+@add_checks(guild_only, Check(guild_configured), Check(trusted_only))
 @command('manage', 'Zarządzaj swoim numerem studenta')
 @implements(commands.SlashCommandGroup)
 async def manage(ctx: Context):

@@ -1,5 +1,6 @@
 from hikari import User, Role, Embed, Member
 from lightbulb import Plugin, commands, implements, command, add_checks, Check, option
+from lightbulb.checks import guild_only
 from lightbulb.context import Context
 from mongoengine import Q
 
@@ -20,7 +21,7 @@ def unload(bot):
 
 
 @plugin.command()
-@add_checks(Check(staff_only))
+@add_checks(guild_only, Check(staff_only))
 @command('admin', 'Przypisuje numer studenta do twojego konta discord')
 @implements(commands.SlashCommandGroup)
 def admin():
@@ -95,7 +96,6 @@ def staff():
 @command('add', 'przypisuje grupę lub użytkownika do personelu', inherit_checks=True)
 @implements(commands.SlashSubCommand)
 async def staff_add(ctx: Context):
-
     conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).get()
 
     if ctx.options.member:

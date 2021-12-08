@@ -1,10 +1,11 @@
 import os
 
 import millify
-from lightbulb import Plugin
-from hikari import GuildMessageCreateEvent, Embed
-from shared.colors import RESULT
 from aiohttp import ClientSession
+from hikari import GuildMessageCreateEvent, Embed
+from lightbulb import Plugin
+
+from shared.colors import RESULT
 
 plugin = Plugin('COVID tracker')
 
@@ -52,4 +53,3 @@ async def covid_mentioned(event: GuildMessageCreateEvent):
     await event.message.respond(
         embed=embed
     )
-
