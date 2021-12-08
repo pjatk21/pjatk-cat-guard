@@ -14,7 +14,7 @@ jinja2 = "*"
 uvicorn = "*"
 # DB
 mongoengine = "*"
-pymongo = "*"
+pymongo = "<4.0"
 python-dotenv = "*"
 # Services SDKs
 google-api-python-client = "*"
