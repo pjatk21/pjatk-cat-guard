@@ -48,9 +48,7 @@ async def verify(ctx: Context):
     trust.student_number = ctx.options.ns
     trust.verification_method = VerificationMethod.ROLE_ENFORCED
     trust.verification_context = {
-        'staff': UserIdentity(
-            guild_id=ctx.get_guild().id, guild_name=ctx.get_guild().name, user_id=ctx.user.id, user_name=str(ctx.user)
-        ),
+        'staff': UserIdentity.from_context(ctx),
         'comment': ctx.options.comment
     }
     trust.save()

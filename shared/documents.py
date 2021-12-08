@@ -1,6 +1,7 @@
 from datetime import datetime
 from enum import Enum
 
+from lightbulb import Context
 from mongoengine import Document, LongField, EnumField, DateTimeField, DynamicField, EmbeddedDocumentField, \
     EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument, ListField
 
@@ -18,6 +19,15 @@ class UserIdentity(EmbeddedDocument):
     guild_name = StringField(null=True)
     user_id = LongField(required=True)
     user_name = StringField(null=True)
+
+    @staticmethod
+    def from_context(ctx: Context):
+        uid = UserIdentity()
+        uid.guild_id = ctx.get_guild().id
+        uid.user_id = ctx.user.id
+        uid.guild_name = ctx.get_guild().name
+        uid.user_name = str(ctx.user)
+        return uid
 
 
 class TrustedUser(Document):
