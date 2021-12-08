@@ -54,3 +54,17 @@ class VerificationLink(Document):
 class CaptchaInvites(Document):
     identity = EmbeddedDocumentField(UserIdentity, required=True)
     invite_alias = StringField(required=True, unique=True)
+
+
+class ExecutedCommand(EmbeddedDocument):
+    name = StringField()
+    options = DynamicField()
+
+
+class AuditLog(Document):
+    identity = EmbeddedDocumentField(UserIdentity, required=True)
+    exec_cmd = EmbeddedDocumentField(ExecutedCommand, required=True)
+    interaction = LongField(required=True)
+    requested = DateTimeField(default=datetime.now)
+    completed = DateTimeField(null=True)
+
