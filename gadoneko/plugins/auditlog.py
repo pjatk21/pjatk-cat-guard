@@ -26,6 +26,9 @@ def create_options_tree(option: CommandInteractionOption, output=None):
     if option.value:
         return option.value
 
+    if option.options is None:
+        return {option.name: None}
+
     for subop in option.options:
         if subop.value:
             output.update({subop.name: subop.value})
