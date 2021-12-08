@@ -7,19 +7,21 @@ name = "pypi"
 # Bot related dependencies
 hikari = {extras = ["speedups"]}
 hikari-lightbulb = ">=2.0.0"
-# User related dependencies
+# Web related dependencies
 starlette = "*"
 python-multipart = "*"
-# Other (backend, db, networking)
+jinja2 = "*"
+uvicorn = "*"
+# DB
 mongoengine = "*"
 pymongo = "*"
-uvicorn = "*"
 python-dotenv = "*"
-jinja2 = "*"
-aiohttp = "<4.0.0"
+# Services SDKs
 google-api-python-client = "*"
-pyyaml = "*"
 sentry-sdk = "*"
+# Utils
+aiohttp = "<4.0.0"
+pyyaml = "*"
 millify = "*"
 
 [dev-packages]
