@@ -14,6 +14,17 @@ services:
       - mongol
       - webgate
     restart: unless-stopped
+  discordcat-cron:
+    build: .
+    image: pjatk21/discordcat:latest
+    entrypoint: pipenv run cron
+    environment:
+      MONGODB_URL: mongodb://notpjatk:notThatExample1!@mongol/ # Future use
+    env_file:
+      - .production.env
+    depends_on:
+      - mongol
+    restart: unless-stopped
   webgate:
     build: .
     image: pjatk21/discordcat:latest

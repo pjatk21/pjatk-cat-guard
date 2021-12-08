@@ -23,6 +23,7 @@ sentry-sdk = "*"
 aiohttp = "<4.0.0"
 pyyaml = "*"
 millify = "*"
+aiocron = "*"
 
 [dev-packages]
 black = "*"
@@ -36,4 +37,5 @@ allow_prereleases = true
 
 [scripts]
 bot = "python -O -m gadoneko"
+cron = "python -O gadoneko/cron.py"
 webpage = "uvicorn webgate:app --host 0.0.0.0"
