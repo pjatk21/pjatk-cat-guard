@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  discordcat:
+  bot:
     build: .
     image: pjatk21/discordcat:latest
     entrypoint: pipenv run bot
@@ -14,7 +14,7 @@ services:
       - mongol
       - webgate
     restart: unless-stopped
-  discordcat-cron:
+  cron:
     build: .
     image: pjatk21/discordcat:latest
     entrypoint: pipenv run cron
@@ -25,7 +25,7 @@ services:
     depends_on:
       - mongol
     restart: unless-stopped
-  webgate:
+  webservice:
     build: .
     image: pjatk21/discordcat:latest
     entrypoint: pipenv run webpage
