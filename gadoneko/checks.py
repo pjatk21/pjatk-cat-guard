@@ -1,3 +1,5 @@
+import os
+
 from hikari.permissions import Permissions
 from lightbulb.context import Context
 from lightbulb.utils import permissions_for
@@ -59,3 +61,7 @@ def guild_configured(ctx: Context):
 
 def guild_not_configured(ctx: Context):
     return not guild_configured(ctx)
+
+
+def bot_owner_only(ctx: Context):
+    return ctx.user.id == os.environ.get('BOT_OWNER', 285146237613899776)

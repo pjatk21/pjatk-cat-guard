@@ -6,9 +6,9 @@ from lightbulb.checks import guild_only
 from lightbulb.context import Context
 from mongoengine import Q
 
-from gadoneko.checks import staff_only
+from gadoneko.checks import staff_only, bot_owner_only
 from shared.colors import RESULT, OK
-from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod
+from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod, CronHealthCheck
 from shared.formatting import code_block
 
 plugin = Plugin('Admin')
@@ -153,7 +153,8 @@ async def query(ctx: Context):
 
 
 @admin.child()
-@command('pkg', 'Pokazuje paczki bota', inherit_checks=True)
+@add_checks(Check(bot_owner_only))
+@command('pkg', 'Pokazuje paczki bota')
 @implements(commands.SlashSubCommand)
 async def env_info(ctx: Context):
     em_pkg = Embed(color=RESULT)
@@ -162,3 +163,17 @@ async def env_info(ctx: Context):
             ['pip', 'list']
         ).decode()[:4000])
     await ctx.respond(embed=em_pkg)
+
+
+@admin.child()
+@add_checks(guild_only, Check(bot_owner_only))
+@command('cron-health', 'Ustawia wiadomość z statusem, działania CRON')
+@implements(commands.SlashSubCommand)
+async def cron_health(ctx: Context):
+    widget_like = await ctx.bot.rest.create_message(
+        ctx.get_channel().id, "Widget pojawi się tutaj!"
+    )
+    CronHealthCheck.objects(identity=UserIdentity.from_context(ctx)).update_one(
+        upsert=True, widget_message_id=widget_like.id, widget_channel_id=ctx.get_channel().id
+    )
+    await ctx.respond('Ustawiono widget CRON!')

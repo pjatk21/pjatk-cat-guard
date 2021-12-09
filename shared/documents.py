@@ -68,3 +68,8 @@ class AuditLog(Document):
     requested = DateTimeField(default=datetime.now)
     completed = DateTimeField(null=True)
 
+
+class CronHealthCheck(Document):
+    identity = EmbeddedDocumentField(UserIdentity, required=True)
+    widget_channel_id = LongField(required=True)
+    widget_message_id = LongField(required=True)
