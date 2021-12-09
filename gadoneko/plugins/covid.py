@@ -20,7 +20,8 @@ def unload(bot):
 
 @plugin.listener(GuildMessageCreateEvent)
 async def covid_mentioned(event: GuildMessageCreateEvent):
-    if event.author.is_bot or event.author.is_system:
+    # Return if message is from bot or don't have content
+    if event.author.is_bot or event.author.is_system or event.message.content is None:
         return
 
     if (not os.getenv('APIFY_COVID')) or ('statystyki covid' not in event.message.content.lower()):
