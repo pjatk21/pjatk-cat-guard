@@ -58,5 +58,8 @@ async def invoked(event: SlashCommandInvocationEvent):
 @plugin.listener(SlashCommandCompletionEvent)
 async def invoked(event: SlashCommandCompletionEvent):
     log: AuditLog = AuditLog.objects(interaction=event.context.interaction.id).first()
-    log.completed = datetime.now()
-    log.save()
+    if log:
+        log.completed = datetime.now()
+        log.save()
+    else:
+        logger.debug('Command finished it\'s execution, but no start were recorded, skipping...')
