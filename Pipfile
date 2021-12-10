@@ -24,6 +24,7 @@ aiohttp = "<4.0.0"
 pyyaml = "*"
 millify = "*"
 aiocron = "*"
+google-cloud-vision = "*"
 
 [dev-packages]
 black = "*"
