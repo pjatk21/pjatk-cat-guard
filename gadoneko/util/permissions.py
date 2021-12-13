@@ -15,7 +15,7 @@ async def update_permissions(ctx: Context, conf: GuildConfiguration):
         ctx.get_channel(),
         embed=embed
     )
-    
+
     # Compute permissions
     computed_permissions = [
         # @everyone id is equal to guild id, disable admin for @everyone
