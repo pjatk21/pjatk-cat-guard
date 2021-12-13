@@ -1,12 +1,13 @@
 import subprocess
 
-from hikari import User, Role, Embed, Member
-from lightbulb import Plugin, commands, implements, command, add_checks, Check, option
+from hikari import User, Role, Embed, Member, CommandPermission, CommandPermissionType
+from lightbulb import Plugin, commands, implements, command, add_checks, Check, option, BotApp, LightbulbStartedEvent
 from lightbulb.checks import guild_only
 from lightbulb.context import Context
 from mongoengine import Q
 
 from gadoneko.checks import staff_only, bot_owner_only
+from gadoneko.util.perrmissions import update_permissions
 from shared.colors import RESULT, OK
 from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod, CronHealthCheck
 from shared.formatting import code_block
@@ -14,7 +15,7 @@ from shared.formatting import code_block
 plugin = Plugin('Admin')
 
 
-def load(bot):
+def load(bot: BotApp):
     bot.add_plugin(plugin)
 
 
@@ -24,7 +25,7 @@ def unload(bot):
 
 @plugin.command()
 @add_checks(guild_only, Check(staff_only))
-@command('admin', 'Przypisuje numer studenta do twojego konta discord')
+@command('adm', 'Zestaw narzędzi administarcyjnych.')
 @implements(commands.SlashCommandGroup)
 def admin():
     pass
@@ -76,13 +77,16 @@ async def verify(ctx: Context):
 @command('init', 'Dokonuje inicjalizacji', inherit_checks=True)
 @implements(commands.SlashSubCommand)
 async def init(ctx: Context):
+    # Add objects to the db
     GuildConfiguration.objects(
         guild_id=ctx.guild_id
     ).update_one(
         trusted_role_id=ctx.options.trust.id, upsert=True
     )
     conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).first()
-    await ctx.respond(f'Skonfigurowano!\n```json\n{conf.to_json()}```')
+    await ctx.respond(f'Zapisano!\n```json\n{conf.to_json()}```')
+
+    await update_permissions(ctx, conf)
 
 
 @admin.child()
@@ -109,7 +113,8 @@ async def staff_add(ctx: Context):
         return
 
     conf.save()
-    await ctx.respond('Zaktualizowano!')
+    await update_permissions(ctx, conf)
+    await ctx.respond('OK')
 
 
 @staff.child()
@@ -129,7 +134,8 @@ async def staff_remove(ctx: Context):
         return
 
     conf.save()
-    await ctx.respond('Zaktualizowano!')
+    await update_permissions(ctx, conf)
+    await ctx.respond('OK')
 
 
 @admin.child()
