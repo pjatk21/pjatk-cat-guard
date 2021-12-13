@@ -7,7 +7,7 @@ from lightbulb.context import Context
 from mongoengine import Q
 
 from gadoneko.checks import staff_only, bot_owner_only
-from gadoneko.util.perrmissions import update_permissions
+from gadoneko.util.permissions import update_permissions
 from shared.colors import RESULT, OK
 from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod, CronHealthCheck
 from shared.formatting import code_block
