@@ -7,7 +7,7 @@ services:
     entrypoint: pipenv run bot
     environment:
       MOTD: awaiting for java ITN
-      MONGODB_URL: mongodb://notpjatk:notThatExample1!@mongol/
+      MONGODB_URL: mongodb://mongol/pjatk21
     env_file:
       - .production.env
     depends_on:
@@ -15,11 +15,10 @@ services:
       - webgate
     restart: unless-stopped
   cron:
-    build: .
     image: pjatk21/discordcat:latest
     entrypoint: pipenv run cron
     environment:
-      MONGODB_URL: mongodb://notpjatk:notThatExample1!@mongol/ # Future use
+      MONGODB_URL: mongodb://mongol/pjatk21
     env_file:
       - .production.env
     depends_on:
@@ -32,7 +31,7 @@ services:
     ports:
       - '9093:8000'
     environment:
-      MONGODB_URL: mongodb://notpjatk:notThatExample1!@mongol:27017/
+      MONGODB_URL: mongodb://mongol/pjatk21
     env_file:
       - .production.env
     depends_on:
@@ -40,9 +39,9 @@ services:
     restart: unless-stopped
   mongol:
     image: mongo:latest
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: notpjatk
-      MONGO_INITDB_ROOT_PASSWORD: notThatExample1!
-    ports:
-      - 27017:27017
+    volumes:
+      - backup:/backup
     restart: unless-stopped
+
+volumes:
+  backup:
