@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 
 import sentry_sdk as sentry
-from hikari import Embed
+from hikari import Embed, NotFoundError
 from lightbulb import Plugin
 from lightbulb.events import SlashCommandErrorEvent
 
@@ -29,13 +29,22 @@ async def slash_err(event: SlashCommandErrorEvent):
     err_embed.add_field('Error class', f'`{repr(event.exception.__class__)}`')
     if event.exception.__cause__:
         err_embed.add_field('Cause class', f'`{repr(event.exception.__cause__.__class__)}`')
+    try:
+        await event.context.respond(
+            embeds=[
+                err_embed,
+                Embed(description=code_block(str(event.exception.__cause__)), color=ERR)
+            ] if event.exception.__cause__ else [err_embed]
+        )
+    except NotFoundError:
+        await event.bot.rest.create_message(
+            event.context.channel_id,
+            embeds=[
+                err_embed,
+                Embed(description=code_block(str(event.exception.__cause__)), color=ERR)
+            ] if event.exception.__cause__ else [err_embed]
+        )
 
-    await event.context.respond(
-        embeds=[
-            err_embed,
-            Embed(description=code_block(str(event.exception.__cause__)), color=ERR)
-        ] if event.exception.__cause__ else [err_embed]
-    )
 
     if os.getenv('SENTRY'):
         with sentry.push_scope() as scope:
