@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "f2ae56e934626ac0b216f7c1eaa4b5a4f87b21b808c41dcd5961951655efa630"
+            "sha256": "c5d8fdd707be898eccf98c15c0ba3bf3aca0360e0173c04a9fe1bc3af24301e2"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -487,11 +487,11 @@
         },
         "hikari-lightbulb": {
             "hashes": [
-                "sha256:04c1834e5592909240fb5f6a3c49c5abd4bb1dd9cdaafdca252302423d30e64f",
-                "sha256:b06692085cebc5407cda987bba0b228be6c7a1e91048dc6fdc3d8f051a955c0a"
+                "sha256:2975a095a56735cb8e882636948f2a529c69c03cf35a57d02a0bab6595e4fbd6",
+                "sha256:d81d013c5855820335988cd885b0158e8203fa11c5ee84bf002a744f9f39956e"
             ],
             "index": "pypi",
-            "version": "==2.0.4"
+            "version": "==2.1.0"
         },
         "httplib2": {
             "hashes": [
