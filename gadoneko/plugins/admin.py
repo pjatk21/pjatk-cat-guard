@@ -102,18 +102,15 @@ def staff():
 @command('add', 'przypisuje grupę lub użytkownika do personelu', inherit_checks=True)
 @implements(commands.SlashSubCommand)
 async def staff_add(ctx: Context):
-    conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).get()
-
     if ctx.options.member:
-        conf.additional_staff.append(ctx.options.member.id)
+        GuildConfiguration.objects(guild_id=ctx.guild_id).update(add_to_set__additional_staff=ctx.options.member.id)
     elif ctx.options.role:
-        conf.additional_staff_roles.append(ctx.options.role.id)
+        GuildConfiguration.objects(guild_id=ctx.guild_id).update(add_to_set__additional_staff_roles=ctx.options.role.id)
     else:
         await ctx.respond('Nie podałeś żadnego argumentu cepie')
         return
 
-    conf.save()
-    await update_permissions(ctx, conf)
+    await update_permissions(ctx, GuildConfiguration.objects(guild_id=ctx.guild_id).first())
     await ctx.respond('OK')
 
 
@@ -123,19 +120,42 @@ async def staff_add(ctx: Context):
 @command('del', 'przypisuje grupę lub użytkownika do personelu', inherit_checks=True)
 @implements(commands.SlashSubCommand)
 async def staff_remove(ctx: Context):
-    conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).get()
-
     if ctx.options.member:
-        conf.additional_staff = [m for m in conf.additional_staff if m != ctx.options.member.id]
+        GuildConfiguration.objects(guild_id=ctx.guild_id).update(pull__additional_staff=ctx.options.member.id)
     elif ctx.options.role:
-        conf.additional_staff_roles = [r for r in conf.additional_staff_roles if r != ctx.options.role.id]
+        GuildConfiguration.objects(guild_id=ctx.guild_id).update(pull__additional_staff_roles=ctx.options.role.id)
     else:
         await ctx.respond('Nie podałeś żadnego argumentu cepie')
         return
 
-    conf.save()
-    await update_permissions(ctx, conf)
+    await update_permissions(ctx, GuildConfiguration.objects(guild_id=ctx.guild_id).first())
     await ctx.respond('OK')
+
+
+@staff.child()
+@command('ls', 'przypisuje grupę lub użytkownika do personelu', inherit_checks=True)
+@implements(commands.SlashSubCommand)
+async def staff_remove(ctx: Context):
+    conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).first()
+    embed = Embed(title='Uprawnieni do obslugi bot\'a')
+    members = [
+        f'<@{m}>' for m in conf.additional_staff  # Mention users
+    ]
+    groups = [
+        f'<@&{r}>' for r in conf.additional_staff_roles  # Mention roles
+    ]
+
+    if len(members):
+        embed.add_field(
+            'Użytkownicy', '\n'.join(members), inline=True
+        )
+
+    if len(groups):
+        embed.add_field(
+            'Grupy', '\n'.join(groups), inline=True
+        )
+
+    await ctx.respond(embed=embed)
 
 
 @admin.child()
