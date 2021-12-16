@@ -2,12 +2,14 @@ version: "3.9"
 
 services:
   bot:
-    build: .
+    build:
+      dockerfile: docker/gadoneko/Dockerfile
     image: pjatk21/discordcat:latest
     entrypoint: pipenv run bot
     environment:
       MOTD: 🥶 java mrozi ❄️
       MONGODB_URL: mongodb://mongol/pjatk21
+      TIKA: http://tika:9998
     env_file:
       - .production.env
     depends_on:
@@ -24,8 +26,10 @@ services:
     depends_on:
       - mongol
     restart: unless-stopped
+  tika:
+    build:
+      dockerfile: docker/tika/Dockerfile
   webservice:
-    build: .
     image: pjatk21/discordcat:latest
     entrypoint: pipenv run webpage
     ports:
