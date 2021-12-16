@@ -5,13 +5,13 @@ import re
 import threading
 from datetime import datetime
 
-from hikari import UnicodeEmoji, Attachment, Embed, Message, CustomEmoji, KnownCustomEmoji
-from hikari.events import GuildMessageCreateEvent, GuildReactionAddEvent, MessageCreateEvent
+from hikari import UnicodeEmoji, Attachment, Embed, Message
+from hikari.events import GuildMessageCreateEvent, GuildReactionAddEvent
 from lightbulb import Plugin, implements, commands, command, Context, option
 from mongoengine import DoesNotExist, Q
 
 from shared.colors import FILE
-from shared.documents import CommonRepoFile, UserIdentity
+from shared.documents import CommonRepoFile
 from shared.formatting import code_block
 from shared.tika import tika_ocr
 
@@ -25,26 +25,6 @@ def load(bot):
 
 def unload(bot):
     bot.remove_plugin(plugin)
-
-
-MATCH_PATTERN = r'application\/(pdf|zip)|text\/x-.*'
-ARCHIVE_EMOJI = UnicodeEmoji('🗂')
-
-
-@plugin.listener(GuildMessageCreateEvent)
-async def add_archive_option(event: GuildMessageCreateEvent):
-    """
-    Listens for files uploaded, give option to mark file as achievable
-    """
-    if len(event.message.attachments) == 0:
-        return
-
-    for attachment in event.message.attachments:
-        logger.debug('Checking pattern for %s', attachment.media_type)
-        if not re.match(MATCH_PATTERN, attachment.media_type):
-            continue
-
-        await event.message.add_reaction(ARCHIVE_EMOJI)
 
 
 async def process_attachment(attachment: Attachment, message: Message) -> Embed:
@@ -89,7 +69,6 @@ async def receive_arch_signal(event: GuildReactionAddEvent):
 
     logger.debug('Marked as archival!')
     message = await plugin.bot.rest.fetch_message(channel=event.channel_id, message=event.message_id)
-    await message.remove_all_reactions(emoji=ARCHIVE_EMOJI)
 
     results = [await process_attachment(attachment, message) for attachment in message.attachments]
     await plugin.bot.rest.create_message(
@@ -104,7 +83,7 @@ async def update_tags(event: GuildMessageCreateEvent):
     if event.message.referenced_message and event.message.content:
         ref = await plugin.bot.rest.fetch_message(event.message.referenced_message.channel_id,
                                                   event.message.referenced_message.id)
-        tags = re.match(r'tags: ((\w|\d).*(\w|\d))', event.message.content)
+        tags = re.match(r'tags?: ((\w|\d).*(\w|\d))', event.message.content)  # Can be tags: bruh or tag: brush
         if tags is None:
             return
         tags = tags.groups()[0].split(' ')
