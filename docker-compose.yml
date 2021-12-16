@@ -6,7 +6,7 @@ services:
     image: pjatk21/discordcat:latest
     entrypoint: pipenv run bot
     environment:
-      MOTD: awaiting for java ITN
+      MOTD: 🥶 java mrozi ❄️
       MONGODB_URL: mongodb://mongol/pjatk21
     env_file:
       - .production.env
