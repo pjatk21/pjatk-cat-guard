@@ -1,6 +1,7 @@
 from datetime import datetime
 from enum import Enum
 
+from hikari import Member
 from lightbulb import Context
 from mongoengine import Document, LongField, EnumField, DateTimeField, DynamicField, EmbeddedDocumentField, \
     EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument, ListField
@@ -27,6 +28,14 @@ class UserIdentity(EmbeddedDocument):
         uid.user_id = ctx.user.id
         uid.guild_name = ctx.get_guild().name
         uid.user_name = str(ctx.user)
+        return uid
+
+    @staticmethod
+    def from_member(mem: Member):
+        uid = UserIdentity()
+        uid.guild_id = mem.guild_id
+        uid.user_id = mem.id,
+        uid.user_name = str(mem.user)
         return uid
 
 
