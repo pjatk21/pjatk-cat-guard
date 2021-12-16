@@ -92,4 +92,6 @@ class CommonRepoFile(Document):
     file_hash = StringField(unique=True)
     added = DateTimeField(required=True)
     tags = ListField()
-    total_virus_opinion = DynamicField()
+    extra = DynamicField()
+    # transcription = StringField(null=False)
+    # metadata = DynamicField()
