@@ -8,5 +8,5 @@ load_dotenv()
 
 
 def init_connection():
-    logging.info(connect(host=os.getenv('MONGODB_URL'), db='catguard'))
+    logging.info(connect(host=os.getenv('MONGODB_URL'), db='catguard', tz_aware=True))
 

@@ -35,7 +35,7 @@ class TrustedUser(Document):
     verification_method = EnumField(VerificationMethod, required=True)
     verification_context = DynamicField()
     student_number = StringField(r's\d{5}')
-    when = DateTimeField(default=datetime.now)
+    when = DateTimeField(default=lambda: datetime.now().astimezone())
 
 
 class GuildConfiguration(DynamicDocument):
@@ -65,7 +65,7 @@ class AuditLog(Document):
     identity = EmbeddedDocumentField(UserIdentity, required=True)
     exec_cmd = EmbeddedDocumentField(ExecutedCommand, required=True)
     interaction = LongField(required=True)
-    requested = DateTimeField(default=datetime.now)
+    requested = DateTimeField(default=lambda: datetime.now().astimezone())
     completed = DateTimeField(null=True)
 
 
