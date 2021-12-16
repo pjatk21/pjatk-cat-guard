@@ -15,6 +15,7 @@ services:
     depends_on:
       - mongol
       - webgate
+      - tika
     restart: unless-stopped
   cron:
     image: pjatk21/discordcat:latest
