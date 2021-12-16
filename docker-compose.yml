@@ -9,7 +9,7 @@ services:
     environment:
       MOTD: 🥶 java mrozi ❄️
       MONGODB_URL: mongodb://mongol/pjatk21
-      TIKA: http://tika:9998
+      TIKA_URL: http://tika:9998
     env_file:
       - .production.env
     depends_on:
