@@ -4,7 +4,7 @@ from enum import Enum
 from hikari import Member
 from lightbulb import Context
 from mongoengine import Document, LongField, EnumField, DateTimeField, DynamicField, EmbeddedDocumentField, \
-    EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument, ListField
+    EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument, ListField, URLField
 
 
 class VerificationMethod(Enum):
@@ -82,3 +82,14 @@ class CronHealthCheck(Document):
     identity = EmbeddedDocumentField(UserIdentity, required=True)
     widget_channel_id = LongField(required=True)
     widget_message_id = LongField(required=True)
+
+
+class CommonRepoFile(Document):
+    message_id = LongField(required=True)
+    file_url = URLField(required=True)
+    file_name = StringField(required=True)
+    file_type = StringField(required=True)
+    file_hash = StringField(unique=True)
+    added = DateTimeField(required=True)
+    tags = ListField()
+    total_virus_opinion = DynamicField()
