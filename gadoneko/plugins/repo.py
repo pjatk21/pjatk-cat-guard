@@ -31,10 +31,12 @@ async def process_attachment(attachment: Attachment, message: Message) -> Embed:
     file_hash = hashlib.sha256(await attachment.read()).hexdigest()
     try:
         file_doc = CommonRepoFile.objects(file_hash=file_hash).get()
+        logger.debug('File %s exists, cache hit', attachment.filename)
     except DoesNotExist:
+        logger.debug('File %s does not exist, cache miss', attachment.filename)
         file_doc = CommonRepoFile()
         file_doc.message_id = message.id
-        file_doc.file_type = attachment.media_type
+        file_doc.file_type = attachment.media_type if attachment.media_type else 'application/octet-stream'
         file_doc.file_hash = file_hash
         file_doc.file_url = attachment.url
         file_doc.file_name = attachment.filename
@@ -54,9 +56,8 @@ async def process_attachment(attachment: Attachment, message: Message) -> Embed:
             target=lambda: asyncio.run(bg_ocr()), daemon=True, name=f'ocr-{file_doc.file_hash}'
         ).start()
 
-    return Embed(title=file_doc.file_name, color=FILE) \
-        .add_field('SHA-256', code_block(file_doc.file_hash)) \
-        .add_field('Added', file_doc.added.isoformat())
+    return Embed(title=file_doc.file_name, color=FILE, timestamp=file_doc.added.astimezone()) \
+        .add_field('SHA-256', code_block(file_doc.file_hash))
 
 
 @plugin.listener(GuildReactionAddEvent)
@@ -64,8 +65,9 @@ async def receive_arch_signal(event: GuildReactionAddEvent):
     if event.member.is_bot:
         return
 
-    if event.emoji_name != '\N{card index dividers}':
-        pass
+    if event.emoji_name != '🗂️':
+        logger.debug('Ignoring %s emoji', event.emoji_name)
+        return
 
     logger.debug('Marked as archival!')
     message = await plugin.bot.rest.fetch_message(channel=event.channel_id, message=event.message_id)
@@ -92,10 +94,10 @@ async def update_tags(event: GuildMessageCreateEvent):
                 a_file = CommonRepoFile.objects(file_hash=hashlib.sha256(await attachment.read()).hexdigest()).get()
                 a_file.tags = tags
                 a_file.save()
+                await event.message.add_reaction(UnicodeEmoji('🆗'))
             except DoesNotExist:
                 logger.info('User tried to tag file which is not archived.')
-        ce = UnicodeEmoji('🆗')
-        await event.message.add_reaction(ce)
+                await event.message.add_reaction(UnicodeEmoji('❓'))
 
 
 @plugin.command()
