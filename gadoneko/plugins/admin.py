@@ -1,15 +1,17 @@
 import subprocess
 
-from hikari import User, Role, Embed, Member, CommandPermission, CommandPermissionType
-from lightbulb import Plugin, commands, implements, command, add_checks, Check, option, BotApp, LightbulbStartedEvent
+from hikari import User, Role, Embed, Member
+from lightbulb import Plugin, commands, implements, command, add_checks, Check, option, BotApp
 from lightbulb.checks import guild_only
 from lightbulb.context import Context
 from mongoengine import Q
 
 from gadoneko.checks import staff_only, bot_owner_only
+from gadoneko.components.admin import AdminQueryMenu
 from gadoneko.util.permissions import update_permissions
 from shared.colors import RESULT, OK
-from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod, CronHealthCheck, CommonRepoFile
+from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod, CronHealthCheck, \
+    CommonRepoFile
 from shared.formatting import code_block
 
 plugin = Plugin('Admin')
@@ -173,9 +175,12 @@ async def query(ctx: Context):
     if ctx.options.by_ns:
         qs &= Q(student_number=ctx.options.by_ns)
 
+    aqm = AdminQueryMenu(ctx, timeout=180)
+
     results = TrustedUser.objects(qs)
     embed = Embed(description=code_block(results.to_json(indent=2)), color=RESULT)
-    await ctx.respond(embed=embed)
+    response = await ctx.respond(embed=embed, components=aqm.build())
+    await aqm.run(response)
 
 
 @admin.child()

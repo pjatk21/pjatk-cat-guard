@@ -24,6 +24,7 @@ aiohttp = "<4.0.0"
 pyyaml = "*"
 millify = "*"
 aiocron = "*"
+lightbulb-ext-neon = {git = "https://github.com/neonjonn/lightbulb-ext-neon.git"}
 
 [dev-packages]
 black = "*"
