@@ -2,14 +2,13 @@ FROM python:3.10-alpine
 
 RUN apk add build-base openssl-dev libffi-dev
 
-RUN pip3 install pipenv
+RUN pip3 install poetry
 
 WORKDIR /pjatk
 
-COPY Pipfile .
-COPY Pipfile.lock .
+COPY poetry.lock pyproject.toml /pjatk/
 
-RUN pipenv install --skip-lock
+RUN poetry install --no-dev
 
 RUN apk del build-base openssl-dev libffi-dev
 

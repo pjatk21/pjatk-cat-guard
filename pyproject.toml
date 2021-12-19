@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "pjatkjanitor"
+version = "1.4.0rc2"
+description = ""
+authors = ["Krystian Postek <krystian@postek.eu>"]
+
+[tool.poetry.dependencies]
+setuptools = "setuptools<58"
+python = ">=3.10,<3.11"
+hikari = {extras = ["speedups"], version = "^2.0.0-alpha.104"}
+hikari-lightbulb = ">=2.0.0"
+starlette = "*"
+python-multipart = "*"
+jinja2 = "*"
+uvicorn = "*"
+mongoengine = ">=0.23.1"
+pymongo = "<4.0"
+python-dotenv = "*"
+google-api-python-client = "*"
+sentry-sdk = "*"
+aiohttp = "<4.0.0"
+pyyaml = "*"
+millify = "*"
+aiocron = "*"
+
+[tool.poetry.dev-dependencies]
+black = "*"
+pylint = "*"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
