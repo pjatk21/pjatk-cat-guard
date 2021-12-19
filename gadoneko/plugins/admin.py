@@ -7,7 +7,8 @@ from lightbulb.context import Context
 from mongoengine import Q
 
 from gadoneko.checks import staff_only, bot_owner_only
-from gadoneko.components.admin import AdminQueryMenu
+from gadoneko.components.admin.admin import AdminQueryMenu
+from gadoneko.components.admin.metrics import MetricsMenu
 from gadoneko.util.permissions import update_permissions
 from shared.colors import RESULT, OK
 from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod, CronHealthCheck, \
@@ -225,3 +226,11 @@ async def arc_rm(ctx: Context):
     rm_query = Q(file_name__contains=tq) | Q(file_hash__startswith=tq) | Q(file_type=tq) | Q(tags__contains=tq)
     resp = CommonRepoFile.objects(rm_query).delete()
     await ctx.respond(str(resp))
+
+
+@admin.child()
+@command('metrics', 'Pokazuje statystyki', inherit_checks=True)
+@implements(commands.SlashSubCommand)
+async def arc_rm(ctx: Context):
+    mm = MetricsMenu(ctx)
+    await mm.run(await ctx.respond('Wybierz statystykę to przedstawienia', components=mm.build()))
