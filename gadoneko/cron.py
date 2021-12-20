@@ -106,15 +106,19 @@ async def happy_christmas():
 
     async with bot.acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as client:
         guild = await client.fetch_guild(635437057858076682)  # Replace with main guild
-        members = await client.fetch_members(guild)
+        members = [member for member in await client.fetch_members(guild) if not member.is_bot]
         logger.info('Sending wishes to %s members', len(members))
         for member in members:
             try:
                 logger.debug('Sending message to the %s...', str(member))
-                if not member.is_bot:
-                    await member.send(f"Administracja PJATKowego serwera discord z okazji świąt życzy: {random.choice(wishes)}")
+                await member.send(
+                    f"Administracja PJATKowego serwera discord z okazji świąt życzy: {random.choice(wishes)}"
+                )
             except RateLimitedError as rle:
                 await asyncio.sleep(rle.retry_after + 0.5)
+                await member.send(
+                    f"Administracja PJATKowego serwera discord z okazji świąt życzy: {random.choice(wishes)}"
+                )
             except ForbiddenError as fe:
                 logger.warning('User %s has blocked DM, skipping...', str(member))
             except Exception as err:
