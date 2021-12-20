@@ -5,14 +5,19 @@ description = ""
 authors = ["Krystian Postek <krystian@postek.eu>"]
 
 [tool.poetry.dependencies]
-setuptools = "setuptools<58"
 python = ">=3.10,<3.11"
+# Bot related dependencies
 hikari = {extras = ["speedups"], version = "^2.0.0-alpha.104"}
 hikari-lightbulb = ">=2.0.0"
+lightbulb-ext-neon = {git = "https://github.com/neonjonn/lightbulb-ext-neon.git"}
+# Cron related dependencies
+aiocron = "*"
+# Web related dependencies
 starlette = "*"
 python-multipart = "*"
 jinja2 = "*"
 uvicorn = "*"
+# Common dependencies
 mongoengine = ">=0.23.1"
 pymongo = "<4.0"
 python-dotenv = "*"
@@ -21,7 +26,6 @@ sentry-sdk = "*"
 aiohttp = "<4.0.0"
 pyyaml = "*"
 millify = "*"
-aiocron = "*"
 
 [tool.poetry.dev-dependencies]
 black = "*"
