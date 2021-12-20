@@ -2,6 +2,8 @@ import asyncio
 import logging
 import os
 from datetime import datetime, timedelta
+import random
+from pathlib import Path
 
 import aiocron
 import millify
@@ -9,7 +11,7 @@ import yaml
 from aiohttp import ClientSession
 from dotenv import load_dotenv
 from hikari import RESTApp, Embed
-from hikari.errors import NotFoundError
+from hikari.errors import NotFoundError, RateLimitedError, ForbiddenError
 
 from shared.colors import RESULT, OK
 from shared.db import init_connection
@@ -22,7 +24,10 @@ load_dotenv()
 
 loop = asyncio.new_event_loop()
 logger = logging.getLogger('gadoneko.cron')
-logging.basicConfig(level=logging.INFO, format='%(levelname)-1.1s %(asctime)23.23s %(name)s: %(message)s')
+if os.getenv('ENV') == 'dev':
+    logging.basicConfig(level=logging.DEBUG, format='%(levelname)-1.1s %(asctime)23.23s %(name)s: %(message)s')
+else:
+    logging.basicConfig(level=logging.INFO, format='%(levelname)-1.1s %(asctime)23.23s %(name)s: %(message)s')
 
 if os.getenv('SENTRY'):  # Init error reporting to sentry
     logging.info('Sentry DSN present, init.')
@@ -32,7 +37,7 @@ init_connection()
 bot = RESTApp()
 
 
-@aiocron.crontab('45 11 * * *', loop=loop)
+@aiocron.crontab('11 11 * * *', loop=loop)
 # @aiocron.crontab('* * * * *', loop=loop)
 async def announce_covid_stats():
     logger.info('Sending embed')
@@ -92,5 +97,30 @@ async def health_check():
             *[update(widget) for widget in widgets]
         )
 
+
+@aiocron.crontab("27 15 24 12 *")  # Sunset at 24.12
+#@aiocron.crontab("* * * * *", loop=loop)  # Sunset at 24.12
+async def happy_christmas():
+    with open(Path.cwd().joinpath('shared/festive.yml'), 'r') as file:
+        wishes: list[str] = yaml.safe_load(file)
+
+    async with bot.acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as client:
+        guild = await client.fetch_guild(635437057858076682)  # Replace with main guild
+        members = await client.fetch_members(guild)
+        logger.info('Sending wishes to %s members', len(members))
+        for member in members:
+            try:
+                logger.debug('Sending message to the %s...', str(member))
+                if not member.is_bot:
+                    await member.send(f"Administracja PJATKowego serwera discord z okazji świąt życzy: {random.choice(wishes)}")
+            except RateLimitedError as rle:
+                await asyncio.sleep(rle.retry_after + 0.5)
+            except ForbiddenError as fe:
+                logger.warning('User %s has blocked DM, skipping...', str(member))
+            except Exception as err:
+                logger.error(err)  # Kids, don't do it this way, please, it's illegal like drugs and genocide
+
+
 logger.info('Starting loop...')
+logger.info('The soonest exec will be in %s seconds.', 60 - datetime.now().second)
 loop.run_forever()
