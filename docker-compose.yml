@@ -5,7 +5,7 @@ services:
     build:
       dockerfile: docker/gadoneko/Dockerfile
     image: pjatk21/discordcat:latest
-    entrypoint: pipenv run bot
+    entrypoint: poetry run python3 -O -m gadoneko.bot
     environment:
       MOTD: 🥶 java mrozi ❄️
       MONGODB_URL: mongodb://mongol/pjatk21
@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
   cron:
     image: pjatk21/discordcat:latest
-    entrypoint: pipenv run cron
+    entrypoint: poetry run python3 -O -m gadoneko.cron
     environment:
       MONGODB_URL: mongodb://mongol/pjatk21
     env_file:
@@ -32,7 +32,7 @@ services:
       dockerfile: docker/tika/Dockerfile
   webservice:
     image: pjatk21/discordcat:latest
-    entrypoint: pipenv run webpage
+    entrypoint: poetry run python -m uvicorn webgate:app --host 0.0.0.0
     ports:
       - '9093:8000'
     environment:
