@@ -7,9 +7,7 @@ services:
     image: pjatk21/discordcat:latest
     entrypoint: poetry run python3 -O -m gadoneko.bot
     environment:
-      MOTD: 🥶 java mrozi ❄️
-      MONGODB_URL: mongodb://mongol/pjatk21
-      TIKA_URL: http://tika:9998
+      MOTD: ☃️🎄 javastic christmas 🌲❄️
     env_file:
       - .production.env
     depends_on:
@@ -20,8 +18,6 @@ services:
   cron:
     image: pjatk21/discordcat:latest
     entrypoint: poetry run python3 -O -m gadoneko.cron
-    environment:
-      MONGODB_URL: mongodb://mongol/pjatk21
     env_file:
       - .production.env
     depends_on:
@@ -35,8 +31,6 @@ services:
     entrypoint: poetry run python -m uvicorn webgate:app --host 0.0.0.0
     ports:
       - '9093:8000'
-    environment:
-      MONGODB_URL: mongodb://mongol/pjatk21
     env_file:
       - .production.env
     depends_on:
