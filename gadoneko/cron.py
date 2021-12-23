@@ -108,7 +108,9 @@ async def happy_christmas(repeat: Member = None):
         try:
             logger.debug('Sending message to the %s...', str(member))
             await member.send(
-                f"Administracja PJATKowego serwera discord z okazji świąt życzy, spokojnych świąt, zdanych studiów oraz {random.choice(wishes)}"
+                f"Administracja PJATK'owego serwera discord z okazji świąt życzy "
+                f"spokojnie spędzonej wigilii, zdanych studiów, szczęśliwego nowego roku, zdrowia oraz "
+                f"{random.choice(wishes)}"
             )
         except RateLimitedError as rle:
             # Probably redundant, because ✨superior hikari✨ does it anyway
