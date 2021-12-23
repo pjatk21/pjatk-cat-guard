@@ -1,6 +1,6 @@
 FROM python:3.10-alpine
 
-RUN apk add build-base openssl-dev libffi-dev
+RUN apk add build-base openssl-dev libffi-dev git
 
 RUN pip3 install poetry
 
