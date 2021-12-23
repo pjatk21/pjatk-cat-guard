@@ -71,6 +71,7 @@ async def announce_covid_stats():
 
 @aiocron.crontab('*/5 * * * *', loop=loop)
 async def health_check():
+    logger.debug('Updating health checks...')
     heartbeat = datetime.now()
     widget_embed = Embed(
         title='CRON healthcheck',
@@ -134,6 +135,7 @@ async def happy_christmas(repeat: Member = None):
             logger.info('Chunk %s of %s (%s)', i+1, len(chs), f'{(i+1)/len(chs) * 100:.2f}%')
             await asyncio.gather(*[try_sending_wish(member) for member in members_chunk])
 
+asyncio.run(health_check.func())
 logger.info('Starting loop...')
 logger.info('The soonest exec will be in %s seconds.', 60 - datetime.now().second)
 loop.run_forever()
