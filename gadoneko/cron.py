@@ -63,7 +63,7 @@ async def announce_covid_stats():
 
     async with bot.acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as client:
         await client.create_message(
-            918167880535773194,  # TODO: remove hard code
+            os.getenv('COVID_UPDATES', 918167880535773194),
             embed=embed
         )
 
