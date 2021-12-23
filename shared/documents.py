@@ -4,7 +4,7 @@ from enum import Enum
 from hikari import Member
 from lightbulb import Context
 from mongoengine import Document, LongField, EnumField, DateTimeField, DynamicField, EmbeddedDocumentField, \
-    EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument, ListField, URLField
+    EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument, ListField, URLField, IntField, FloatField
 
 
 class VerificationMethod(Enum):
@@ -95,3 +95,21 @@ class CommonRepoFile(Document):
     extra = DynamicField()
     # transcription = StringField(null=False)
     # metadata = DynamicField()
+
+
+class AchievementAcquired(EmbeddedDocument):
+    title = StringField()
+    when = DateTimeField(default=lambda: datetime.now().astimezone())
+
+
+class UserVoiceTracking(Document):
+    identity = EmbeddedDocumentField(UserIdentity, required=True)
+    joined = DateTimeField(required=True)
+    left = DateTimeField(null=True)
+
+
+class UserTracking(Document):
+    identity = EmbeddedDocumentField(UserIdentity, required=True)
+    messages_sent = IntField(default=0)
+    hours_spend_on_voice = FloatField(default=0)
+    achievements = ListField(EmbeddedDocumentField(AchievementAcquired))
