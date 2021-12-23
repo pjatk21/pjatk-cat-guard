@@ -10,9 +10,10 @@ import millify
 import yaml
 from aiohttp import ClientSession
 from dotenv import load_dotenv
-from hikari import RESTApp, Embed
+from hikari import RESTApp, Embed, Member
 from hikari.errors import NotFoundError, RateLimitedError, ForbiddenError
 
+from shared.util import chunks
 from shared.colors import RESULT, OK
 from shared.db import init_connection
 from shared.documents import CronHealthCheck
@@ -99,31 +100,37 @@ async def health_check():
 
 
 @aiocron.crontab("27 15 24 12 *")  # Sunset at 24.12
-#@aiocron.crontab("* * * * *", loop=loop)  # Sunset at 24.12
-async def happy_christmas():
+async def happy_christmas(repeat: Member = None):
     with open(Path.cwd().joinpath('shared/festive.yml'), 'r') as file:
         wishes: list[str] = yaml.safe_load(file)
 
+    async def try_sending_wish(member: Member):
+        try:
+            logger.debug('Sending message to the %s...', str(member))
+            await member.send(
+                f"Administracja PJATKowego serwera discord z okazji świąt życzy, spokojnych świąt, zdanych studiów oraz {random.choice(wishes)}"
+            )
+        except RateLimitedError as rle:
+            # Probably redundant, because ✨superior hikari✨ does it anyway
+            logger.warning('Rate limit reached, next call will be at %s', (datetime.now() + timedelta(seconds=rle.retry_after)).isoformat())
+            await asyncio.sleep(rle.retry_after + 1)
+            await happy_christmas.func(member)  # wait and retry
+        except ForbiddenError as fe:
+            logger.warning('User %s has blocked DM, skipping... (%s)', str(member), fe.message)
+        except Exception as err:
+            logger.error(err)  # Kids, don't do it this way, please, it's illegal like drugs and genocide
+
     async with bot.acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as client:
-        guild = await client.fetch_guild(635437057858076682)  # Replace with main guild
+        if repeat:
+            await try_sending_wish(repeat)
+
+        guild = await client.fetch_guild(os.getenv('WISH_GUILD', 635437057858076682))
         members = [member for member in await client.fetch_members(guild) if not member.is_bot]
         logger.info('Sending wishes to %s members', len(members))
-        for member in members:
-            try:
-                logger.debug('Sending message to the %s...', str(member))
-                await member.send(
-                    f"Administracja PJATKowego serwera discord z okazji świąt życzy: {random.choice(wishes)}"
-                )
-            except RateLimitedError as rle:
-                await asyncio.sleep(rle.retry_after + 0.5)
-                await member.send(
-                    f"Administracja PJATKowego serwera discord z okazji świąt życzy: {random.choice(wishes)}"
-                )
-            except ForbiddenError as fe:
-                logger.warning('User %s has blocked DM, skipping...', str(member))
-            except Exception as err:
-                logger.error(err)  # Kids, don't do it this way, please, it's illegal like drugs and genocide
-
+        chs = tuple(chunks(members, 2))
+        for i, members_chunk in enumerate(chs):
+            logger.info('Chunk %s of %s (%s)', i+1, len(chs), f'{(i+1)/len(chs) * 100:.2f}%')
+            await asyncio.gather(*[try_sending_wish(member) for member in members_chunk])
 
 logger.info('Starting loop...')
 logger.info('The soonest exec will be in %s seconds.', 60 - datetime.now().second)
