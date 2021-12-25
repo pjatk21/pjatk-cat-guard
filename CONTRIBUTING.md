@@ -24,20 +24,24 @@ Nie polecam robić dev na dockerze bezpośrednio. Uruchamiaj wszystko wewnątrz 
 
 Bot
 ```
-pipenv run python3 -m gadoneko 
+poetry run python3 -O -m gadoneko.bot
 ```
 
 Bot CRON
 ```
-pipenv run python3 gadoneko/cron.py
+poetry run python3 -O -m gadoneko.cron
 ```
 
 Webgate 
 ```
-pipenv run uvicorn webgate:app --host 0.0.0.0
+poetry run python -m uvicorn webgate:app
 ```
 
 Database (in docker)
 ```
 docker run -p 27017:27017 --restart always --name mongodb -d mongo:latest
 ```
+
+## Nazewnictwo
+ - *gado neko (ガード猫)* - guard cat (main discord bot codebase)
+ - *tasuku neko (タスク猫)* - task cat (codebase related to the celery tasks)
