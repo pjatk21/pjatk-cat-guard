@@ -100,7 +100,7 @@ async def health_check():
         )
 
 
-@aiocron.crontab("27 15 24 12 *")  # Sunset at 24.12
+@aiocron.crontab("14 14 24 12 *", loop=loop)
 async def happy_christmas(repeat: Member = None):
     with open(Path.cwd().joinpath('shared/festive.yml'), 'r') as file:
         wishes: list[str] = yaml.safe_load(file)
@@ -135,7 +135,6 @@ async def happy_christmas(repeat: Member = None):
             logger.info('Chunk %s of %s (%s)', i+1, len(chs), f'{(i+1)/len(chs) * 100:.2f}%')
             await asyncio.gather(*[try_sending_wish(member) for member in members_chunk])
 
-asyncio.run(health_check.func())
 logger.info('Starting loop...')
 logger.info('The soonest exec will be in %s seconds.', 60 - datetime.now().second)
 loop.run_forever()
