@@ -39,7 +39,6 @@ bot = RESTApp()
 
 
 @aiocron.crontab('11 11 * * *', loop=loop)
-# @aiocron.crontab('* * * * *', loop=loop)
 async def announce_covid_stats():
     logger.info('Sending embed')
     embed = Embed(
