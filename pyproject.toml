@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gadoneko"
-version = "1.5.0rc1"
+version = "1.5.0"
 description = "Just an overegnieered discord bot for students."
 authors = ["Krystian Postek <krystian@postek.eu>"]
 
