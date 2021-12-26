@@ -97,14 +97,11 @@ wrapt = ">=1.11,<1.14"
 
 [[package]]
 name = "async-timeout"
-version = "4.0.1"
+version = "4.0.2"
 description = "Timeout context manager for asyncio programs"
 category = "main"
 optional = false
 python-versions = ">=3.6"
-
-[package.dependencies]
-typing-extensions = ">=3.6.5"
 
 [[package]]
 name = "attrs"
@@ -381,7 +378,7 @@ speedups = ["aiodns (>=3.0,<4.0)", "cchardet (>=2.1,<3.0)", "Brotli (>=1.0,<2.0)
 
 [[package]]
 name = "hikari-lightbulb"
-version = "2.1.1"
+version = "2.1.2"
 description = "A simple to use command handler for Hikari"
 category = "main"
 optional = false
@@ -796,7 +793,7 @@ python-versions = ">=3.6"
 name = "typing-extensions"
 version = "4.0.1"
 description = "Backported and Experimental Type Hints for Python 3.6+"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -986,8 +983,8 @@ astroid = [
     {file = "astroid-2.9.0.tar.gz", hash = "sha256:5939cf55de24b92bda00345d4d0659d01b3c7dafb5055165c330bc7c568ba273"},
 ]
 async-timeout = [
-    {file = "async-timeout-4.0.1.tar.gz", hash = "sha256:b930cb161a39042f9222f6efb7301399c87eeab394727ec5437924a36d6eef51"},
-    {file = "async_timeout-4.0.1-py3-none-any.whl", hash = "sha256:a22c0b311af23337eb05fcf05a8b51c3ea53729d46fb5460af62bee033cec690"},
+    {file = "async-timeout-4.0.2.tar.gz", hash = "sha256:2163e1640ddb52b7a8c80d0a67a08587e5d245cc9c553a74a847056bc2976b15"},
+    {file = "async_timeout-4.0.2-py3-none-any.whl", hash = "sha256:8ca1e4fcf50d07413d66d1a5e416e42cfdf5851c981d679a09851a6853383b3c"},
 ]
 attrs = [
     {file = "attrs-21.2.0-py2.py3-none-any.whl", hash = "sha256:149e90d6d8ac20db7a955ad60cf0e6881a3f20d37096140088356da6c716b0b1"},
@@ -1266,8 +1263,8 @@ hikari = [
     {file = "hikari-2.0.0.dev104.tar.gz", hash = "sha256:2cccd2c8ddb5896590a66034ae94a2215f4f993c5b38a99e5797518d819ffa1c"},
 ]
 hikari-lightbulb = [
-    {file = "hikari-lightbulb-2.1.1.tar.gz", hash = "sha256:4cb473cbc287966550971dc1f914f1e1842459aead62be8514ee8ae4a5982b96"},
-    {file = "hikari_lightbulb-2.1.1-py3-none-any.whl", hash = "sha256:5466bd162a2a63ccd78d5f9ca5b7aa9bc98d894298b9d2aff1d3fc10db595134"},
+    {file = "hikari-lightbulb-2.1.2.tar.gz", hash = "sha256:3bffda5dba7401955c364aa8c0497d20b45ff34ab73c15a591ac3ae9a4b2d1a5"},
+    {file = "hikari_lightbulb-2.1.2-py3-none-any.whl", hash = "sha256:bbd424ffc2cfee47abd83e39cba681f507b79a62017244067e2d490412375e8f"},
 ]
 httplib2 = [
     {file = "httplib2-0.20.2-py3-none-any.whl", hash = "sha256:6b937120e7d786482881b44b8eec230c1ee1c5c1d06bce8cc865f25abbbf713b"},
