@@ -35,7 +35,6 @@ if os.getenv('SENTRY'):  # Init error reporting to sentry
     sentry.init(os.getenv('SENTRY'), environment=os.getenv('ENV'), release=__version__)
 
 init_connection()
-bot = RESTApp()
 
 
 @aiocron.crontab('11 11 * * *', loop=loop)
@@ -61,7 +60,7 @@ async def announce_covid_stats():
 
             embed.set_footer(f'Ostatnia aktualizajca danych: {data["txtDate"]}')
 
-    async with bot.acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as client:
+    async with RESTApp().acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as client:
         await client.create_message(
             os.getenv('COVID_UPDATES', 918167880535773194),
             embed=embed
@@ -93,7 +92,7 @@ async def health_check():
             logger.info('Message %s removed, remove widget check!', widget.widget_message_id)
             widget.delete()
 
-    async with bot.acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as client:
+    async with RESTApp().acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as client:
         await asyncio.gather(
             *[update(widget) for widget in widgets]
         )
@@ -122,7 +121,7 @@ async def happy_christmas(repeat: Member = None):
         except Exception as err:
             logger.error(err)  # Kids, don't do it this way, please, it's illegal like drugs and genocide
 
-    async with bot.acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as client:
+    async with RESTApp().acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as client:
         if repeat:
             await try_sending_wish(repeat)
 
@@ -135,5 +134,5 @@ async def happy_christmas(repeat: Member = None):
             await asyncio.gather(*[try_sending_wish(member) for member in members_chunk])
 
 logger.info('Starting loop...')
-logger.info('The soonest exec will be in %s seconds.', 60 - datetime.now().second)
+logger.info('The soonest possible exec will be in %s seconds.', 60 - datetime.now().second)
 loop.run_forever()
