@@ -12,12 +12,15 @@ hikari-lightbulb = ">=2.0.0"
 lightbulb-ext-neon = {git = "https://github.com/neonjonn/lightbulb-ext-neon.git"}
 # Cron related dependencies
 aiocron = "*"
+# Tasks related dependencies (celery)
+celery = {extras = ["redis"], version = "^5.2.1"}
+asgiref = "^3.4.1"
 # Web related dependencies
 starlette = "*"
 python-multipart = "*"
 jinja2 = "*"
 uvicorn = "*"
-# Common dependencies
+# Other dependencies
 mongoengine = ">=0.23.1"
 pymongo = "<4.0"
 python-dotenv = "*"

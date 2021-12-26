@@ -42,6 +42,16 @@ Database (in docker)
 docker run -p 27017:27017 --restart always --name mongodb -d mongo:latest
 ```
 
+Redis (messaging broker and cache)
+```
+docker run --name dev-redis -d -p 6379:6379 redis:latest
+```
+
+Celery
+```
+poetry run python -m celery -A tasukuneko.heart worker -B -l DEBUG
+```
+
 ## Nazewnictwo
  - *gado neko (ガード猫)* - guard cat (main discord bot codebase)
  - *tasuku neko (タスク猫)* - task cat (codebase related to the celery tasks)

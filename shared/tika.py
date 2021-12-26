@@ -5,7 +5,7 @@ from aiohttp import ClientSession
 
 async def tika_ocr(data):
     async with ClientSession(
-        base_url=os.getenv('TIKA_URL', 'http://127.0.0.1:9998'),
+        base_url=os.getenv('TIKA', 'http://127.0.0.1:9998'),
         headers={'X-Tika-OCRLanguage': 'pol+eng'}
     ) as client:
         async with client.put(
