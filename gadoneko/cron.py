@@ -61,10 +61,11 @@ async def announce_covid_stats():
             embed.set_footer(f'Ostatnia aktualizajca danych: {data["txtDate"]}')
 
     async with RESTApp().acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as client:
-        await client.create_message(
+        covid_message = await client.create_message(
             os.getenv('COVID_UPDATES', 918167880535773194),
             embed=embed
         )
+        await client.crosspost_message(covid_message.channel_id, covid_message.id)
 
 
 @aiocron.crontab('*/5 * * * *', loop=loop)
