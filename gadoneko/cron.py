@@ -129,7 +129,7 @@ async def happy_christmas(repeat: Member = None):
         guild = await client.fetch_guild(os.getenv('WISH_GUILD', 635437057858076682))
         members = [member for member in await client.fetch_members(guild) if not member.is_bot]
         logger.info('Sending wishes to %s members', len(members))
-        chs = tuple(chunks(members, 2))
+        chs = tuple(chunks(members, 12))
         for i, members_chunk in enumerate(chs):
             logger.info('Chunk %s of %s (%s)', i+1, len(chs), f'{(i+1)/len(chs) * 100:.2f}%')
             await asyncio.gather(*[try_sending_wish(member) for member in members_chunk])

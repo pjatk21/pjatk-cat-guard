@@ -1,6 +1,10 @@
+import asyncio
+import logging
+import os
 import subprocess
+from datetime import datetime, timedelta
 
-from hikari import User, Role, Embed, Member, CommandPermission, CommandPermissionType
+from hikari import User, Role, Embed, Member, CommandPermission, CommandPermissionType, ForbiddenError
 from lightbulb import Plugin, commands, implements, command, add_checks, Check, option, BotApp, LightbulbStartedEvent
 from lightbulb.checks import guild_only
 from lightbulb.context import Context
@@ -11,8 +15,11 @@ from gadoneko.util.permissions import update_permissions
 from shared.colors import RESULT, OK
 from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod, CronHealthCheck, CommonRepoFile
 from shared.formatting import code_block
+from shared.progressbar import ProgressBar
+from shared.util import chunks
 
 plugin = Plugin('Admin')
+logger = logging.getLogger('gadoneko.admin')
 
 
 def load(bot: BotApp):
@@ -220,3 +227,38 @@ async def arc_rm(ctx: Context):
     rm_query = Q(file_name__contains=tq) | Q(file_hash__startswith=tq) | Q(file_type=tq) | Q(tags__contains=tq)
     resp = CommonRepoFile.objects(rm_query).delete()
     await ctx.respond(str(resp))
+
+
+@admin.child()
+@option('role', 'Rola użytkowników, którzy mają zostać wyciszeni', type=Role)
+@option('length', 'czas w minutach na, który bot ma wyciszyć grupę', type=float)
+@command('blackout', 'Dokonuje wyciszenia', inherit_checks=True)
+@implements(commands.SlashSubCommand)
+async def blackout(ctx: Context):
+    role: Role = ctx.options.role
+    members = [user for user in await ctx.bot.rest.fetch_members(ctx.guild_id) if role.id in user.role_ids]
+    if os.getenv('ENV') == 'dev':
+        members_chunks: tuple[tuple[Member]] = tuple(chunks(members, 2))
+    else:
+        members_chunks: tuple[tuple[Member]] = tuple(chunks(members, 12))
+    response = await ctx.respond(f'Rozpoczynam blackout dla {len(members)} użytkowników.')
+    blackout_for = datetime.now().astimezone() + timedelta(minutes=ctx.options.length)
+    pb = ProgressBar(len(members_chunks))
+
+    async def timeout_member(mem: Member):
+        try:
+            await mem.edit(
+                communication_disabled_until=blackout_for,
+                reason=f'Requested blackout for {role.name} by {ctx.author.username}'
+            )
+        except ForbiddenError:
+            logger.warning(f'Insufficient permissions to timeout {mem.username}')
+
+    for i, chunk in enumerate(members_chunks):
+        await asyncio.gather(*[
+            timeout_member(member) for member in chunk
+        ])
+        pb.update((i+1)/len(members_chunks))
+        await response.edit(str(pb))
+
+    await response.edit(f'Zakończono uciszanie `{role.name}`, cisza potrwa do {blackout_for.isoformat()}')
