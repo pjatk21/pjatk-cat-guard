@@ -32,7 +32,7 @@ def unload(bot):
 
 @plugin.command()
 @add_checks(guild_only, Check(staff_only))
-@command('adm', 'Zestaw narzędzi administarcyjnych.')
+@command('adm', 'Zestaw narzędzi administracyjnych.')
 @implements(commands.SlashCommandGroup)
 def admin():
     pass
