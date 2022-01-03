@@ -28,7 +28,7 @@ services:
       dockerfile: docker/tika/Dockerfile
   webservice:
     image: pjatk21/discordcat:latest
-    entrypoint: poetry run python -m uvicorn webgate:app --host 0.0.0.0
+    entrypoint: poetry run python -m uvicorn webpanel:app --host 0.0.0.0
     ports:
       - '9093:8000'
     env_file:

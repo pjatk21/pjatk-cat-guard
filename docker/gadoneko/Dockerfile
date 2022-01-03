@@ -16,7 +16,7 @@ COPY gadoneko/ /pjatk/gadoneko/
 
 COPY shared/ /pjatk/shared/
 
-COPY webgate/ /pjatk/webgate/
+COPY webpanel/ /pjatk/webpanel/
 
 COPY templates/ /pjatk/templates/
 

@@ -12,7 +12,7 @@ from starlette.responses import PlainTextResponse
 
 from shared.colors import OK
 from shared.documents import VerificationLink, TrustedUser, GuildConfiguration, VerificationMethod
-from webgate.common import templates
+from webpanel.common import templates
 from hikari import RESTApp, Embed
 
 

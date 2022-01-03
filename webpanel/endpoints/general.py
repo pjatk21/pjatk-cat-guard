@@ -3,7 +3,7 @@ import os
 from starlette.endpoints import HTTPEndpoint
 from starlette.requests import Request
 
-from webgate.common import templates
+from webpanel.common import templates
 
 
 class AboutPage(HTTPEndpoint):
