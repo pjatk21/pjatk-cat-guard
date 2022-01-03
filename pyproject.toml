@@ -26,6 +26,8 @@ sentry-sdk = "*"
 aiohttp = "<4.0.0"
 pyyaml = "*"
 millify = "*"
+itsdangerous = "^2.0.1"
+starlette-discord = "^0.2.0"
 
 [tool.poetry.dev-dependencies]
 black = "*"
