@@ -6,13 +6,11 @@ services:
       dockerfile: docker/gadoneko/Dockerfile
     image: pjatk21/discordcat:latest
     entrypoint: poetry run python3 -O -m gadoneko.bot
-    environment:
-      MOTD: ☃️🎄 javastic christmas 🌲❄️
     env_file:
       - .production.env
     depends_on:
       - mongol
-      - webgate
+      - webpanel
       - tika
     restart: unless-stopped
   cron:
@@ -26,7 +24,7 @@ services:
   tika:
     build:
       dockerfile: docker/tika/Dockerfile
-  webservice:
+  webpanel:
     image: pjatk21/discordcat:latest
     entrypoint: poetry run python -m uvicorn webpanel:app --host 0.0.0.0
     ports:
