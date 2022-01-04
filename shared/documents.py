@@ -95,3 +95,7 @@ class CommonRepoFile(Document):
     extra = DynamicField()
     # transcription = StringField(null=False)
     # metadata = DynamicField()
+
+
+class ParsedMail(DynamicDocument):
+    when = DateTimeField(default=lambda: datetime.now().astimezone())

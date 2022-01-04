@@ -28,6 +28,7 @@ pyyaml = "*"
 millify = "*"
 itsdangerous = "^2.0.1"
 starlette-discord = "^0.2.0"
+markdownify = "^0.10.1"
 
 [tool.poetry.dev-dependencies]
 black = "*"
