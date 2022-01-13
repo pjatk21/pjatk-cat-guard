@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 import os
 from datetime import datetime, timedelta
@@ -20,6 +21,7 @@ from shared.documents import CronHealthCheck
 import sentry_sdk as sentry
 from gadoneko._metadata import __version__
 from shared.formatting import code_block
+from shared.graphs import create_graph
 
 load_dotenv()
 
@@ -43,6 +45,9 @@ async def announce_covid_stats():
     embed = Embed(
         title='COVID 19 (statystyki)', description='Dane rządowe', color=RESULT
     )
+
+    with open('hist.json') as file:
+        embed.set_image(create_graph(file).to_image(format='png'))
 
     extract_keys = (
         ('dailyInfected', 'Zakażono dziś'),
@@ -97,6 +102,19 @@ async def health_check():
         await asyncio.gather(
             *[update(widget) for widget in widgets]
         )
+
+
+@aiocron.crontab('05 11 * * *', loop=loop)
+async def update_hist_data():
+    logger.info('Downloading hist data...')
+    async with ClientSession() as client:
+        async with client.get(os.getenv('APIFY_COVID_HISTORICAL')) as response:
+            data = await response.json()
+            data = data[-14:]
+            store = open('hist.json', 'w')
+            json.dump(data, store)
+    store.close()
+    logger.info('Data downloaded!')
 
 
 @aiocron.crontab("14 14 24 12 *", loop=loop)
