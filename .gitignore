@@ -140,3 +140,4 @@ cython_debug/
 .idea/
 .production.env
 .dev.env
+hist.json
