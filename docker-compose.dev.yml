@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  bot:
+    build:
+      dockerfile: docker/gadoneko/Dockerfile
+      target: base
+    entrypoint: poetry run python3 -O -m gadoneko.bot
+    env_file:
+      - .dev.env
+    depends_on:
+      - database
+    volumes:
+      - ".:/pjatk"
+    network_mode: host
+  webpanel:
+    build:
+      dockerfile: docker/gadoneko/Dockerfile
+      target: base
+    depends_on:
+      - database
+    volumes:
+      - ".:/pjatk"
+    network_mode: host
+  database:
+    image: mongo:latest
+    network_mode: host
