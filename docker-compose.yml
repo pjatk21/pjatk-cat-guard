@@ -4,7 +4,8 @@ services:
   bot:
     build:
       dockerfile: docker/gadoneko/Dockerfile
-    image: pjatk21/discordcat:latest
+      target: bot
+    image: pjatk21/discordcat:bot
     entrypoint: poetry run python3 -O -m gadoneko.bot
     env_file:
       - .production.env
@@ -14,7 +15,7 @@ services:
       - tika
     restart: unless-stopped
   cron:
-    image: pjatk21/discordcat:latest
+    image: pjatk21/discordcat:bot
     entrypoint: poetry run python3 -O -m gadoneko.cron
     env_file:
       - .production.env
@@ -24,8 +25,12 @@ services:
   tika:
     build:
       dockerfile: docker/tika/Dockerfile
+    restart: unless-stopped
   webpanel:
-    image: pjatk21/discordcat:latest
+    build:
+      dockerfile: docker/gadoneko/Dockerfile
+      target: web
+    image: pjatk21/discordcat:web
     entrypoint: poetry run python -m uvicorn webpanel:app --host 0.0.0.0
     ports:
       - '9093:8000'
@@ -36,9 +41,4 @@ services:
     restart: unless-stopped
   mongol:
     image: mongo:latest
-    volumes:
-      - backup:/backup
     restart: unless-stopped
-
-volumes:
-  backup:

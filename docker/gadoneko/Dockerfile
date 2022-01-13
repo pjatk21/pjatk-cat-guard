@@ -1,6 +1,6 @@
-FROM python:3.10-alpine
+FROM python:3.10 AS base
 
-RUN apk add build-base openssl-dev libffi-dev git
+RUN apt update && apt install -y build-essential git
 
 RUN pip3 install poetry
 
@@ -8,18 +8,24 @@ WORKDIR /pjatk
 
 COPY poetry.lock pyproject.toml /pjatk/
 
-RUN poetry install --no-dev
+RUN poetry install --no-dev && poetry run pip install kaleido
 
-RUN apk del build-base openssl-dev libffi-dev
+RUN apt remove -y build-essential
+
+ENV PYTHONPATH "${PYTHONPATH}:/pjatk/"
+
+ENV TZ "Europe/Warsaw"
+
+FROM base AS bot
+
+COPY shared/ /pjatk/shared/
 
 COPY gadoneko/ /pjatk/gadoneko/
+
+FROM base AS web
 
 COPY shared/ /pjatk/shared/
 
 COPY webpanel/ /pjatk/webpanel/
 
 COPY templates/ /pjatk/templates/
-
-ENV PYTHONPATH "${PYTHONPATH}:/pjatk/"
-
-ENV TZ "Europe/Warsaw"
