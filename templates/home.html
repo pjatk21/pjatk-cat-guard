@@ -15,6 +15,17 @@
     {% endblock %}
 
     <style type="text/css">
+        @media only screen and (min-aspect-ratio: 40/25) {
+            #main-content {
+                margin: 0;
+                aspect-ratio: 40/25;
+            }
+
+            #captcha {
+                flex-direction: row;
+            }
+        }
+
         body {
             background-color: hsl(240, 100%, 10%);
             margin: 0;
@@ -27,17 +38,19 @@
         }
 
         #main_content {
+            margin: 5px;
             border: solid 1em;
             border-color: #6c6cf1;
             padding: 1em;
             background-color: #4242e7;
             color: #a5a5ff;
             width: fit-content;
-            aspect-ratio: 40/25;
+
         }
 
         #captcha {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             margin: 16px 0 0 0;
