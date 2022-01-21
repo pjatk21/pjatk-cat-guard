@@ -1,27 +1,29 @@
-version: '3.8'
+version: "3.9"
 
 services:
   bot:
     build:
       dockerfile: docker/gadoneko/Dockerfile
-      target: base
+      target: bot
     entrypoint: poetry run python3 -O -m gadoneko.bot
     env_file:
       - .dev.env
     depends_on:
-      - database
-    volumes:
-      - ".:/pjatk"
-    network_mode: host
+      - mongol
+      - webpanel
+
   webpanel:
     build:
       dockerfile: docker/gadoneko/Dockerfile
-      target: base
+      target: web
+    entrypoint: poetry run python -m uvicorn webpanel:app --host 0.0.0.0 --reload
+    ports:
+      - '9093:8000'
+    env_file:
+      - .dev.env
     depends_on:
-      - database
-    volumes:
-      - ".:/pjatk"
-    network_mode: host
-  database:
+      - mongol
+
+  mongol:
     image: mongo:latest
-    network_mode: host
+
