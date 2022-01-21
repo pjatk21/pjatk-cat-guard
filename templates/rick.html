@@ -1,8 +1,10 @@
 {% extends 'home.html' %}
 {% block body %}
-    <div class="text-center" style="display: flex;flex-direction:column;align-items: center;justify-content: center;width: 100vw;height: 100vh;">
-        <h1>{{ issue }}</h1>
-        <iframe height="300" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        {% include 'copyright.html' %}
-    </div>
+<div id="main_content">
+    <h1>{{ issue }}</h1>
+    <iframe height="300" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1" title="YouTube video player"
+        frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+    {% include 'copyright.html' %}
+</div>
 {% endblock %}
