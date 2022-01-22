@@ -12,16 +12,21 @@ services:
       - database
     volumes:
       - ".:/pjatk"
-    network_mode: host
   webpanel:
     build:
       dockerfile: docker/gadoneko/Dockerfile
       target: base
+    env_file:
+      - .dev.env
     depends_on:
       - database
     volumes:
       - ".:/pjatk"
-    network_mode: host
+    ports:
+      - "8000:8000"
+    entrypoint: poetry run python3 -m uvicorn webpanel:app --host 0.0.0.0 --reload --log-level debug
   database:
     image: mongo:latest
     network_mode: host
+    ports:
+      - "27017:27017"
