@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.9"
 
 services:
   bot:
@@ -10,6 +10,7 @@ services:
       - .dev.env
     depends_on:
       - database
+      - webpanel
     volumes:
       - ".:/pjatk"
   webpanel:
@@ -27,6 +28,14 @@ services:
     entrypoint: poetry run python3 -m uvicorn webpanel:app --host 0.0.0.0 --reload --log-level debug
   database:
     image: mongo:latest
-    network_mode: host
+    # uncomment if you want to debug db manually
+    # ports:
+    #   - "27017:27017"
+  database-viewer:
+    image: mongo-express
+    depends_on:
+      - database
+    environment:
+      ME_CONFIG_MONGODB_URL: 'mongodb://database/'
     ports:
-      - "27017:27017"
+      - "8081:8081"
