@@ -1,0 +1,8 @@
+*.env
+docker-compose*
+docker/
+README.md
+MANUAL.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+.github/
