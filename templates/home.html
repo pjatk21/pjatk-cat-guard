@@ -7,131 +7,53 @@
     <title>PJATK cat guard</title>
     {% endblock %}
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Lato&family=Press+Start+2P&display=swap"
-        rel="stylesheet">
-    {% block head %}
-    {% endblock %}
-
+    <link rel="stylesheet" href="https://unpkg.com/98.css">
     <style type="text/css">
-        @media only screen and (min-aspect-ratio: 40/25) {
-            #main-content {
-                margin: 0;
-                aspect-ratio: 40/25;
-            }
-
-            #captcha {
-                flex-direction: row;
-            }
-        }
-
         body {
-            background-color: hsl(240, 100%, 10%);
-            margin: 0;
             display: flex;
+            margin: 0;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #0d7173;
             width: 100vw;
             height: 100vh;
         }
 
-        #main_content {
-            margin: 5px;
-            border: solid 1em;
-            border-color: #6c6cf1;
-            padding: 1em;
-            background-color: #4242e7;
-            color: #a5a5ff;
-            width: fit-content;
-
+        .title-bar {
+            color: white;
         }
 
-        #captcha {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 16px 0 0 0;
-        }
-
-        #main_content::before {
-            content: "PJATKommodore 2021";
-            font-family: 'Courier Prime', monospace;
+        .window-body {
             text-align: center;
-            display: inline-block;
-            width: 100%;
-            margin-bottom: 1em;
         }
 
-        h1,
-        h3 {
-            font-family: 'Press Start 2P', monospace;
-            font-weight: 700;
-            margin: 5px;
-        }
-
-        p,
-        a,
-        button {
-            font-family: 'Courier Prime', monospace;
-
-        }
-
-        button {
-            padding: 1em;
-            border: dashed;
-            border-color: #6c6cf1;
-            background-color: #4242e7;
-            color: #a5a5ff;
-            font-size: 16px;
-        }
-
-        button:hover,
-        button:active {
-            border-color: #a5a5ff;
-        }
-
-        a:visited {
-            color: #a5a5ff;
-        }
-
-        a:link {
-            color: #a5a5ff;
-            text-decoration-line: none;
-        }
-
-        a:link:hover,
-        button:hover,
-        a:link:active,
-        button:active {
-            text-decoration-line: underline;
-        }
-
-        #discord_link {
-            font-weight: bold;
-        }
-
-        #recaptcha-form {
-            margin: 0;
-            height: 78px;
+        #main_content {
+            width: fit-content;
         }
     </style>
+    {% block head %}
+    {% endblock %}
 </head>
 
 <body>
     {% block body %}
-    <div id="main_content">
-        <h1>Stop! OAuth please</h1>
-        <p>Jestem botem pilnującym PJATKowych serwerów przed nieporządanymi ludźmi</p>
-        <p>
-            <a href="{{ invitation }}">
-                <button type="button">Dodaj mnie do swojego serwera B-)</button>
-            </a>
-        </p>
-        {% include 'copyright.html' %}
+    <div class="window" id="main_content">
+        <div class="title-bar">
+            PJATK Informatyka 2021/2022
+        </div>
+        <div class="window-body">
+            <h1>Stop! OAuth please</h1>
+            <p>Jestem botem pilnującym PJATKowych serwerów przed nieporządanymi ludźmi</p>
+            <p>
+                <a href="{{ invitation }}">
+                    <button type="button">Dodaj mnie do swojego serwera B-)</button>
+                </a>
+            </p>
+            {% include 'copyright.html' %}
 
+        </div>
     </div>
     {% endblock %}
 </body>
