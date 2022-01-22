@@ -141,3 +141,4 @@ cython_debug/
 .production.env
 .dev.env
 hist.json
+/docker-compose.prod.yml
