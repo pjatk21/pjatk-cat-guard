@@ -9,7 +9,7 @@ services:
     env_file:
       - .dev.env
     depends_on:
-      - mongol
+      - database
       - webpanel
     volumes:
       - ".:/pjatk"
@@ -20,7 +20,7 @@ services:
     env_file:
       - .dev.env
     depends_on:
-      - mongol
+      - database
     volumes:
       - ".:/pjatk"
     ports:
