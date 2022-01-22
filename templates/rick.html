@@ -1,10 +1,16 @@
 {% extends 'home.html' %}
 {% block body %}
-<div id="main_content">
-    <h1>{{ issue }}</h1>
-    <iframe height="300" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1" title="YouTube video player"
-        frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen></iframe>
-    {% include 'copyright.html' %}
+<div class="window" id="main_content">
+    <div class="title-bar">
+        PJATK Informatyka 2021/2022
+    </div>
+    <div class="window-body">
+        <h1>{{ issue }}</h1>
+        <iframe height="300" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1"
+            title="YouTube video player" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+        {% include 'copyright.html' %}
+    </div>
 </div>
 {% endblock %}
