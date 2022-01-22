@@ -12,21 +12,22 @@ services:
       - mongol
       - webpanel
     volumes:
-      - ".:/pjatk" # binds code with runtime
-
+      - ".:/pjatk"
   webpanel:
     build:
       dockerfile: docker/gadoneko/Dockerfile
       target: base
-    entrypoint: poetry run python -m uvicorn webpanel:app --host 0.0.0.0 --reload --log-level debug
-    ports:
-      - '8000:8000'
     env_file:
       - .dev.env
     depends_on:
       - mongol
     volumes:
-      - ".:/pjatk" # binds code with runtime
-      
-  mongol:
+      - ".:/pjatk"
+    ports:
+      - "8000:8000"
+    entrypoint: poetry run python3 -m uvicorn webpanel:app --host 0.0.0.0 --reload --log-level debug
+  database:
     image: mongo:latest
+    network_mode: host
+    ports:
+      - "27017:27017"
