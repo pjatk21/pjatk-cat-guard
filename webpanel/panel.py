@@ -6,6 +6,7 @@ from starlette.applications import Starlette
 from starlette.middleware import Middleware
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.routing import Route, Mount
+from starlette.staticfiles import StaticFiles
 
 from shared.db import init_connection
 from .endpoints import invites, general, mailing
@@ -20,7 +21,8 @@ routes = [
     Route("/login", invites.LoginGate),
     Route("/join/pjatk2021", invites.GuildInviteEndpoint),
     # Mount("/admin", routes=admin.routes),
-    Mount("/mail", routes=mailing.routes)
+    Mount("/mail", routes=mailing.routes),
+    Mount("/static", app=StaticFiles(directory='webpanel/static'), name="static")
 ]
 
 middleware = [
