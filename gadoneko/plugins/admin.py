@@ -1,10 +1,12 @@
 import asyncio
 import logging
 import os
+import re
 import subprocess
 from datetime import datetime, timedelta
+from pathlib import Path
 
-from hikari import User, Role, Embed, Member, CommandPermission, CommandPermissionType, ForbiddenError
+from hikari import User, Role, Embed, Member, CommandPermission, CommandPermissionType, ForbiddenError, GuildMessageCreateEvent
 from lightbulb import Plugin, commands, implements, command, add_checks, Check, option, BotApp, LightbulbStartedEvent
 from lightbulb.checks import guild_only
 from lightbulb.context import Context
@@ -262,3 +264,38 @@ async def blackout(ctx: Context):
         await response.edit(str(pb))
 
     await response.edit(f'Zakończono uciszanie `{role.name}`, cisza potrwa do {blackout_for.isoformat()}')
+
+
+@admin.child()
+@option('action', 'wybierz co zamierzasz zrobić', choices=['download', 'upload'])
+@command('static', 'Zapytanie do bazy danych', inherit_checks=True)
+@implements(commands.SlashSubCommand)
+async def update(ctx: Context):
+    match ctx.options.action:
+        case 'download':
+            await ctx.respond("Podaj nazwę pliku!")
+            filename: GuildMessageCreateEvent = await ctx.bot.wait_for(GuildMessageCreateEvent, 30, lambda x: x.channel_id == ctx.channel_id and ctx.author == x.author)
+            path_string_safe = re.match(r"^[^/][\w/]+(\.\w+)+$", filename.content)
+            if path_string_safe:
+                await ctx.bot.rest.create_message(
+                    ctx.channel_id,
+                    attachment=f'static/{path_string_safe.string}'
+                )
+        case 'upload':
+            await ctx.respond("Wyślij pliki")
+            files_message: GuildMessageCreateEvent = await ctx.bot.wait_for(GuildMessageCreateEvent, 30, lambda x: x.channel_id == ctx.channel_id and ctx.author == x.author)
+            for att in files_message.message.attachments:
+                path_string_safe = re.match(r"^[^/][\w/]+(\.\w+)+$", att.filename)
+                if path_string_safe:
+                    path = Path(f'static/{path_string_safe.string}')
+                    with open(path, 'wb') as f:
+                        data = await att.read()
+                        f.write(data)
+                        await ctx.bot.rest.create_message(
+                            ctx.channel_id,
+                            f'Wpisano plik {path.absolute()}!'
+                        )
+        case _:
+            await ctx.respond('huh???')
+
+
