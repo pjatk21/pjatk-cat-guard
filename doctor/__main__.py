@@ -10,7 +10,7 @@ if Path(filename).exists():
 else:
     sys.exit(1)
 
-heathy_overall = True
+healthy_overall = True
 
 for module, props in content.items():
     date_string, healthy = props
