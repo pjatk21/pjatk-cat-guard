@@ -36,7 +36,8 @@ async def update_permissions(ctx: Context, conf: GuildConfiguration):
         ctx.app.application.id,
         ctx.get_guild(),
         {
-            ctx.bot.slash_commands.get('adm').instances[None].id: computed_permissions
+            ctx.bot.slash_commands.get('adm').instances[None].id: computed_permissions,
+            ctx.bot.slash_commands.get('reload').instances[None].id: computed_permissions,
         }
     )
 

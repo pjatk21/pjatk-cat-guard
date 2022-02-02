@@ -1,11 +1,12 @@
 import os
 
+import yaml
 from dotenv import load_dotenv
-from hikari import Intents, Status, Activity, ActivityType
+from hikari import Intents, Status, Activity, ActivityType, commands, Embed
 from hikari.events import ShardReadyEvent, ShardDisconnectedEvent
-from lightbulb.events import CommandInvocationEvent
-from lightbulb import BotApp
+from lightbulb import BotApp, add_checks, Check, command, commands, implements, Context
 from doctor import DockerDoctor
+from gadoneko.checks import bot_owner_only
 
 load_dotenv()
 
@@ -15,6 +16,16 @@ else:
     bot = BotApp(os.getenv('DISCORD_TOKEN'), intents=Intents.ALL_UNPRIVILEGED | Intents.GUILD_MEMBERS)
 
 bot.load_extensions_from('gadoneko/plugins')
+
+
+@bot.command()
+@add_checks(Check(bot_owner_only))
+@command('reload', 'Uruchamia ponownie bota')
+@implements(commands.SlashCommand)
+async def reload(ctx: Context):
+    bot.reload_extensions(*bot.extensions)
+    embed = Embed(title='Przeładowano wtyczki', description=yaml.dump(bot.extensions))
+    await ctx.respond(embed=embed)
 
 
 @bot.listen(ShardReadyEvent)
