@@ -142,3 +142,4 @@ cython_debug/
 .dev.env
 hist.json
 /docker-compose.prod.yml
+health-*.json

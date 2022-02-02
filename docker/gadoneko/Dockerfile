@@ -2,6 +2,10 @@ FROM python:3.10 AS base
 
 RUN apt update && apt install -y build-essential git
 
+RUN adduser -D -s /bin/bash neko
+
+USER neko
+
 RUN pip3 install poetry
 
 WORKDIR /pjatk
@@ -16,16 +20,18 @@ ENV PYTHONPATH "${PYTHONPATH}:/pjatk/"
 
 ENV TZ "Europe/Warsaw"
 
+COPY . /pjatk/
+
 FROM base AS bot
 
-COPY shared/ /pjatk/shared/
+HEALTHCHECK CMD python3 -m doctor bot
 
-COPY gadoneko/ /pjatk/gadoneko/
+ENTRYPOINT poetry run python3 -O -m gadoneko.bot
 
 FROM base AS web
 
-COPY shared/ /pjatk/shared/
+ENTRYPOINT poetry run python -m uvicorn webpanel:app --host 0.0.0.0
 
-COPY webpanel/ /pjatk/webpanel/
+FROM base AS cron
 
-COPY templates/ /pjatk/templates/
+ENTRYPOINT poetry run python3 -O -m gadoneko.cron

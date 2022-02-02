@@ -2,8 +2,10 @@ import os
 
 from dotenv import load_dotenv
 from hikari import Intents, Status, Activity, ActivityType
-from hikari.events import ShardReadyEvent
+from hikari.events import ShardReadyEvent, ShardDisconnectedEvent
+from lightbulb.events import CommandInvocationEvent
 from lightbulb import BotApp
+from doctor import DockerDoctor
 
 load_dotenv()
 
@@ -22,3 +24,11 @@ async def ready(event: ShardReadyEvent):
             status=Status.ONLINE,
             activity=Activity(name=os.getenv('MOTD'), type=ActivityType.PLAYING)
         )
+
+    DockerDoctor('bot').update_module('bot')
+
+
+@bot.listen(ShardDisconnectedEvent)
+async def mark_not_healthy(event: ShardDisconnectedEvent):
+    DockerDoctor('bot').fail_module('bot')
+

@@ -2,6 +2,7 @@ import logging
 import os
 from datetime import datetime
 
+import mongoengine
 import sentry_sdk as sentry
 from hikari import Embed, NotFoundError
 from lightbulb import Plugin
@@ -45,10 +46,10 @@ async def slash_err(event: SlashCommandErrorEvent):
             ] if event.exception.__cause__ else [err_embed]
         )
 
-
     if os.getenv('SENTRY'):
         with sentry.push_scope() as scope:
             scope.set_user({'username': str(event.context.user)})
             sentry.capture_exception(event.exception.__cause__ if event.exception.__cause__ else event.exception)
+
     else:
         raise event.exception
