@@ -11,5 +11,5 @@
   reply: "https://cdn.discordapp.com/attachments/923518762890690560/938447295719014410/java_lore_cut.mp4"
 - regex: "[Cc]o to jest ((wsi)|(WSI))"
   reply: "https://cdn.discordapp.com/attachments/891588026780770344/938439603172544512/53892944_134575062363754_5321002678164690802_n.mp4"
-- regex: "((([Cc]o to)|([Cc]zym)) jest [Pp][Jj][Aa]([Ii][Tt]|[Tt][Kk])"
+- regex: "(([Cc]o to)|([Cc]zym)) jest [Pp][Jj][Aa]([Ii][Tt]|[Tt][Kk])"
   reply: "https://streamable.com/mh60tp"

@@ -5,7 +5,7 @@ import yaml
 from lightbulb import Plugin
 from hikari.events import GuildMessageCreateEvent
 
-plugin = Plugin('Archive repository')
+plugin = Plugin('hehe funny responses')
 logger = logging.getLogger('gadoneko.plugins.funny')
 
 hehe_funny = []
@@ -13,7 +13,7 @@ hehe_funny = []
 
 def load(bot):
     global hehe_funny
-    with open('gadoneko/util/funny.yml', 'r') as f:
+    with open('static/funny.yml', 'r') as f:
         hehe_funny = yaml.safe_load(f)
     bot.add_plugin(plugin)
 

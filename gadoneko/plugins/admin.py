@@ -142,7 +142,7 @@ async def staff_remove(ctx: Context):
 @staff.child()
 @command('ls', 'przypisuje grupę lub użytkownika do personelu', inherit_checks=True)
 @implements(commands.SlashSubCommand)
-async def staff_remove(ctx: Context):
+async def staff_ls(ctx: Context):
     conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).first()
     embed = Embed(title='Uprawnieni do obslugi bot\'a')
     members = [

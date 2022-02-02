@@ -119,7 +119,7 @@ async def update_hist_data():
 
 @aiocron.crontab("14 14 24 12 *", loop=loop)
 async def happy_christmas(repeat: Member = None):
-    with open(Path.cwd().joinpath('shared/festive.yml'), 'r') as file:
+    with open(Path.cwd().joinpath('static/festive.yml'), 'r') as file:
         wishes: list[str] = yaml.safe_load(file)
 
     async def try_sending_wish(member: Member):
