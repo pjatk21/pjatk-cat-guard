@@ -2,6 +2,7 @@ import logging
 import re
 
 import yaml
+from hikari import CustomEmoji
 from lightbulb import Plugin
 from hikari.events import GuildMessageCreateEvent
 
@@ -37,4 +38,16 @@ async def reply_for_match(event: GuildMessageCreateEvent):
                     await plugin.bot.rest.create_message(
                         event.channel_id,
                         rule.get('send')
+                    )
+                if rule.get('reaction') and rule.get('guild'):
+                    await plugin.bot.rest.add_reaction(
+                        event.channel_id,
+                        event.message_id,
+                        emoji=(await plugin.bot.rest.fetch_guild(rule.get('guild'))).get_emoji(rule.get('reaction')),
+                    )
+                if rule.get('reaction') and not rule.get('guild'):
+                    await plugin.bot.rest.add_reaction(
+                        event.channel_id,
+                        event.message_id,
+                        emoji=rule.get('reaction')
                     )
