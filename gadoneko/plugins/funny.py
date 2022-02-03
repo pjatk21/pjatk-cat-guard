@@ -25,9 +25,9 @@ def unload(bot):
 
 @plugin.listener(GuildMessageCreateEvent)
 async def reply_for_match(event: GuildMessageCreateEvent):
-    if event.content:
+    if event.content and event.is_human:
         for rule in hehe_funny:
-            if re.match(rule['regex'], event.content):
+            if re.search(rule['regex'], event.content):
                 if rule.get('reply'):
                     await plugin.bot.rest.create_message(
                         event.channel_id,
