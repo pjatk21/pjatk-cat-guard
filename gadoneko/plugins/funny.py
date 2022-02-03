@@ -2,8 +2,8 @@ import logging
 import re
 
 import yaml
-from hikari import CustomEmoji
 from lightbulb import Plugin
+from webpanel.common import templates
 from hikari.events import GuildMessageCreateEvent
 
 plugin = Plugin('hehe funny responses')

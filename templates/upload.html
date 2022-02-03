@@ -1,0 +1,22 @@
+{% extends 'home.html' %}
+{% block body %}
+    <div class="content-frame" style="text-align: center">
+        <h1>Dodatkowe formalności</h1>
+        <p>Zanim przejdziemy dalej, potrzebujemy zdjęcia twojej legitymacji studenckiej.</p>
+        <form method="post" enctype="multipart/form-data">
+            <div class="input-boxy">
+                <label for="photo-of-id">Legitymacja studencka</label>
+                <input name="photo-of-id" required type="file" accept="image/*, image/heic">
+            </div>
+            <div class="input-boxy">
+                <label for="photo-of-id">Zapoznał*m się z statutem</label>
+                <input name="photo-of-id" required type="checkbox">
+            </div>
+            <div class="input-boxy">
+                <label for="photo-of-id">Oświadczam, że nie jestem pracownikiem PJATK</label>
+                <input name="photo-of-id" required type="checkbox">
+            </div>
+            <button type="submit">Wyślij</button>
+        </form>
+    </div>
+{% endblock %}

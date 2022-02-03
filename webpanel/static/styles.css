@@ -53,11 +53,8 @@ h3 {
     margin: 5px;
 }
 
-p,
-a,
-button {
+p, a, button, input, label {
     font-family: 'Courier Prime', monospace;
-
 }
 
 button {
@@ -98,6 +95,13 @@ button:active {
     height: 78px;
 }
 
+.input-boxy {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px;
+}
 
 @media (prefers-color-scheme: light) {
     body {
