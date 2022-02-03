@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin: {{ request.session["user"] }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/css/uikit.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit-icons.min.js"></script>
+</head>
+<body>
+{% block body %}
+    <div class="uk-container">
+        <h1>Witaj {{ request.session["user"] }}</h1>
+        <h2>Oczekujące weryfikacje</h2>
+        <table class="uk-table">
+            <thead>
+            <tr>
+                <th>Zdjęcie</th>
+                <th>User</th>
+                <th>Czas oczekiwania</th>
+                <th>Akcja</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for vr in awaiting %}
+                <tr>
+                    <td>
+                        <img src="data:{{ vr.content_type }};base64, {{ vr.photo_as_base64 }}" alt="{{ vr.content_name }}"
+                         style="height: 50px">
+                    </td>
+                    <td>
+                        {{ vr.link.identity.user_name }}
+                    </td>
+                    <td>
+                        {{ vr.wait_time }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+</body>
+</html>

@@ -47,7 +47,7 @@ def start_verification_flow(guild: Guild, user: User):
 async def verify(ctx: Context):
     link = start_verification_flow(ctx.get_guild(), ctx.user)
 
-    await ctx.author.send(f"Link do logowania: {os.getenv('VERIFICATION_URL')}oauth/{link.secret_code}")
+    await ctx.author.send(f"Link do logowania: {os.getenv('VERIFICATION_URL')}verify/{link.secret_code}")
     await ctx.respond("Wysłano link do logowania na DM.")
 
 
@@ -62,7 +62,7 @@ async def auto_verify(event: MemberCreateEvent):
                     'Taki proces weryfikacji nie trwa dłużej niż minutę.',
         color=INFO, timestamp=datetime.now().astimezone()
     ).add_field(
-        'Twój link do weryfikacji', f"{os.getenv('VERIFICATION_URL')}oauth/{link.secret_code}"
+        'Twój link do weryfikacji', f"{os.getenv('VERIFICATION_URL')}verify/{link.secret_code}"
     )
 
     await event.user.send(embed=embed)

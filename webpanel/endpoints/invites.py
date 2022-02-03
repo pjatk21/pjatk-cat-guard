@@ -5,13 +5,14 @@ from aiohttp import ClientSession
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from mongoengine import Q
+from starlette.datastructures import UploadFile
 from starlette.endpoints import HTTPEndpoint
 from starlette.exceptions import HTTPException
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse
 
 from shared.colors import OK
-from shared.documents import VerificationLink, TrustedUser, GuildConfiguration, VerificationMethod
+from shared.documents import VerificationLink, TrustedUser, GuildConfiguration, VerificationMethod, VerificationRequest
 from webpanel.common import templates
 from hikari import RESTApp, Embed
 
@@ -130,3 +131,35 @@ class LoginGate(HTTPEndpoint):
             link_data.save()
 
         return templates.TemplateResponse("verified.html", {"request": request})
+
+
+class LoginQueueRequest(HTTPEndpoint):
+    async def get(self, request: Request):
+        secret = request.path_params["secret"]
+
+        link_data: VerificationLink = VerificationLink.objects(secret_code=secret).first()
+        if not link_data:
+            raise HTTPException(404, 'Takie wiązanie nie istnieje')
+
+        return templates.TemplateResponse(
+            'upload.html',
+            {'request': request}
+        )
+
+    async def post(self, request: Request):
+        form = await request.form()
+        photo: UploadFile = form['photo-of-id']
+
+        vr = VerificationRequest(
+            link=VerificationLink.objects(secret_code=request.path_params["secret"]).first(),
+            photo=photo.file.read(),
+            content_type=photo.content_type,
+            content_name=photo.filename,
+        )
+        vr.save()
+
+        return templates.TemplateResponse(
+            'message.html',
+            {'request': request, 'header': 'Twoje dane zostały przekazane do ręcznej weryfikacji!'}
+        )
+

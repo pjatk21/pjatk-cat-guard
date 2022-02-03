@@ -1,10 +1,11 @@
+import base64
 from datetime import datetime
 from enum import Enum
 
 from hikari import Member
 from lightbulb import Context
 from mongoengine import Document, LongField, EnumField, DateTimeField, DynamicField, EmbeddedDocumentField, \
-    EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument, ListField, URLField
+    EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument, ListField, URLField, LazyReferenceField, BinaryField
 
 
 class VerificationMethod(Enum):
@@ -58,6 +59,22 @@ class VerificationLink(Document):
     identity = EmbeddedDocumentField(UserIdentity, required=True)
     secret_code = StringField(required=True)
     trust = ReferenceField(TrustedUser, reverse_delete_rule=NULLIFY, null=True)
+
+
+class VerificationRequest(Document):
+    link = ReferenceField(VerificationLink, required=True, unique=True)
+    photo = BinaryField(required=True)
+    content_type = StringField(required=True)
+    content_name = StringField(required=True)
+    submitted = DateTimeField(default=lambda: datetime.now().astimezone())
+
+    @property
+    def photo_as_base64(self):
+        return base64.b64encode(self.photo).decode()
+
+    @property
+    def wait_time(self):
+        return datetime.now().astimezone() - self.submitted
 
 
 class CaptchaInvites(Document):

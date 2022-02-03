@@ -1,4 +1,4 @@
-from starlette.authentication import AuthenticationBackend
+from starlette.authentication import AuthenticationBackend, AuthCredentials, SimpleUser
 from starlette.requests import HTTPConnection
 
 
@@ -7,3 +7,4 @@ class DiscordAuthBackend(AuthenticationBackend):
         if not conn.session.get('discord'):
             return
 
+        return AuthCredentials(['authenticated']), SimpleUser(conn.session['user'])
