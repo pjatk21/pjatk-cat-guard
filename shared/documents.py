@@ -79,6 +79,11 @@ class VerificationGoogle(EmbeddedDocument):
     raw = DynamicField(null=True)
 
 
+class VerificationRejection(EmbeddedDocument):
+    reason = StringField()
+    when = DateTimeField(default=lambda: datetime.now().astimezone())
+
+
 class Reviewer(Document):
     identity = EmbeddedDocumentField(UserIdentity, required=True)
 
@@ -93,6 +98,7 @@ class VerificationRequest(Document):
     state = EnumField(VerificationState, default=VerificationState.PENDING)
     trust = ReferenceField(TrustedUser, null=True, reverse_delete_rule=CASCADE)
     reviewer = ReferenceField(Reviewer, null=True, reverse_delete_rule=NULLIFY)
+    rejection = EmbeddedDocumentField(VerificationRejection, null=True)
 
     @property
     def photos_as_base64(self):

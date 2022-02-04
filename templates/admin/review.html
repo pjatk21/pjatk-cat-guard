@@ -51,7 +51,7 @@
             </div>
         </div>
         <h2>Dokumenty</h2>
-        {% if vr.state.value == 'id required' %}
+        {% if vr.state.value == 'id required' or (vr.photo_front and vr.photo_back) %}
             {% if vr.photo_front and vr.photo_back %}
                 <div class="uk-margin-small-bottom" uk-lightbox>
                     <a class="uk-button uk-button-default"
@@ -70,18 +70,21 @@
             {% else %}
                 <p>Użytkownik jeszcze nie przesłał dokumentów</p>
             {% endif %}
-        {% else %}
+        {% elif vr.state.value != 'rejected' %}
             <div class="uk-margin-small-bottom">
                 <form method="post" action="{{ request.url_for('admin:id required', rid=vr.id) }}">
                     <button type="submit" class="uk-button uk-button-default">🚨 Poproś o przesłanie legitymacji
                     </button>
                 </form>
             </div>
+        {% else %}
+            <p>Użytkownik nie został poproszony o dokumenty.</p>
         {% endif %}
 
-        <div class="uk-container-small">
+        {% if vr.state.value in ['in review', 'id requested'] %}
+            <div class="uk-container-small">
             <form method="post">
-                <button type="submit" class="uk-button uk-button-primary">✅ Zaakceptuj</button>
+                <button  type="submit" class="uk-button uk-button-primary">✅ Zaakceptuj</button>
             </form>
 
 
@@ -107,5 +110,6 @@
                 <button disabled type="submit" class="uk-button uk-button-danger">🔨 Zbanuj</button>
             </form>
         </div>
+        {% endif %}
     </div>
 {% endblock %}

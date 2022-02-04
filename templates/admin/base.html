@@ -14,8 +14,8 @@
         <div class="uk-navbar-item uk-logo">ガード猫</div>
         <ul class="uk-navbar-nav">
             <li><a href="{{ request.url_for('admin:admin_index') }}">Pulpit</a></li>
-            <li><a href="#">Zatwierdzeni</a></li>
-            <li><a href="#">Odrzuceni</a></li>
+            <li><a disabled href="#">Zatwierdzeni</a></li>
+            <li><a href="{{ request.url_for('admin:rejected') }}">Odrzuceni</a></li>
         </ul>
 
     </div>

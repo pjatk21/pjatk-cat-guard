@@ -19,7 +19,7 @@ from starlette.responses import JSONResponse, RedirectResponse, Response
 
 from shared.db import init_connection
 from shared.documents import VerificationRequest, GuildConfiguration, VerificationState, TrustedUser, \
-    VerificationMethod, Reviewer
+    VerificationMethod, Reviewer, VerificationRejection
 from webpanel.common import templates
 from webpanel.middleware.auth import DiscordAuthBackend
 import webpanel.tasks
@@ -82,6 +82,19 @@ async def admin_logout(request: Request):
 async def admin_index(request: Request):
     awaiting = VerificationRequest.objects(Q(state=VerificationState.IN_REVIEW) | Q(state=VerificationState.ID_REQUIRED)).order_by('-submitted')
     return templates.TemplateResponse('admin/base.html', {'request': request, 'awaiting': awaiting})
+
+
+@app.route('/rejected', name='rejected')
+@requires('authenticated')
+async def admin_rejected(request: Request):
+    if request.query_params.get('search'):
+        s = request.query_params['search']
+        rejected = VerificationRequest.objects(
+            Q(state=VerificationState.REJECTED) & Q(rejection__reason__icontains=s) | Q(google__email__icontains=s)
+        ).order_by('-submitted')
+    else:
+        rejected = VerificationRequest.objects(state=VerificationState.REJECTED).order_by('-submitted')
+    return templates.TemplateResponse('admin/rejected.html', {'request': request, 'rejected': rejected})
 
 
 @app.route('/review/{rid}', name='review')
@@ -158,13 +171,14 @@ async def admin_reject(request: Request):
     except DoesNotExist:
         raise HTTPException(404)
 
+    vr.state = VerificationState.REJECTED
+    vr.rejection = VerificationRejection(reason=form['reason'])
+    vr.reviewer = ObjectId(request.session['reviewer'])
+    vr.save()
+
     tasks = BackgroundTasks()
     tasks.add_task(webpanel.tasks.send_rejection_mail, vr, form['reason'])
     tasks.add_task(webpanel.tasks.send_rejection_dm, vr, form['reason'])
-
-    vr.state = VerificationState.REJECTED
-    vr.reviewer = ObjectId(request.session['reviewer'])
-    vr.save()
 
     return RedirectResponse(request.url_for('admin:admin_index'), status_code=302, background=tasks)
 
