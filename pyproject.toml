@@ -8,8 +8,7 @@ authors = ["Krystian Postek <krystian@postek.eu>"]
 python = ">=3.10,<3.11"
 # Bot related dependencies
 hikari = {extras = ["speedups"], version = "^2.0.0-alpha.104"}
-hikari-lightbulb = ">=2.0.0"
-lightbulb-ext-neon = {git = "https://github.com/neonjonn/lightbulb-ext-neon.git"}
+hikari-lightbulb = "^2.2.0"
 # Cron related dependencies
 aiocron = "*"
 # Web related dependencies
@@ -30,7 +29,7 @@ itsdangerous = "^2.0.1"
 markdownify = "^0.10.1"
 plotly = "^5.5.0"
 pandas = "^1.3.5"
-# kaleido = { git = "https://github.com/plotly/Kaleido.git" }
+kaleido = "0.2.1"
 
 [tool.poetry.dev-dependencies]
 black = "*"

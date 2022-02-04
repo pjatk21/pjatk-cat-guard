@@ -14,7 +14,7 @@ WORKDIR /pjatk
 
 COPY poetry.lock pyproject.toml /pjatk/
 
-RUN poetry install --no-dev && poetry run pip install kaleido
+RUN poetry install --no-dev
 
 ENV PYTHONPATH "${PYTHONPATH}:/pjatk/"
 
