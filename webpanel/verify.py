@@ -98,28 +98,29 @@ class LoginQueueRequest(HTTPEndpoint):
         except DoesNotExist:
             raise HTTPException(404)
 
-        form = await request.form()
-        if form.get('photo-front'):
-            pf: UploadFile = form['photo-front']
-            if pf.content_type != 'application/octet-stream':
-                vr.photo_front = VerificationPhoto(
-                    photo=pf.file.read(),
-                    content_type=pf.content_type,
-                    content_name=pf.filename
-                )
+        if vr.state == VerificationState.ID_REQUIRED:
+            form = await request.form()
+            if form.get('photo-front'):
+                pf: UploadFile = form['photo-front']
+                if pf.content_type != 'application/octet-stream':
+                    vr.photo_front = VerificationPhoto(
+                        photo=pf.file.read(),
+                        content_type=pf.content_type,
+                        content_name=pf.filename
+                    )
 
-        if form.get('photo-back'):
-            pf: UploadFile = form['photo-back']
-            if pf.content_type != 'application/octet-stream':
-                vr.photo_back = VerificationPhoto(
-                    photo=pf.file.read(),
-                    content_type=pf.content_type,
-                    content_name=pf.filename
-                )
+            if form.get('photo-back'):
+                pf: UploadFile = form['photo-back']
+                if pf.content_type != 'application/octet-stream':
+                    vr.photo_back = VerificationPhoto(
+                        photo=pf.file.read(),
+                        content_type=pf.content_type,
+                        content_name=pf.filename
+                    )
 
         tasks = BackgroundTasks()
 
-        if vr.photo_front and vr.photo_back and vr.google:
+        if vr.google and vr.state == VerificationState.PENDING:
             vr.state = VerificationState.IN_REVIEW
             tasks.add_task(webpanel.tasks.notify_reviewers, vr)
 

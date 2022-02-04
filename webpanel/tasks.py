@@ -71,6 +71,20 @@ async def send_rejection_dm(vr: VerificationRequest, message: str):
         await user.send(embed=embed)
 
 
+async def notify_requested_id(vr: VerificationRequest):
+    async with RESTApp().acquire(os.getenv("DISCORD_TOKEN"), "Bot") as bot:
+        user = await bot.fetch_user(vr.identity.user_id)
+        await user.send(
+            embed=Embed(
+                title='Papers please!',
+                description=f'Weryfikujący poprosił o wysłanie legitymacji studenckiej w celu potwierdzenia tożsamości, odwiedź {os.getenv("VERIFICATION_URL")}verify/{vr.code} aby przesłać dokument.',
+                url=f'{os.getenv("VERIFICATION_URL")}verify/{vr.code}',
+                colour=WARN
+            )
+        )
+        # await user.send(f'Weryfikujący poprosił o wysłanie legitymacji studenckiej w celu potwierdzenia tożsamości, odwiedź {os.getenv("VERIFICATION_URL")}verify/{vr.code} aby przesłać dokument.')
+
+
 async def notify_reviewers(vr: VerificationRequest):
     async with RESTApp().acquire(os.getenv("DISCORD_TOKEN"), "Bot") as bot:
         rs = Reviewer.objects(identity__guild_id=vr.identity.guild_id)

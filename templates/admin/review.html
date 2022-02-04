@@ -6,25 +6,39 @@
         {{ vr.google.name }}
         {{ vr.google.email }}
         <h2>Dokumenty</h2>
-        <div uk-lightbox>
-            <a class="uk-button uk-button-default"
-               href="{{ request.url_for('admin:photoproxy', side='front', rid=vr.id) }}" data-alt="Przód">
-                Przednia strona dokumentu
-                <img style="height: 120px; margin: 20px" loading="lazy"
-                     src="{{ request.url_for('admin:photoproxy', side='front', rid=vr.id) }}">
-            </a>
-            <a class="uk-button uk-button-default"
-               href="{{ request.url_for('admin:photoproxy', side='back', rid=vr.id) }}" data-alt="Tył">
-                Przednia strona dokumentu
-                <img style="height: 120px; margin: 20px" loading="lazy"
-                     src="{{ request.url_for('admin:photoproxy', side='back', rid=vr.id) }}">
-            </a>
-        </div>
+        {% if vr.state.value == 'id required' %}
+            {% if vr.photo_front and vr.photo_back %}
+                <div class="uk-margin-small-bottom" uk-lightbox>
+                    <a class="uk-button uk-button-default"
+                       href="{{ request.url_for('admin:photoproxy', side='front', rid=vr.id) }}" data-alt="Przód">
+                        Przednia strona dokumentu
+                        <img style="height: 120px; margin: 20px" loading="lazy"
+                             src="{{ request.url_for('admin:photoproxy', side='front', rid=vr.id) }}">
+                    </a>
+                    <a class="uk-button uk-button-default"
+                       href="{{ request.url_for('admin:photoproxy', side='back', rid=vr.id) }}" data-alt="Tył">
+                        Przednia strona dokumentu
+                        <img style="height: 120px; margin: 20px" loading="lazy"
+                             src="{{ request.url_for('admin:photoproxy', side='back', rid=vr.id) }}">
+                    </a>
+                </div>
+            {% else %}
+                <p>Użytkownik jeszcze nie przesłał dokumentów</p>
+            {% endif %}
+        {% else %}
+            <div class="uk-margin-small-bottom">
+                <form method="post" action="{{ request.url_for('admin:id required', rid=vr.id) }}">
+                    <button type="submit" class="uk-button uk-button-default">🚨 Poproś o przesłanie legitymacji
+                    </button>
+                </form>
+            </div>
+        {% endif %}
 
         <div class="uk-container-small">
             <form method="post">
                 <button type="submit" class="uk-button uk-button-primary">✅ Zaakceptuj</button>
             </form>
+
 
             <button uk-toggle="target: #confirm-{{ vr.id }}" class="uk-button uk-button-secondary">🗑 Odrzuć</button>
             <div id="confirm-{{ vr.id }}" uk-modal>

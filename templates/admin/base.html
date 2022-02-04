@@ -29,9 +29,10 @@
     <div class="uk-container">
         {% if awaiting|length > 0 %}
             <h2>Oczekujące weryfikacje</h2>
-            <table class="uk-table">
+            <table class="uk-table uk-table-divider uk-table-striped">
                 <thead>
                 <tr>
+                    <th>Nr studenta</th>
                     <th>Imię i nazwisko</th>
                     <th>User</th>
                     <th>Czas oczekiwania</th>
@@ -42,6 +43,9 @@
                 {% for vr in awaiting %}
                     <tr>
                         <td>
+                            {{ vr.no }}
+                        </td>
+                        <td>
                             {{ vr.google.name }}
                         </td>
                         <td>
@@ -49,6 +53,9 @@
                         </td>
                         <td>
                             {{ vr.wait_time() }}
+                            {% if vr.state.value == 'id required' %}
+                                <span class="uk-badge">id required</span>
+                            {% endif %}
                         </td>
                         <td>
                             <div class="uk-container-small">

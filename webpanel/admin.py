@@ -5,7 +5,7 @@ from authlib.integrations.starlette_client import OAuth
 from bson import ObjectId
 from dotenv import load_dotenv
 from hikari import RESTApp
-from mongoengine import DoesNotExist
+from mongoengine import DoesNotExist, Q, NotUniqueError
 from starlette.applications import Starlette
 from starlette.authentication import requires
 from starlette.background import BackgroundTask, BackgroundTasks
@@ -63,7 +63,6 @@ async def admin_oauth(request: Request):
         except DoesNotExist:
             return templates.TemplateResponse('message.html', {'request': request, 'header': 'Nie jesteś wyznaczony na sprawdzającego.', 'paragraphs': ['sorka']})
 
-
         request.session['discord'] = token
         request.session['user'] = str(user)
         request.session['discord']['id'] = user.id
@@ -81,7 +80,7 @@ async def admin_logout(request: Request):
 @app.route('/')
 @requires('authenticated')
 async def admin_index(request: Request):
-    awaiting = VerificationRequest.objects(state=VerificationState.IN_REVIEW)
+    awaiting = VerificationRequest.objects(Q(state=VerificationState.IN_REVIEW) | Q(state=VerificationState.ID_REQUIRED)).order_by('-submitted')
     return templates.TemplateResponse('admin/base.html', {'request': request, 'awaiting': awaiting})
 
 
@@ -106,9 +105,14 @@ class AdminReview(HTTPEndpoint):
 
         trust = TrustedUser()
         trust.identity = vr.identity
-        trust.student_number = re.search(r's\d+', vr.google.email).string
+        trust.student_number = vr.no
         trust.verification_method = VerificationMethod.REVIEW
-        trust.save()
+
+        try:
+            trust.save()
+        except NotUniqueError:
+            vr.delete()
+            return templates.TemplateResponse('admin/autodelete.html', {'request': request})
 
         vr.trust = trust
         vr.state = VerificationState.ACCEPTED
@@ -120,6 +124,23 @@ class AdminReview(HTTPEndpoint):
         tasks.add_task(webpanel.tasks.send_trust_confirmation, vr)
 
         return RedirectResponse(request.url_for('admin:admin_index'), background=tasks, status_code=302)
+
+
+@app.route('/id-req/{rid}', name='id required', methods=['POST'])
+@requires('authenticated')
+async def admin_id_req(request: Request):
+    try:
+        vr: VerificationRequest = VerificationRequest.objects(id=request.path_params['rid']).get()
+    except DoesNotExist:
+        raise HTTPException(404)
+
+    vr.state = VerificationState.ID_REQUIRED
+    vr.save()
+
+    tasks = BackgroundTasks()
+    tasks.add_task(webpanel.tasks.notify_requested_id, vr)
+
+    return RedirectResponse(request.url_for('admin:review', rid=vr.id), status_code=302, background=tasks)
 
 
 @app.route('/reject/{rid}', name='reject', methods=['POST'])

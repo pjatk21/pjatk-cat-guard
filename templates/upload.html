@@ -7,7 +7,8 @@
     </div>
     <div class="content-frame">
         <h1>Dodatkowe formalności</h1>
-        {% if not vr.photo_front or not vr.photo_back %}
+        <p>Status zgłoszenia: <span style="font-weight: bold; color: greenyellow">{{ vr.state.value }}</span></p>
+        {% if vr.state.value == 'id required' %}
             <div class="content-frame">
                 <h3 style="color: red; font-weight: bold">Zanim wyślesz</h3>
                 <p>Dane, które weryfikujemy</p>
@@ -23,73 +24,53 @@
                     <li>PESEL</li>
                 </ul>
             </div>
-        {% else %}
-            <p>Status zgłoszenia: <span style="font-weight: bold; color: greenyellow">{{ vr.state.value }}</span></p>
-        {% endif %}
-        <form method="post" enctype="multipart/form-data">
-            <h3>Dokumenty</h3>
-            <p>Wszystkie zdjęcia są usuwane po stwierdzeniu zgodności danych.</p>
+            <form method="post" enctype="multipart/form-data">
+                <h3>Dokumenty</h3>
+                <p>Wszystkie zdjęcia są usuwane po stwierdzeniu zgodności danych.</p>
 
-            <div class="input-boxy">
-                <label>
-                    Front legitymacji studenckiej
-                    {% if vr.photo_front == None %}
-                        <input name="photo-front" type="file" accept="image/*, image/heic">
-                    {% else %}
-                        ✅ przesłano
-                    {% endif %}
-                </label>
-            </div>
-
-            <div class="input-boxy">
-                <label>
-                    Tył legitymacji studenckiej
-                    {% if vr.photo_back == None %}
-                        <input name="photo-back" type="file" accept="image/*, image/heic">
-                    {% else %}
-                        ✅ przesłano
-                    {% endif %}
-                </label>
-
-            </div>
-            <h3>Kontakt</h3>
-            <div class="input-boxy">
-                {% if vr.google == None %}
-                    <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_black"
-                         data-text="continue_with"
-                         data-size="large" data-logo_alignment="left">
-                    </div>
-                {% else %}
+                <div class="input-boxy">
                     <label>
-                        Studenckie konto google ✅ przekazano dane
+                        Front legitymacji studenckiej
+                        {% if vr.photo_front == None %}
+                            <input name="photo-front" type="file" accept="image/*, image/heic">
+                        {% else %}
+                            ✅ przesłano
+                        {% endif %}
                     </label>
-                {% endif %}
-            </div>
-            <!-- <h3>Zgody i oświadczenia</h3>
-            <div class="input-boxy">
-                <label>
-                    <input name="regulations" type="checkbox">
-                    Oświadczam, że zapoznałem się z <a href="https://github.com/pjatk21/statut2webhook/blob/main/STATUT.md">statutem</a> serwera.
-                </label>
-            </div>
-            <div class="input-boxy">
-                <label>
-                    <input name="no-dziekan" type="checkbox">
-                    Oświadczam, że nie jestem pracownikiem PJATK.
-                </label>
-            </div>
-            <div class="input-boxy">
-                <label>
-                    <input name="privacy-policy" type="checkbox">
-                    Zgadzam się na przetwarzanie moich danych osobowych, w przedstawiony <a href="https://github.com/pjatk21/pjatk-cat-guard/blob/main/PRIVACY.md">tutaj</a> sposób.
-                </label>
-            </div> -->
-            {% if vr.state.value != 'in review' %}
+                </div>
+
+                <div class="input-boxy">
+                    <label>
+                        Tył legitymacji studenckiej
+                        {% if vr.photo_back == None %}
+                            <input name="photo-back" type="file" accept="image/*, image/heic">
+                        {% else %}
+                            ✅ przesłano
+                        {% endif %}
+                    </label>
+                </div>
+            {% if not vr.photo_front and not photo_back %}
                 <button type="submit">Wyślij</button>
-            {% else %}
-                <p style="color: greenyellow">Oczekuj kolejnych wiadomości na mailu/Discord DM</p>
             {% endif %}
-            <input name="ignore me" type="hidden">
-        </form>
+            </form>
+        {% else %}
+        <h3>Konto studenckie</h3>
+        <div class="input-boxy">
+            {% if vr.google == None %}
+                <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_black"
+                     data-text="continue_with"
+                     data-size="large" data-logo_alignment="left">
+                </div>
+            {% else %}
+                <label>
+                    Studenckie konto google ✅ przekazano dane
+                </label>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if vr.state.value == 'in review' or vr.state.value == 'id required' %}
+            <p style="color: greenyellow">Oczekuj kolejnych wiadomości na mailu/Discord DM</p>
+        {% endif %}
     </div>
 {% endblock %}

@@ -1,4 +1,5 @@
 import base64
+import re
 from datetime import datetime
 from enum import Enum
 
@@ -21,6 +22,7 @@ class VerificationMethod(Enum):
 class VerificationState(Enum):
     PENDING = 'pending'  # waiting for user to fill all required data
     IN_REVIEW = 'in review'  # waiting to be reviewed
+    ID_REQUIRED = 'id required'  # waiting to be reviewed
     ACCEPTED = 'accepted'  # accepted by reviewer
     REJECTED = 'rejected'  # rejected by reviewer (missing data, typos)
     BANNED = 'banned'  # rejected by reviewer (fraud, fake id, annoying)
@@ -53,7 +55,7 @@ class UserIdentity(EmbeddedDocument):
 class TrustedUser(Document):
     identity = EmbeddedDocumentField(UserIdentity, unique=True, required=True)
     verification_method = EnumField(VerificationMethod, required=True)
-    student_number = StringField(r's\d+')
+    student_number = StringField(r'(s|pd)\d+')
     when = DateTimeField(default=lambda: datetime.now().astimezone())
 
 
@@ -95,6 +97,10 @@ class VerificationRequest(Document):
     @property
     def photos_as_base64(self):
         return base64.b64encode(self.photo_front.photo).decode(), base64.b64encode(self.photo_back.photo).decode()
+
+    @property
+    def no(self):
+        return re.match(r'(s|pd)\d+', self.google.email).group()
 
     def wait_time(self):
         td = datetime.now().astimezone() - self.submitted
