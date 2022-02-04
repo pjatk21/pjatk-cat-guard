@@ -98,11 +98,6 @@ class LoginQueueRequest(HTTPEndpoint):
         except DoesNotExist:
             raise HTTPException(404)
 
-        if vr.photo_front and vr.photo_back and vr.google:
-            vr.state = VerificationState.IN_REVIEW
-            vr.save()
-            return RedirectResponse(request.url_for('verify:form', secret=secret), status_code=302)
-
         form = await request.form()
         if form.get('photo-front'):
             pf: UploadFile = form['photo-front']
