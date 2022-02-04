@@ -120,6 +120,9 @@ class LoginQueueRequest(HTTPEndpoint):
                     content_name=pf.filename
                 )
 
+        if vr.photo_front and vr.photo_back and vr.google:
+            vr.state = VerificationState.IN_REVIEW
+
         vr.save()
 
         return RedirectResponse(request.url_for('verify:form', secret=secret), status_code=302)
