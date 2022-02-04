@@ -10,7 +10,7 @@ from lightbulb.context import Context
 
 from gadoneko.checks import untrusted_only, trusted_only, guild_configured
 from shared.colors import INFO
-from shared.documents import VerificationLink, UserIdentity, TrustedUser, GuildConfiguration
+from shared.documents import UserIdentity, TrustedUser, GuildConfiguration, VerificationRequest
 
 plugin = Plugin('Trust')
 
@@ -26,18 +26,18 @@ def unload(bot):
 def start_verification_flow(guild: Guild, user: User):
     linking_secret_hash = hashlib.sha256()
     linking_secret_hash.update(random.randbytes(512))
-    linking_secret = linking_secret_hash.hexdigest()[:4] + "-" + linking_secret_hash.hexdigest()[4:8]
+    linking_secret = str(guild.id)[:3] + "-" + linking_secret_hash.hexdigest()[:3] + "-" + linking_secret_hash.hexdigest()[3:6] + "-" + linking_secret_hash.hexdigest()[6:9]
 
-    link = VerificationLink()
-    link.identity = UserIdentity()
-    link.identity.guild_id = guild.id
-    link.identity.user_id = user.id
-    link.identity.user_name = str(user)
-    link.identity.guild_name = guild.name
-    link.secret_code = linking_secret
-    link.save()
+    vr = VerificationRequest()
+    vr.identity = UserIdentity()
+    vr.identity.guild_id = guild.id
+    vr.identity.user_id = user.id
+    vr.identity.user_name = str(user)
+    vr.identity.guild_name = guild.name
+    vr.code = linking_secret
+    vr.save()
 
-    return link
+    return vr
 
 
 @plugin.command()
@@ -47,7 +47,7 @@ def start_verification_flow(guild: Guild, user: User):
 async def verify(ctx: Context):
     link = start_verification_flow(ctx.get_guild(), ctx.user)
 
-    await ctx.author.send(f"Link do logowania: {os.getenv('VERIFICATION_URL')}oauth/{link.secret_code}")
+    await ctx.author.send(f"Link do logowania: {os.getenv('VERIFICATION_URL')}verify/{link.code}")
     await ctx.respond("Wysłano link do logowania na DM.")
 
 
@@ -62,7 +62,7 @@ async def auto_verify(event: MemberCreateEvent):
                     'Taki proces weryfikacji nie trwa dłużej niż minutę.',
         color=INFO, timestamp=datetime.now().astimezone()
     ).add_field(
-        'Twój link do weryfikacji', f"{os.getenv('VERIFICATION_URL')}oauth/{link.secret_code}"
+        'Twój link do weryfikacji', f"{os.getenv('VERIFICATION_URL')}verify/{link.code}"
     )
 
     await event.user.send(embed=embed)

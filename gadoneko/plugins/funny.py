@@ -2,8 +2,9 @@ import logging
 import re
 
 import yaml
-from hikari.events import GuildMessageCreateEvent
 from lightbulb import Plugin
+from webpanel.common import templates
+from hikari.events import GuildMessageCreateEvent
 
 plugin = Plugin('hehe funny responses')
 logger = logging.getLogger('gadoneko.plugins.funny')
@@ -13,7 +14,7 @@ hehe_funny = []
 
 def load(bot):
     global hehe_funny
-    with open('static/funny.yml', 'r') as f:
+    with open('gadoneko/static/funny.yml', 'r') as f:
         hehe_funny = yaml.safe_load(f)
     bot.add_plugin(plugin)
 

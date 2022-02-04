@@ -11,11 +11,13 @@ from lightbulb import Plugin, commands, implements, command, add_checks, Check, 
 from lightbulb.checks import guild_only
 from lightbulb.context import Context
 from mongoengine import Q
+from mongoengine.errors import NotUniqueError
 
 from gadoneko.checks import staff_only, bot_owner_only
 from gadoneko.util.permissions import update_permissions
 from shared.colors import RESULT, OK
-from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod, CronHealthCheck
+from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod, CronHealthCheck, \
+    Reviewer
 from shared.formatting import code_block
 from shared.progressbar import ProgressBar
 from shared.util import chunks
@@ -282,3 +284,21 @@ async def update(ctx: Context):
             await ctx.respond('huh???')
 
 
+@admin.child()
+@add_checks(guild_only, Check(bot_owner_only))
+@option('persona', 'Rola użytkowników, którzy mają zostać wyciszeni', type=Member)
+@command('reviewer', 'Mianuje na weryfikatora')
+@implements(commands.SlashSubCommand)
+async def add_reviewer(ctx: Context):
+    try:
+        r = Reviewer()
+        i = UserIdentity()
+        i.guild_name = ctx.get_guild().name
+        i.guild_id = ctx.guild_id
+        i.user_name = str(ctx.options.persona)
+        i.user_id = ctx.options.persona.id
+        r.identity = i
+        r.save()
+        await ctx.respond(f'Dodano {ctx.options.persona.mention} jako sprawdzającego!')
+    except NotUniqueError:
+        await ctx.respond('już jest ale ok')
