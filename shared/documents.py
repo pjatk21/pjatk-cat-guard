@@ -99,20 +99,3 @@ class CronHealthCheck(Document):
     identity = EmbeddedDocumentField(UserIdentity, required=True)
     widget_channel_id = LongField(required=True)
     widget_message_id = LongField(required=True)
-
-
-class CommonRepoFile(Document):
-    message_id = LongField(required=True)
-    file_url = URLField(required=True)
-    file_name = StringField(required=True)
-    file_type = StringField(required=True)
-    file_hash = StringField(unique=True)
-    added = DateTimeField(required=True)
-    tags = ListField()
-    extra = DynamicField()
-    # transcription = StringField(null=False)
-    # metadata = DynamicField()
-
-
-class ParsedMail(DynamicDocument):
-    when = DateTimeField(default=lambda: datetime.now().astimezone())

@@ -28,9 +28,6 @@ services:
     entrypoint: poetry run python3 -m uvicorn webpanel:app --host 0.0.0.0 --reload --log-level debug
   database:
     image: mongo:latest
-    # uncomment if you want to debug db manually
-    # ports:
-    #   - "27017:27017"
   database-viewer:
     image: mongo-express
     depends_on:
