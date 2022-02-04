@@ -3,12 +3,14 @@ from google.auth.transport import requests
 from google.oauth2 import id_token
 from mongoengine import Q
 from starlette.applications import Starlette
+from starlette.background import BackgroundTasks
 from starlette.datastructures import UploadFile
 from starlette.endpoints import HTTPEndpoint
 from starlette.exceptions import HTTPException
 from starlette.requests import Request
 from starlette.responses import JSONResponse, PlainTextResponse, RedirectResponse
 
+import webpanel.tasks
 from shared.db import init_connection
 from shared.documents import VerificationRequest, VerificationPhoto, VerificationGoogle, TrustedUser, VerificationState
 from webpanel.common import templates
@@ -120,9 +122,12 @@ class LoginQueueRequest(HTTPEndpoint):
                     content_name=pf.filename
                 )
 
+        tasks = BackgroundTasks()
+
         if vr.photo_front and vr.photo_back and vr.google:
             vr.state = VerificationState.IN_REVIEW
+            tasks.add_task(webpanel.tasks.notify_reviewers, vr)
 
         vr.save()
 
-        return RedirectResponse(request.url_for('verify:form', secret=secret), status_code=302)
+        return RedirectResponse(request.url_for('verify:form', secret=secret), status_code=302, background=tasks)

@@ -3,10 +3,10 @@ import re
 
 from hikari import RESTApp, Embed
 
-from sendgrid import SendGridAPIClient, From, To, Mail
+from sendgrid import SendGridAPIClient, Mail
 
-from shared.colors import OK, WARN
-from shared.documents import VerificationRequest, TrustedUser, VerificationMethod, GuildConfiguration
+from shared.colors import *
+from shared.documents import VerificationRequest, TrustedUser, VerificationMethod, GuildConfiguration, Reviewer
 
 
 async def apply_trusted_role(tu: TrustedUser, conf: GuildConfiguration):
@@ -69,3 +69,17 @@ async def send_rejection_dm(vr: VerificationRequest, message: str):
         )
 
         await user.send(embed=embed)
+
+
+async def notify_reviewers(vr: VerificationRequest):
+    async with RESTApp().acquire(os.getenv("DISCORD_TOKEN"), "Bot") as bot:
+        rs = Reviewer.objects(identity__guild_id=vr.identity.guild_id)
+
+        for reviewer in [await bot.fetch_user(r.user_id) for r in rs]:
+            await reviewer.send(
+                embed=Embed(
+                    title='Nowa osoba do weryfikacji!',
+                    description=f'{vr.identity.user_name} oczekuje na weryfikację!',
+                    url='https://free.itny.me/admin/login'
+                )
+            )
