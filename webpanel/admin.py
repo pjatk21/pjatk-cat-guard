@@ -7,7 +7,7 @@ from hikari import RESTApp
 from mongoengine import DoesNotExist
 from starlette.applications import Starlette
 from starlette.authentication import requires
-from starlette.background import BackgroundTask
+from starlette.background import BackgroundTask, BackgroundTasks
 from starlette.endpoints import HTTPEndpoint
 from starlette.exceptions import HTTPException
 from starlette.middleware import Middleware
@@ -111,9 +111,11 @@ class AdminReview(HTTPEndpoint):
         vr.state = VerificationState.ACCEPTED
         vr.save()
 
-        task = BackgroundTask(webpanel.tasks.apply_trusted_role, trust, conf)
+        tasks = BackgroundTasks()
+        tasks.add_task(webpanel.tasks.apply_trusted_role, trust, conf)
+        tasks.add_task(webpanel.tasks.send_trust_confirmation, vr)
 
-        return RedirectResponse(request.url_for('admin:admin_index'), background=task, status_code=302)
+        return RedirectResponse(request.url_for('admin:admin_index'), background=tasks, status_code=302)
 
 
 @app.route('/reject/{rid}', name='reject', methods=['POST'])
@@ -126,11 +128,13 @@ async def admin_reject(request: Request):
     except DoesNotExist:
         raise HTTPException(404)
 
-    # TODO: announce rejection
+    tasks = BackgroundTasks()
+    tasks.add_task(webpanel.tasks.send_rejection_mail, vr, form['reason'])
+    tasks.add_task(webpanel.tasks.send_rejection_dm, vr, form['reason'])
 
     vr.state = VerificationState.REJECTED
     vr.save()
-    return RedirectResponse(request.url_for('admin:admin_index'), status_code=302)
+    return RedirectResponse(request.url_for('admin:admin_index'), status_code=302, background=tasks)
 
 
 @app.route('/photoproxy/{side}-{rid}', name='photoproxy')

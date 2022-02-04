@@ -81,7 +81,11 @@
                     Zgadzam się na przetwarzanie moich danych osobowych, w przedstawiony <a href="https://github.com/pjatk21/pjatk-cat-guard/blob/main/PRIVACY.md">tutaj</a> sposób.
                 </label>
             </div> -->
+        {% if vr.state.value != 'in review' %}
             <button type="submit">Wyślij</button>
+        {% else %}
+            <p style="color: greenyellow">Oczekuj kolejnych wiadomości na mailu/Discord DM</p>
+        {% endif %}
         </form>
     </div>
 {% endblock %}
