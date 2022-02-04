@@ -98,3 +98,17 @@ async def notify_reviewers(vr: VerificationRequest):
                     colour=INFO
                 )
             )
+
+
+async def notify_reviewer_docs(vr: VerificationRequest):
+    async with RESTApp().acquire(os.getenv("DISCORD_TOKEN"), "Bot") as bot:
+        rs = Reviewer.objects(id=vr.reviewer.id).get()
+        reviewer = await bot.fetch_user(rs.identity.user_id)
+        await reviewer.send(
+            embed=Embed(
+                title='Dokumenty do weryfikacji!',
+                description=f'{vr.identity.user_name} oczekuje na weryfikację dokumentów!',
+                url='https://free.itny.me/admin/login',
+                colour=INFO
+            )
+        )

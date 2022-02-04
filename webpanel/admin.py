@@ -118,6 +118,7 @@ class AdminReview(HTTPEndpoint):
         vr.state = VerificationState.ACCEPTED
         vr.reviewer = ObjectId(request.session['reviewer'])
         vr.save()
+        VerificationRequest.objects(identity=vr.identity, id__ne=vr.id, state=VerificationState.PENDING).delete()
 
         tasks = BackgroundTasks()
         tasks.add_task(webpanel.tasks.apply_trusted_role, trust, conf)
@@ -135,6 +136,7 @@ async def admin_id_req(request: Request):
         raise HTTPException(404)
 
     vr.state = VerificationState.ID_REQUIRED
+    vr.reviewer = ObjectId(request.session['reviewer'])
     vr.save()
 
     tasks = BackgroundTasks()
@@ -160,6 +162,7 @@ async def admin_reject(request: Request):
     vr.state = VerificationState.REJECTED
     vr.reviewer = ObjectId(request.session['reviewer'])
     vr.save()
+
     return RedirectResponse(request.url_for('admin:admin_index'), status_code=302, background=tasks)
 
 
