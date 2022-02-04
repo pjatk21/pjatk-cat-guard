@@ -81,7 +81,7 @@
             <p>Użytkownik nie został poproszony o dokumenty.</p>
         {% endif %}
 
-        {% if vr.state.value in ['in review', 'id requested'] %}
+        {% if vr.state.value in ['in review', 'id required'] %}
             <div class="uk-container-small">
             <form method="post">
                 <button  type="submit" class="uk-button uk-button-primary">✅ Zaakceptuj</button>
