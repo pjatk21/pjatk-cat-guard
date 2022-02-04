@@ -14,7 +14,7 @@ hehe_funny = []
 
 def load(bot):
     global hehe_funny
-    with open('static/funny.yml', 'r') as f:
+    with open('gadoneko/static/funny.yml', 'r') as f:
         hehe_funny = yaml.safe_load(f)
     bot.add_plugin(plugin)
 
