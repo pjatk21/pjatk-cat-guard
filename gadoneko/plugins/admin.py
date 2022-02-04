@@ -15,7 +15,7 @@ from mongoengine import Q
 from gadoneko.checks import staff_only, bot_owner_only
 from gadoneko.util.permissions import update_permissions
 from shared.colors import RESULT, OK
-from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod, CronHealthCheck, CommonRepoFile
+from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod, CronHealthCheck
 from shared.formatting import code_block
 from shared.progressbar import ProgressBar
 from shared.util import chunks
@@ -212,23 +212,6 @@ async def cron_health(ctx: Context):
         upsert=True, widget_message_id=widget_like.id, widget_channel_id=ctx.get_channel().id
     )
     await ctx.respond('Ustawiono widget CRON!')
-
-
-@admin.child()
-@option('query', 'Zapytanie')
-@command('arcrm', 'Usuwa określone pliki', inherit_checks=True)
-@implements(commands.SlashSubCommand)
-async def arc_rm(ctx: Context):
-    tq = ctx.options.query
-
-    if tq == 'yes, all of them':
-        resp = CommonRepoFile.objects().delete()
-        await ctx.respond(str(resp))
-        return
-
-    rm_query = Q(file_name__contains=tq) | Q(file_hash__startswith=tq) | Q(file_type=tq) | Q(tags__contains=tq)
-    resp = CommonRepoFile.objects(rm_query).delete()
-    await ctx.respond(str(resp))
 
 
 @admin.child()
