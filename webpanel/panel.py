@@ -18,7 +18,7 @@ from hikari import RESTApp
 
 from shared.db import init_connection
 from shared.documents import GuildConfiguration, VerificationRequest
-from .endpoints import invites, general, mailing
+from .endpoints import invites, general
 from .middleware.auth import DiscordAuthBackend
 
 load_dotenv()

@@ -2,7 +2,6 @@ import logging
 import os
 from datetime import datetime
 
-import mongoengine
 import sentry_sdk as sentry
 from hikari import Embed, NotFoundError
 from lightbulb import Plugin

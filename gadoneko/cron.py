@@ -2,26 +2,26 @@ import asyncio
 import json
 import logging
 import os
-from datetime import datetime, timedelta
 import random
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import aiocron
 import millify
+import sentry_sdk as sentry
 import yaml
 from aiohttp import ClientSession
 from dotenv import load_dotenv
 from hikari import RESTApp, Embed, Member
 from hikari.errors import NotFoundError, RateLimitedError, ForbiddenError
 
-from shared.util import chunks
+from gadoneko._metadata import __version__
 from shared.colors import RESULT, OK
 from shared.db import init_connection
 from shared.documents import CronHealthCheck
-import sentry_sdk as sentry
-from gadoneko._metadata import __version__
 from shared.formatting import code_block
 from shared.graphs import create_graph
+from shared.util import chunks
 
 load_dotenv()
 

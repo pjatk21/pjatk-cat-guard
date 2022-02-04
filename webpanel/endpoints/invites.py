@@ -2,8 +2,9 @@ import os
 from datetime import timedelta, datetime
 
 from aiohttp import ClientSession
-from google.oauth2 import id_token
 from google.auth.transport import requests
+from google.oauth2 import id_token
+from hikari import RESTApp, Embed
 from mongoengine import Q
 from starlette.datastructures import UploadFile
 from starlette.endpoints import HTTPEndpoint
@@ -14,7 +15,6 @@ from starlette.responses import PlainTextResponse
 from shared.colors import OK
 from shared.documents import VerificationLink, TrustedUser, GuildConfiguration, VerificationMethod, VerificationRequest
 from webpanel.common import templates
-from hikari import RESTApp, Embed
 
 
 async def gen_guild_invite(channel_id: int):

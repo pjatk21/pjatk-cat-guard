@@ -1,5 +1,3 @@
-import os
-
 from starlette.templating import Jinja2Templates
 # from starlette_discord import DiscordOAuthClient
 

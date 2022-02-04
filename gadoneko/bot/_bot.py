@@ -2,9 +2,10 @@ import os
 
 import yaml
 from dotenv import load_dotenv
-from hikari import Intents, Status, Activity, ActivityType, commands, Embed
+from hikari import Intents, Status, Activity, ActivityType, Embed
 from hikari.events import ShardReadyEvent, ShardDisconnectedEvent
 from lightbulb import BotApp, add_checks, Check, command, commands, implements, Context
+
 from doctor import DockerDoctor
 from gadoneko.checks import bot_owner_only
 
