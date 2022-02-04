@@ -10,10 +10,19 @@ from mongoengine import Document, LongField, EnumField, DateTimeField, DynamicFi
 
 class VerificationMethod(Enum):
     OAUTH = 'oauth'  # user verified by OAuth flow
+    REVIEW = 'review'  # user verified by review
     ROLE_ASSIGNED = 'role'  # user verified manually by staff
     ROLE_ENFORCED = 'enforced'  # staff has run command
     MIGRATED = 'migrated'  # user added to the collection due to migration
     CONTEXT_PROVIDED = 'context'  # user added to the collection, while checking his permissions
+
+
+class VerificationState(Enum):
+    PENDING = 'pending'  # waiting for user to fill all required data
+    IN_REVIEW = 'in review'  # waiting to be reviewed
+    ACCEPTED = 'accepted'  # accepted by reviewer
+    REJECTED = 'rejected'  # rejected by reviewer (missing data, typos)
+    BANNED = 'banned'  # rejected by reviewer (fraud, fake id, annoying)
 
 
 class UserIdentity(EmbeddedDocument):
@@ -43,8 +52,7 @@ class UserIdentity(EmbeddedDocument):
 class TrustedUser(Document):
     identity = EmbeddedDocumentField(UserIdentity, unique=True, required=True)
     verification_method = EnumField(VerificationMethod, required=True)
-    verification_context = DynamicField()
-    student_number = StringField(r's\d{5}')
+    student_number = StringField(r's\d+')
     when = DateTimeField(default=lambda: datetime.now().astimezone())
 
 
@@ -55,26 +63,40 @@ class GuildConfiguration(DynamicDocument):
     additional_staff_roles = ListField(LongField())
 
 
-class VerificationLink(Document):
-    identity = EmbeddedDocumentField(UserIdentity, required=True)
-    secret_code = StringField(required=True)
-    trust = ReferenceField(TrustedUser, reverse_delete_rule=NULLIFY, null=True)
-
-
-class VerificationRequest(Document):
-    link = ReferenceField(VerificationLink, required=True, unique=True)
+class VerificationPhoto(EmbeddedDocument):
     photo = BinaryField(required=True)
     content_type = StringField(required=True)
     content_name = StringField(required=True)
+    uploaded = DateTimeField(default=lambda: datetime.now().astimezone())
+
+
+class VerificationGoogle(EmbeddedDocument):
+    email = StringField(required=True)
+    name = StringField(required=True)
+    raw = DynamicField(null=True)
+
+
+class VerificationRequest(Document):
+    identity = EmbeddedDocumentField(UserIdentity, required=True)
+    code = StringField(required=True)
+    photo_front = EmbeddedDocumentField(VerificationPhoto, null=True)
+    photo_back = EmbeddedDocumentField(VerificationPhoto, null=True)
+    google = EmbeddedDocumentField(VerificationGoogle, null=True)
     submitted = DateTimeField(default=lambda: datetime.now().astimezone())
+    state = EnumField(VerificationState, default=VerificationState.PENDING)
+    trust = ReferenceField(TrustedUser, null=True)
 
     @property
-    def photo_as_base64(self):
-        return base64.b64encode(self.photo).decode()
+    def photos_as_base64(self):
+        return base64.b64encode(self.photo_front).decode(), base64.b64encode(self.photo_back).decode()
 
-    @property
     def wait_time(self):
-        return datetime.now().astimezone() - self.submitted
+        td = datetime.now().astimezone() - self.submitted
+        if td.seconds < 60:
+            return 'Mniej niż minuta'
+        if td.days > 1:
+            return 'Ponad dzień'
+        return f'{td.seconds // 3600}h {td.seconds // 60}m'
 
 
 class CaptchaInvites(Document):

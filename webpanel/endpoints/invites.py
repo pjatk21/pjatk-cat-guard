@@ -13,7 +13,7 @@ from starlette.requests import Request
 from starlette.responses import PlainTextResponse
 
 from shared.colors import OK
-from shared.documents import VerificationLink, TrustedUser, GuildConfiguration, VerificationMethod, VerificationRequest
+from shared.documents import TrustedUser, GuildConfiguration, VerificationMethod, VerificationRequest
 from webpanel.common import templates
 
 
@@ -49,6 +49,7 @@ class GuildInviteEndpoint(HTTPEndpoint):
                     )
 
 
+'''
 class LoginGate(HTTPEndpoint):
     async def get(self, request: Request):
         secret = request.path_params["secret"]
@@ -162,4 +163,4 @@ class LoginQueueRequest(HTTPEndpoint):
             'message.html',
             {'request': request, 'header': 'Twoje dane zostały przekazane do ręcznej weryfikacji!'}
         )
-
+'''

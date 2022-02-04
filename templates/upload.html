@@ -1,34 +1,86 @@
 {% extends 'home.html' %}
 {% block body %}
-    <div class="content-frame" style="text-align: center">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <div id="g_id_onload" data-client_id="415405805208-n7irpdbl5go8cs5jf15i8005gd53iume.apps.googleusercontent.com"
+         data-context="signup" data-ux_mode="popup" data-state="{{ secret }}" data-login_uri="{{ redirect }}"
+         data-auto_prompt="false">
+    </div>
+    <div class="content-frame">
         <h1>Dodatkowe formalności</h1>
-        <p>Zanim przejdziemy dalej, potrzebujemy zdjęcia twojej legitymacji studenckiej.</p>
+        {% if not vr.photo_front or not vr.photo_back %}
+        <p style="color: red; font-weight: bold">Zanim wyślesz</p>
+            <p>Dane, które weryfikujemy</p>
+            <ul>
+                <li>numer studenta</li>
+                <li>imię i nazwisko</li>
+                <li>ważność legitymacji</li>
+            </ul>
+            <p>Dane, których nie weryfikujemy <small>i powinien*ś ukryć/zamazać</small></p>
+            <ul>
+                <li>zdjęcie</li>
+                <li>PESEL</li>
+            </ul>
+        {% else %}
+            <p>Status zgłoszenia: <span style="font-weight: bold; color: greenyellow">{{ vr.state }}</span></p>
+        {% endif %}
         <form method="post" enctype="multipart/form-data">
+            <h3>Dokumenty</h3>
+            <p>Wszystkie zdjęcia są usuwane po stwierdzeniu zgodności danych.</p>
+
             <div class="input-boxy">
                 <label>
-                    Zdjęcie legitymacji studenckiej
-                    <input name="photo-of-id" required type="file" accept="image/*, image/heic">
+                    Front legitymacji studenckiej
+                    {% if vr.photo_front == None %}
+                    <input name="photo-front" type="file" accept="image/*, image/heic">
+                    {% else %}
+                        ✅ przesłano
+                    {% endif %}
                 </label>
             </div>
-            <!-- <div class="input-boxy">
-                 <label>
-                     Kod bezpieczeństwa
-                     <input name="safety-reference" pattern="\d{3}-\d{3}(-[amp])?">
-                     <small>(opcjonalne)</small>
-                 </label>
+
+            <div class="input-boxy">
+                <label>
+                    Tył legitymacji studenckiej
+                    {% if vr.photo_back == None %}
+                    <input name="photo-back" type="file" accept="image/*, image/heic">
+                    {% else %}
+                        ✅ przesłano
+                    {% endif %}
+                </label>
+
+            </div>
+            <h3>Kontakt</h3>
+            <div class="input-boxy">
+                {% if vr.google == None %}
+                <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_black"
+                     data-text="continue_with"
+                     data-size="large" data-logo_alignment="left">
+                </div>
+                {% else %}
+                    <label>
+                        Studenckie konto google ✅ przekazano dane
+                    </label>
+                {% endif %}
+            </div>
+            <!-- <h3>Zgody i oświadczenia</h3>
+            <div class="input-boxy">
+                <label>
+                    <input name="regulations" type="checkbox">
+                    Oświadczam, że zapoznałem się z <a href="https://github.com/pjatk21/statut2webhook/blob/main/STATUT.md">statutem</a> serwera.
+                </label>
+            </div>
+            <div class="input-boxy">
+                <label>
+                    <input name="no-dziekan" type="checkbox">
+                    Oświadczam, że nie jestem pracownikiem PJATK.
+                </label>
+            </div>
+            <div class="input-boxy">
+                <label>
+                    <input name="privacy-policy" type="checkbox">
+                    Zgadzam się na przetwarzanie moich danych osobowych, w przedstawiony <a href="https://github.com/pjatk21/pjatk-cat-guard/blob/main/PRIVACY.md">tutaj</a> sposób.
+                </label>
             </div> -->
-            <div class="input-boxy">
-                <label>
-                    Oświadczam, że zapoznałem się z statutem serwera
-                    <input name="regulations" required type="checkbox">
-                </label>
-            </div>
-            <div class="input-boxy">
-                <label>
-                    Oświadczam, że nie jestem pracownikiem PJATK
-                    <input name="no-dziekan" required type="checkbox">
-                </label>
-            </div>
             <button type="submit">Wyślij</button>
         </form>
     </div>

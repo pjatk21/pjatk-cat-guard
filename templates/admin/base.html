@@ -33,7 +33,23 @@
                         {{ vr.link.identity.user_name }}
                     </td>
                     <td>
-                        {{ vr.wait_time }}
+                        {{ vr.wait_time() }}
+                    </td>
+                    <td>
+                        <div class="uk-container-small">
+                            <button class="uk-button uk-button-primary">
+                                ✅
+                                Zatwierdź
+                            </button>
+                            <button class="uk-button uk-button-secondary">
+                                🗑
+                                Odrzuć
+                            </button>
+                            <button class="uk-button uk-button-danger">
+                                ⛔️
+                                Zablokuj
+                            </button>
+                        </div>
                     </td>
                 </tr>
             {% endfor %}
