@@ -88,7 +88,7 @@ class VerificationRequest(Document):
 
     @property
     def photos_as_base64(self):
-        return base64.b64encode(self.photo_front).decode(), base64.b64encode(self.photo_back).decode()
+        return base64.b64encode(self.photo_front.photo).decode(), base64.b64encode(self.photo_back.photo).decode()
 
     def wait_time(self):
         td = datetime.now().astimezone() - self.submitted
