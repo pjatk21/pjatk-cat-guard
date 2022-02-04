@@ -8,18 +8,21 @@
     <div class="content-frame">
         <h1>Dodatkowe formalności</h1>
         {% if not vr.photo_front or not vr.photo_back %}
-        <p style="color: red; font-weight: bold">Zanim wyślesz</p>
-            <p>Dane, które weryfikujemy</p>
-            <ul>
-                <li>numer studenta</li>
-                <li>imię i nazwisko</li>
-                <li>ważność legitymacji</li>
-            </ul>
-            <p>Dane, których nie weryfikujemy <small>i powinien*ś ukryć/zamazać</small></p>
-            <ul>
-                <li>zdjęcie</li>
-                <li>PESEL</li>
-            </ul>
+            <div class="content-frame">
+                <h3 style="color: red; font-weight: bold">Zanim wyślesz</h3>
+                <p>Dane, które weryfikujemy</p>
+                <ul>
+                    <li>numer studenta</li>
+                    <li>imię i nazwisko</li>
+                    <li>ważność legitymacji</li>
+                </ul>
+                <p>Dane, których <b style="color: red">nie</b> weryfikujemy <small>i powinien*ś ukryć/zamazać</small>
+                </p>
+                <ul>
+                    <li>zdjęcie</li>
+                    <li>PESEL</li>
+                </ul>
+            </div>
         {% else %}
             <p>Status zgłoszenia: <span style="font-weight: bold; color: greenyellow">{{ vr.state.value }}</span></p>
         {% endif %}
@@ -31,7 +34,7 @@
                 <label>
                     Front legitymacji studenckiej
                     {% if vr.photo_front == None %}
-                    <input name="photo-front" type="file" accept="image/*, image/heic">
+                        <input name="photo-front" type="file" accept="image/*, image/heic">
                     {% else %}
                         ✅ przesłano
                     {% endif %}
@@ -42,7 +45,7 @@
                 <label>
                     Tył legitymacji studenckiej
                     {% if vr.photo_back == None %}
-                    <input name="photo-back" type="file" accept="image/*, image/heic">
+                        <input name="photo-back" type="file" accept="image/*, image/heic">
                     {% else %}
                         ✅ przesłano
                     {% endif %}
@@ -52,10 +55,10 @@
             <h3>Kontakt</h3>
             <div class="input-boxy">
                 {% if vr.google == None %}
-                <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_black"
-                     data-text="continue_with"
-                     data-size="large" data-logo_alignment="left">
-                </div>
+                    <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_black"
+                         data-text="continue_with"
+                         data-size="large" data-logo_alignment="left">
+                    </div>
                 {% else %}
                     <label>
                         Studenckie konto google ✅ przekazano dane
@@ -81,12 +84,12 @@
                     Zgadzam się na przetwarzanie moich danych osobowych, w przedstawiony <a href="https://github.com/pjatk21/pjatk-cat-guard/blob/main/PRIVACY.md">tutaj</a> sposób.
                 </label>
             </div> -->
-        {% if vr.state.value != 'in review' %}
-            <button type="submit">Wyślij</button>
-        {% else %}
-            <p style="color: greenyellow">Oczekuj kolejnych wiadomości na mailu/Discord DM</p>
-        {% endif %}
-        <input name="ignore me" type="hidden">
+            {% if vr.state.value != 'in review' %}
+                <button type="submit">Wyślij</button>
+            {% else %}
+                <p style="color: greenyellow">Oczekuj kolejnych wiadomości na mailu/Discord DM</p>
+            {% endif %}
+            <input name="ignore me" type="hidden">
         </form>
     </div>
 {% endblock %}
