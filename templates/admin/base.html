@@ -9,52 +9,81 @@
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit-icons.min.js"></script>
 </head>
 <body>
+<nav class="uk-navbar-container" uk-navbar>
+    <div class="uk-navbar-left">
+        <div class="uk-navbar-item uk-logo">ガード猫</div>
+        <ul class="uk-navbar-nav">
+            <li><a href="{{ request.url_for('admin:admin_index') }}">Pulpit</a></li>
+            <li><a href="#">Zatwierdzeni</a></li>
+            <li><a href="#">Odrzuceni</a></li>
+        </ul>
+
+    </div>
+    <div class="uk-navbar-right">
+        <ul class="uk-navbar-nav">
+            <li>{{ request.session["user"] }}</li>
+        </ul>
+    </div>
+</nav>
 {% block body %}
     <div class="uk-container">
-        <h1>Witaj {{ request.session["user"] }}</h1>
-        <h2>Oczekujące weryfikacje</h2>
-        <table class="uk-table">
-            <thead>
-            <tr>
-                <th>Zdjęcie</th>
-                <th>User</th>
-                <th>Czas oczekiwania</th>
-                <th>Akcja</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for vr in awaiting %}
+        {% if awaiting|length > 0 %}
+            <h2>Oczekujące weryfikacje</h2>
+            <table class="uk-table">
+                <thead>
                 <tr>
-                    <td>
-                        <img src="data:{{ vr.content_type }};base64, {{ vr.photo_as_base64 }}" alt="{{ vr.content_name }}"
-                         style="height: 50px">
-                    </td>
-                    <td>
-                        {{ vr.link.identity.user_name }}
-                    </td>
-                    <td>
-                        {{ vr.wait_time() }}
-                    </td>
-                    <td>
-                        <div class="uk-container-small">
-                            <button class="uk-button uk-button-primary">
-                                ✅
-                                Zatwierdź
-                            </button>
-                            <button class="uk-button uk-button-secondary">
-                                🗑
-                                Odrzuć
-                            </button>
-                            <button class="uk-button uk-button-danger">
-                                ⛔️
-                                Zablokuj
-                            </button>
-                        </div>
-                    </td>
+                    <th>Imię i nazwisko</th>
+                    <th>User</th>
+                    <th>Czas oczekiwania</th>
+                    <th>Akcja</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for vr in awaiting %}
+                    <tr>
+                        <td>
+                            {{ vr.google.name }}
+                        </td>
+                        <td>
+                            {{ vr.identity.user_name }}
+                        </td>
+                        <td>
+                            {{ vr.wait_time() }}
+                        </td>
+                        <td>
+                            <div class="uk-container-small">
+                                <a href="{{ request.url_for('admin:review', rid=vr.id) }}"
+                                   class="uk-button uk-button-primary">
+                                    🔍 Sprawdź
+                                </a>
+                                <button uk-toggle="target: #confirm-{{ vr.id }}" class="uk-button uk-button-secondary">
+                                    🗑 Odrzuć
+                                </button>
+                            </div>
+                        </td>
+                        <div id="confirm-{{ vr.id }}" uk-modal>
+                            <div class="uk-modal-dialog uk-modal-body">
+                                <h2 class="uk-modal-title">Czy jesteś pewien?</h2>
+                                <form method="post" action="{{ request.url_for('admin:reject', rid=vr.id) }}"
+                                      enctype="multipart/form-data">
+                                    <label>
+                                        Uzasadnienie decyzji
+                                        <textarea required name="reason"
+                                                  class="uk-textarea">niezgodność danych</textarea>
+                                    </label>
+                                    <button class="uk-button uk-button-danger" type="submit">WYJEB GNOJA</button>
+                                    <button class="uk-modal-close uk-button uk-button-default" type="button">Anuluj
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <h2>Brak oczekujących weryfikacji</h2>
+        {% endif %}
     </div>
 {% endblock %}
 </body>

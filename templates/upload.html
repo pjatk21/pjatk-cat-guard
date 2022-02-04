@@ -21,7 +21,7 @@
                 <li>PESEL</li>
             </ul>
         {% else %}
-            <p>Status zgłoszenia: <span style="font-weight: bold; color: greenyellow">{{ vr.state }}</span></p>
+            <p>Status zgłoszenia: <span style="font-weight: bold; color: greenyellow">{{ vr.state.value }}</span></p>
         {% endif %}
         <form method="post" enctype="multipart/form-data">
             <h3>Dokumenty</h3>

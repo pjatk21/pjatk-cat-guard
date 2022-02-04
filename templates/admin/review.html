@@ -1,0 +1,15 @@
+{% extends 'admin/base.html' %}
+{% block body %}
+    <div class="uk-container">
+        <h1><a href="{{ request.url_for('admin:admin_index') }}" uk-icon="arrow-left"></a> Forma weryfikacyjna</h1>
+        <h2>Dane osobowe</h2>
+        {{ vr.google.name }}
+        {{ vr.google.email }}
+        <h2>Dokumenty</h2>
+        <img style="height: 250px; margin: 20px" loading="lazy" src="{{ request.url_for('admin:photoproxy', side='front', rid=vr.id) }}">
+        <img style="height: 250px; margin: 20px" loading="lazy" src="{{ request.url_for('admin:photoproxy', side='back', rid=vr.id) }}">
+        <form method="post"><button type="submit" class="uk-button uk-button-primary">✅ Zaakceptuj</button></form>
+        <form action="" method="post"><button type="submit" class="uk-button uk-button-secondary">🗑 Odrzuć</button></form>
+        <form action="" method="post"><button type="submit" class="uk-button uk-button-danger">🔨 Zbanuj</button></form>
+    </div>
+{% endblock %}

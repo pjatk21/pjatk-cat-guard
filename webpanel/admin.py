@@ -1,20 +1,26 @@
 import os
+import re
 
 from authlib.integrations.starlette_client import OAuth
 from dotenv import load_dotenv
 from hikari import RESTApp
+from mongoengine import DoesNotExist
 from starlette.applications import Starlette
 from starlette.authentication import requires
+from starlette.background import BackgroundTask
+from starlette.endpoints import HTTPEndpoint
+from starlette.exceptions import HTTPException
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.requests import Request
-from starlette.responses import JSONResponse, RedirectResponse, PlainTextResponse
+from starlette.responses import JSONResponse, RedirectResponse, Response
 
 from shared.db import init_connection
-from shared.documents import VerificationRequest, GuildConfiguration
+from shared.documents import VerificationRequest, GuildConfiguration, VerificationState, TrustedUser, VerificationMethod
 from webpanel.common import templates
 from webpanel.middleware.auth import DiscordAuthBackend
+import webpanel.tasks
 
 load_dotenv()
 init_connection()
@@ -72,7 +78,77 @@ async def admin_logout(request: Request):
 @app.route('/')
 @requires('authenticated')
 async def admin_index(request: Request):
-    async with RESTApp().acquire(request.session['discord']['access_token']) as client:
-        # awaiting = VerificationRequest.objects()
-        awaiting = []
-        return templates.TemplateResponse('admin/base.html', {'request': request, 'awaiting': awaiting})
+    awaiting = VerificationRequest.objects(state=VerificationState.IN_REVIEW)
+    return templates.TemplateResponse('admin/base.html', {'request': request, 'awaiting': awaiting})
+
+
+@app.route('/review/{rid}', name='review')
+class AdminReview(HTTPEndpoint):
+    @requires('authenticated')
+    async def get(self, request: Request):
+        try:
+            vr: VerificationRequest = VerificationRequest.objects(id=request.path_params['rid']).get()
+        except DoesNotExist:
+            raise HTTPException(404)
+
+        return templates.TemplateResponse('admin/review.html', {'request': request, 'vr': vr})
+
+    @requires('authenticated')
+    async def post(self, request: Request):
+        try:
+            vr: VerificationRequest = VerificationRequest.objects(id=request.path_params['rid']).get()
+            conf: GuildConfiguration = GuildConfiguration.objects(guild_id=vr.identity.guild_id).get()
+        except DoesNotExist:
+            raise HTTPException(404)
+
+        trust = TrustedUser()
+        trust.identity = vr.identity
+        trust.student_number = re.search(r's\d+', vr.google.email).string
+        trust.verification_method = VerificationMethod.REVIEW
+        trust.save()
+
+        vr.trust = trust
+        vr.state = VerificationState.ACCEPTED
+        vr.save()
+
+        task = BackgroundTask(webpanel.tasks.apply_trusted_role, trust, conf)
+
+        return RedirectResponse(request.url_for('admin:admin_index'), background=task, status_code=302)
+
+
+@app.route('/reject/{rid}', name='reject', methods=['POST'])
+@requires('authenticated')
+async def admin_reject(request: Request):
+    form = await request.form()
+
+    try:
+        vr: VerificationRequest = VerificationRequest.objects(id=request.path_params['rid']).get()
+    except DoesNotExist:
+        raise HTTPException(404)
+
+    # TODO: announce rejection
+
+    vr.state = VerificationState.REJECTED
+    vr.save()
+    return RedirectResponse(request.url_for('admin:admin_index'), status_code=302)
+
+
+@app.route('/photoproxy/{side}-{rid}', name='photoproxy')
+class PhotoProxy(HTTPEndpoint):
+    @requires('authenticated')
+    async def get(self, request: Request):
+        side = request.path_params['side']
+        rid = request.path_params['rid']
+
+        try:
+            vr: VerificationRequest = VerificationRequest.objects(id=rid).get()
+        except DoesNotExist:
+            raise HTTPException(404)
+
+        match side:
+            case 'front':
+                return Response(content=vr.photo_front.photo, media_type=vr.photo_front.content_type)
+            case 'back':
+                return Response(content=vr.photo_back.photo, media_type=vr.photo_back.content_type)
+            case _:
+                raise HTTPException(400)
