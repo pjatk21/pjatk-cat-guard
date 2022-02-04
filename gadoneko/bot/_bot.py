@@ -12,7 +12,7 @@ from gadoneko.checks import bot_owner_only
 load_dotenv()
 
 if os.getenv('ENV') == 'dev':
-    bot = BotApp(os.getenv('DISCORD_TOKEN'), intents=Intents.ALL_UNPRIVILEGED | Intents.GUILD_MEMBERS, logs='DEBUG')
+    bot = BotApp(os.getenv('DISCORD_TOKEN'), intents=Intents.ALL_UNPRIVILEGED | Intents.GUILD_MEMBERS, logs='INFO')
 else:
     bot = BotApp(os.getenv('DISCORD_TOKEN'), intents=Intents.ALL_UNPRIVILEGED | Intents.GUILD_MEMBERS)
 
