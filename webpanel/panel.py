@@ -20,8 +20,6 @@ routes = [
     Route("/oauth/{secret}", invites.LoginGate),
     Route("/login", invites.LoginGate),
     Route("/join/pjatk2021", invites.GuildInviteEndpoint),
-    # Mount("/admin", routes=admin.routes),
-    Mount("/mail", routes=mailing.routes),
     Mount("/static", app=StaticFiles(directory='webpanel/static'), name="static")
 ]
 

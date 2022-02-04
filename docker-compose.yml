@@ -20,10 +20,6 @@ services:
     depends_on:
       - mongol
     restart: unless-stopped
-  tika:
-    build:
-      dockerfile: docker/tika/Dockerfile
-    restart: unless-stopped
   webpanel:
     build:
       dockerfile: docker/gadoneko/Dockerfile
