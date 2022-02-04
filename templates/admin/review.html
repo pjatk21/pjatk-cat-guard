@@ -2,9 +2,54 @@
 {% block body %}
     <div class="uk-container">
         <h1><a href="{{ request.url_for('admin:admin_index') }}" uk-icon="arrow-left"></a> Forma weryfikacyjna</h1>
-        <h2>Dane osobowe</h2>
-        {{ vr.google.name }}
-        {{ vr.google.email }}
+        <div class="uk-child-width-1-3@m uk-grid-small uk-grid-match" uk-grid>
+            <div>
+                <div class="uk-card uk-card-default">
+                    <div class="uk-card-header">
+                        <div class="uk-grid-small uk-flex-middle" uk-grid>
+                            <div class="uk-width-auto">
+                                <img class="uk-border-circle" width="40" height="40" src="{{ vr.google.raw['picture'] }}">
+                            </div>
+                            <div class="uk-width-expand">
+                                <h3 class="uk-card-title uk-margin-remove-bottom">{{ vr.google.name }}</h3>
+                                <p class="uk-text-meta uk-margin-remove-top">
+                                    {{ vr.no }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="uk-card-body">
+                        <p>Email: <b>{{ vr.google.email }}</b></p>
+                        <p>Złożenie weryfikacji: <b>{{ vr.submitted }}</b></p>
+                        {% if vr.reviewer %}
+                            <p>Operator: <b>{{ vr.reviewer.identity.user_name }}</b></p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="uk-card uk-card-default">
+                    <div class="uk-card-header">
+                        <div class="uk-grid-small uk-flex-middle" uk-grid>
+                            <div class="uk-width-auto">
+                                <img class="uk-border-circle" width="40" height="40" src="{{ ds.avatar_url }}">
+                            </div>
+                            <div class="uk-width-expand">
+                                <h3 class="uk-card-title uk-margin-remove-bottom">{{ ds }}</h3>
+                                <p class="uk-text-meta uk-margin-remove-top">
+                                    aka {{ ds.nickname or "(bez nickname)" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="uk-card-body">
+                        <p>Discord ID: <code>{{ ds.id }}</code></p>
+                        <p>Dołączenie do discorda: <b>{{ ds.created_at }}</b></p>
+                        <p>Dołączenie do serwera: <b>{{ ds.joined_at }}</b></p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <h2>Dokumenty</h2>
         {% if vr.state.value == 'id required' %}
             {% if vr.photo_front and vr.photo_back %}

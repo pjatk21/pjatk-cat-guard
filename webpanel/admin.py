@@ -93,7 +93,10 @@ class AdminReview(HTTPEndpoint):
         except DoesNotExist:
             raise HTTPException(404)
 
-        return templates.TemplateResponse('admin/review.html', {'request': request, 'vr': vr})
+        async with RESTApp().acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as bot:
+            user = await bot.fetch_member(vr.identity.guild_id, vr.identity.user_id)
+
+        return templates.TemplateResponse('admin/review.html', {'request': request, 'vr': vr, 'ds': user})
 
     @requires('authenticated')
     async def post(self, request: Request):
