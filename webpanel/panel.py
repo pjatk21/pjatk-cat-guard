@@ -9,7 +9,7 @@ from starlette.routing import Route, Mount
 from starlette.staticfiles import StaticFiles
 
 from shared.db import init_connection
-from .endpoints import invites, general, mailing
+from .endpoints import invites, general
 
 load_dotenv()
 init_connection()

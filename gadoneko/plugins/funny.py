@@ -2,9 +2,8 @@ import logging
 import re
 
 import yaml
-from hikari import CustomEmoji
-from lightbulb import Plugin
 from hikari.events import GuildMessageCreateEvent
+from lightbulb import Plugin
 
 plugin = Plugin('hehe funny responses')
 logger = logging.getLogger('gadoneko.plugins.funny')
