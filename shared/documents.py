@@ -5,7 +5,8 @@ from enum import Enum
 from hikari import Member
 from lightbulb import Context
 from mongoengine import Document, LongField, EnumField, DateTimeField, DynamicField, EmbeddedDocumentField, \
-    EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument, ListField, URLField, LazyReferenceField, BinaryField
+    EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument, ListField, URLField, LazyReferenceField, \
+    BinaryField, CASCADE
 
 
 class VerificationMethod(Enum):
@@ -84,7 +85,7 @@ class VerificationRequest(Document):
     google = EmbeddedDocumentField(VerificationGoogle, null=True)
     submitted = DateTimeField(default=lambda: datetime.now().astimezone())
     state = EnumField(VerificationState, default=VerificationState.PENDING)
-    trust = ReferenceField(TrustedUser, null=True)
+    trust = ReferenceField(TrustedUser, null=True, reverse_delete_rule=CASCADE)
 
     @property
     def photos_as_base64(self):
