@@ -26,7 +26,7 @@
         {% if vr.rejection %}
             <div class="uk-comment uk-comment-primary uk-margin-bottom">
                 <div class="uk-comment-header">
-                    <h4>Powód odrzucenia</h4>
+                    <h4>Powód odrzucenia <small>z dnia {{ vr.rejection.when }}</small></h4>
                 </div>
                 <div class="uk-comment-body">
                     <p>{{ vr.rejection.reason }}</p>

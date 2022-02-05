@@ -108,7 +108,7 @@ async def admin_accepted(request: Request):
         s = request.query_params['search']
         query &= Q(google__email__icontains=s) | Q(identity__user_name__icontains=s)
 
-    accepted = VerificationRequest.objects(query).order_by('-submitted')
+    accepted = VerificationRequest.objects(query).order_by('-accepted')
     return templates.TemplateResponse('admin/accepted.html', {'request': request, 'accepted': accepted})
 
 
@@ -121,7 +121,7 @@ async def admin_rejected(request: Request):
             Q(state=VerificationState.REJECTED) & Q(rejection__reason__icontains=s) | Q(google__email__icontains=s)
         ).order_by('-submitted')
     else:
-        rejected = VerificationRequest.objects(state=VerificationState.REJECTED).order_by('-submitted')
+        rejected = VerificationRequest.objects(state=VerificationState.REJECTED).order_by('-rejection__when')
     return templates.TemplateResponse('admin/rejected.html', {'request': request, 'rejected': rejected})
 
 
