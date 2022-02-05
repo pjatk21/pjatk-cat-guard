@@ -3,7 +3,7 @@ import os
 
 from dotenv import load_dotenv
 from hikari import GatewayBot, ShardReadyEvent, HikariError, Embed
-from mongoengine import DoesNotExist
+from mongoengine import DoesNotExist, FieldDoesNotExist
 
 from gadoneko.plugins.trust import start_verification_flow
 
@@ -15,6 +15,7 @@ init_connection()
 
 bot = GatewayBot(os.getenv('DISCORD_TOKEN'))
 
+
 @bot.listen(ShardReadyEvent)
 async def doomsday(event: ShardReadyEvent):
     guild = await bot.rest.fetch_guild(872492754821861387)
@@ -25,10 +26,11 @@ async def doomsday(event: ShardReadyEvent):
     for member in await bot.rest.fetch_members(guild):
         try:
             trust: TrustedUser = TrustedUser.objects(identity__user_id=member.id, identity__guild_id=guild.id).get()
+            trust.delete()
         except DoesNotExist:
             continue
-
-        trust.delete()
+        except FieldDoesNotExist:
+            pass
 
         vr: VerificationRequest = start_verification_flow(guild, member)
         link = f"{os.getenv('VERIFICATION_URL')}verify/{vr.code}"
