@@ -97,7 +97,12 @@ async def admin_index(request: Request):
 @app.route('/accepted', name='accepted')
 @requires('authenticated')
 async def admin_accepted(request: Request):
-    accepted = VerificationRequest.objects(state=VerificationState.ACCEPTED).order_by('-submitted')
+    query = Q(state=VerificationState.ACCEPTED)
+    if request.query_params.get('search'):
+        s = request.query_params['search']
+        query &= Q(google__email__icontains=s) | Q(identity__user_name__icontains=s)
+
+    accepted = VerificationRequest.objects(query).order_by('-submitted')
     return templates.TemplateResponse('admin/accepted.html', {'request': request, 'accepted': accepted})
 
 
