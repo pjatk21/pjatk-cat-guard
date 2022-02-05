@@ -135,7 +135,7 @@ class AdminReview(HTTPEndpoint):
             user = await bot.fetch_member(vr.identity.guild_id, vr.identity.user_id)
 
         warns['fresh_meat'] = (user.joined_at - user.created_at).days < 365
-        warns['weird_num'] = not re.match(r'^s2[456]\d{3}$', vr.no).group()
+        warns['weird_num'] = not re.match(r'^s2[456]\d{3}$', vr.no)
 
         return templates.TemplateResponse(
             'admin/review.html',
