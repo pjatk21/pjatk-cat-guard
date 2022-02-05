@@ -15,7 +15,6 @@ from .endpoints import invites
 load_dotenv()
 init_connection()
 
-
 routes = [
     Route("/join/pjatk2021", invites.GuildInviteEndpoint),
     Mount("/static", app=StaticFiles(directory='webpanel/static'), name="static"),
@@ -33,4 +32,11 @@ app = Starlette(routes=routes)
 def index(request):
     return templates.TemplateResponse(
         "home.html", {"request": request, "invitation": os.getenv("INVITATION")}
+    )
+
+
+@app.exception_handler(500)
+def index_500(r, e):
+    return templates.TemplateResponse(
+        "500.html", {'request': r}
     )
