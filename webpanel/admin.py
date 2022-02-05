@@ -44,6 +44,16 @@ middleware = [
 app = Starlette(middleware=middleware)
 
 
+@app.exception_handler(403)
+async def admin_forbidden(req, exc):
+    return templates.TemplateResponse('admin/403.html', {'request': req})
+
+
+@app.exception_handler(404)
+async def admin_forbidden(req, exc):
+    return templates.TemplateResponse('admin/404.html', {'request': req})
+
+
 @app.route('/login')
 async def admin_login(request: Request):
     ds = oauth_discord.create_client('discord')
