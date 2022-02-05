@@ -1,6 +1,6 @@
 import os
 import re
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from authlib.integrations.starlette_client import OAuth
 from bson import ObjectId
@@ -169,6 +169,7 @@ class AdminReview(HTTPEndpoint):
         vr.trust = trust
         vr.state = VerificationState.ACCEPTED
         vr.reviewer = ObjectId(request.session['reviewer'])
+        vr.accepted = datetime.now().astimezone()
         vr.save()
         VerificationRequest.objects(identity=vr.identity, id__ne=vr.id, state=VerificationState.PENDING).delete()
 

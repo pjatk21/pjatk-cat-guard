@@ -95,6 +95,7 @@ class VerificationRequest(Document):
     photo_back = EmbeddedDocumentField(VerificationPhoto, null=True)
     google = EmbeddedDocumentField(VerificationGoogle, null=True)
     submitted = DateTimeField(default=lambda: datetime.now().astimezone())
+    accepted = DateTimeField(null=True)
     state = EnumField(VerificationState, default=VerificationState.PENDING)
     trust = ReferenceField(TrustedUser, null=True, reverse_delete_rule=CASCADE)
     reviewer = ReferenceField(Reviewer, null=True, reverse_delete_rule=NULLIFY)
@@ -118,6 +119,7 @@ class VerificationRequest(Document):
 
     def remove_trust(self):
         trust = self.trust
+        self.accepted = None
         self.trust = None
         self.save()
         trust.delete()
