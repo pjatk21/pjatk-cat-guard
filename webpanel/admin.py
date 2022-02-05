@@ -55,6 +55,11 @@ async def admin_forbidden(req, exc):
     return templates.TemplateResponse('admin/404.html', {'request': req})
 
 
+@app.exception_handler(500)
+async def admin_forbidden(req, exc):
+    return templates.TemplateResponse('admin/500.html', {'request': req, 'exc': exc})
+
+
 @app.route('/login')
 async def admin_login(request: Request):
     ds = oauth_discord.create_client('discord')
