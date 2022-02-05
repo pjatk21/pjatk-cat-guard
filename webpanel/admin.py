@@ -1,5 +1,6 @@
 import os
 import re
+from datetime import timedelta
 
 from authlib.integrations.starlette_client import OAuth
 from bson import ObjectId
@@ -37,7 +38,7 @@ oauth_discord.register(
 )
 
 middleware = [
-    Middleware(SessionMiddleware, secret_key=os.getenv('COOKIE_SECRET', 'someoneforgotcookiesecretrecipe')),
+    Middleware(SessionMiddleware, secret_key=os.getenv('COOKIE_SECRET', 'someoneforgotcookiesecretrecipe'), max_age=timedelta(hours=6).seconds),
     Middleware(AuthenticationMiddleware, backend=DiscordAuthBackend())
 ]
 
