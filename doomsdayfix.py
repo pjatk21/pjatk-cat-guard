@@ -29,5 +29,5 @@ async def doomsday_fix(event: ShardReadyEvent):
             TrustedUser.objects(identity__user_id=m.id).get().delete()
             print('fix 🔧', m)
         except DoesNotExist:
-            pass
+            print('not affected', m)
 
