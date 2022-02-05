@@ -114,7 +114,7 @@ class VerificationRequest(Document):
             return 'Mniej niż minuta'
         if td.days > 1:
             return 'Ponad dzień'
-        return f'{td.seconds // 3600}h {td.seconds // 60}m'
+        return f'{td.seconds // 3600}h {td.seconds % 60}m'
 
 
 class CaptchaInvites(Document):
