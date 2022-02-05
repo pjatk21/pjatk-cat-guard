@@ -107,15 +107,16 @@ async def notify_requested_id(vr: VerificationRequest):
 async def notify_reviewers(vr: VerificationRequest):
     async with RESTApp().acquire(os.getenv("DISCORD_TOKEN"), "Bot") as bot:
         rs = Reviewer.objects(identity__guild_id=vr.identity.guild_id)
+        user = await bot.fetch_user(vr.identity.user_id)
 
         for reviewer in [await bot.fetch_user(r.identity.user_id) for r in rs]:
             await reviewer.send(
                 embed=Embed(
                     title='Nowa osoba do weryfikacji!',
                     description=f'{vr.identity.user_name} oczekuje na weryfikację!',
-                    url='https://free.itny.me/admin/login',
-                    colour=INFO
-                )
+                    url=f'https://free.itny.me/admin/review/{vr.id}',
+                    colour=user.accent_colour,
+                ).set_thumbnail(user.avatar_url)
             )
 
 
