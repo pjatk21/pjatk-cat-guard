@@ -9,7 +9,7 @@
             </div>
         {% elif vr.state.value == 'accepted' %}
             <div class="uk-alert-primary" uk-alert>
-                <p>Ten użytkownik już został zweryfikowany!</p>
+                <p>Ten użytkownik już został zweryfikowany przez <b>{{ vr.reviewer.identity.user_name }}</b>!</p>
             </div>
         {% endif %}
         {% if warns.fresh_meat %}
@@ -24,7 +24,14 @@
             </div>
         {% endif %}
         {% if vr.rejection %}
-            <p>Powód odrzucenia podania: <span class="uk-text-bold uk-text-italic">{{ vr.rejection.reason }}</span></p>
+            <div class="uk-comment uk-comment-primary uk-margin-bottom">
+                <div class="uk-comment-header">
+                    <h4>Powód odrzucenia</h4>
+                </div>
+                <div class="uk-comment-body">
+                    <p>{{ vr.rejection.reason }}</p>
+                </div>
+            </div>
         {% endif %}
         <div class="uk-child-width-1-3@m uk-grid-small uk-grid-match" uk-grid>
             <div>
