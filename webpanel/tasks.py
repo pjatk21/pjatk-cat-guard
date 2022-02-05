@@ -1,7 +1,8 @@
 import os
 import re
 
-from hikari import RESTApp, Embed
+from hikari import RESTApp, Embed, HikariError
+from mongoengine import DoesNotExist
 
 from sendgrid import SendGridAPIClient, Mail
 
@@ -26,6 +27,24 @@ async def apply_trusted_role(tu: TrustedUser, conf: GuildConfiguration):
         embed.add_field("Metoda weryfikacji", tu.verification_method.value)
 
         await user.send(embed=embed)
+
+
+async def removed_trusted_role(vr: VerificationRequest):
+    try:
+        conf: GuildConfiguration = GuildConfiguration.objects(guild_id=vr.identity.guild_id).get()
+    except DoesNotExist:
+        return
+
+    takedowns = [conf.trusted_role_id, 872855213525061662, 874665726886170695, 872854951964049448, 874668279984185374]
+
+    async with RESTApp().acquire(os.getenv("DISCORD_TOKEN"), "Bot") as bot:
+        try:
+            for td in takedowns:
+                await bot.remove_role_from_member(
+                    conf.guild_id, vr.identity.user_id, td, reason=f'Trust removal requested by operator.'
+                )
+        except HikariError:
+            pass
 
 
 async def send_trust_confirmation(vr: VerificationRequest):

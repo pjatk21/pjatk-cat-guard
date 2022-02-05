@@ -1,0 +1,45 @@
+{% extends 'admin/base.html' %}
+{% block body %}
+    <div class="uk-container">
+        <div class="uk-margin-top">
+            <form method="get">
+                <input type="text" class="uk-input" name="search" placeholder="Szukaj..." style="width: 60%" value="{{ request.query_params['search'] }}">
+                <button class="uk-button uk-button-primary">Szukaj</button>
+            </form>
+        </div>
+        <h2>Zatwierdzone weryfikacje</h2>
+        <table class="uk-table uk-table-divider uk-table-striped">
+            <thead>
+            <tr>
+                <th>Numer studenta</th>
+                <th>User</th>
+                <th>Operator</th>
+                <th>Akcja</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for vr in accepted %}
+                <tr>
+                    <td>
+                        {{ vr.no }}
+                    </td>
+                    <td>
+                        {{ vr.identity.user_name }}
+                    </td>
+                    <td>
+                        {{ vr.reviewer.identity.user_name }}
+                    </td>
+                    <td>
+                        <div class="uk-container-small">
+                            <a href="{{ request.url_for('admin:review', rid=vr.id) }}"
+                               class="uk-button uk-button-primary">
+                                🔍 Sprawdź
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

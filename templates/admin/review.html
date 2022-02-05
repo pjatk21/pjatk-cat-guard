@@ -1,7 +1,28 @@
 {% extends 'admin/base.html' %}
 {% block body %}
     <div class="uk-container">
-        <h1><a href="{{ request.url_for('admin:admin_index') }}" uk-icon="icon: arrow-left; ratio: 2"></a> Forma weryfikacyjna</h1>
+        <h1><a href="{{ request.url_for('admin:admin_index') }}" uk-icon="icon: arrow-left; ratio: 2"></a> Forma
+            weryfikacyjna</h1>
+        {% if vr.state.value == 'id required' %}
+            <div class="uk-alert-warning" uk-alert>
+                <p>Ten użytkownik oczekuje na sprawdzenie dokumentów!</p>
+            </div>
+        {% elif vr.state.value == 'accepted' %}
+            <div class="uk-alert-primary" uk-alert>
+                <p>Ten użytkownik już został zweryfikowany!</p>
+            </div>
+        {% endif %}
+        {% if warns.fresh_meat %}
+            <div class="uk-alert-danger" uk-alert>
+                <p>Data utworzenia konta i dołączenia jest krótsza niż rok ({{ (ds.joined_at - ds.created_at).days }}
+                    dni)</p>
+            </div>
+        {% endif %}
+        {% if warns.weird_num %}
+            <div class="uk-alert-danger" uk-alert>
+                <p>Numer studenta wygląda podejrzanie ({{ vr.no }})</p>
+            </div>
+        {% endif %}
         {% if vr.rejection %}
             <p>Powód odrzucenia podania: <span class="uk-text-bold uk-text-italic">{{ vr.rejection.reason }}</span></p>
         {% endif %}
@@ -11,7 +32,8 @@
                     <div class="uk-card-header">
                         <div class="uk-grid-small uk-flex-middle" uk-grid>
                             <div class="uk-width-auto">
-                                <img class="uk-border-circle" width="40" height="40" src="{{ vr.google.raw['picture'] }}">
+                                <img class="uk-border-circle" width="40" height="40"
+                                     src="{{ vr.google.raw['picture'] }}">
                             </div>
                             <div class="uk-width-expand">
                                 <h3 class="uk-card-title uk-margin-remove-bottom">{{ vr.google.name }}</h3>
@@ -84,12 +106,12 @@
             <p>Użytkownik nie został poproszony o dokumenty.</p>
         {% endif %}
 
-        {% if vr.state.value in ['in review', 'id required'] %}
-            <div class="uk-container-small">
-            <form method="post">
-                <button  type="submit" class="uk-button uk-button-primary">✅ Zaakceptuj</button>
-            </form>
-
+        <div class="uk-container-small">
+            {% if vr.state.value in ['in review', 'id required'] %}
+                <form method="post">
+                    <button type="submit" class="uk-button uk-button-primary">✅ Zaakceptuj</button>
+                </form>
+            {% endif %}
 
             <button uk-toggle="target: #confirm-{{ vr.id }}" class="uk-button uk-button-secondary">🗑 Odrzuć</button>
             <div id="confirm-{{ vr.id }}" uk-modal>
@@ -113,6 +135,5 @@
                 <button disabled type="submit" class="uk-button uk-button-danger">🔨 Zbanuj</button>
             </form>
         </div>
-        {% endif %}
     </div>
 {% endblock %}

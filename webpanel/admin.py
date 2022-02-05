@@ -94,6 +94,13 @@ async def admin_index(request: Request):
     return templates.TemplateResponse('admin/base.html', {'request': request, 'awaiting': awaiting})
 
 
+@app.route('/accepted', name='accepted')
+@requires('authenticated')
+async def admin_accepted(request: Request):
+    accepted = VerificationRequest.objects(state=VerificationState.ACCEPTED).order_by('-submitted')
+    return templates.TemplateResponse('admin/accepted.html', {'request': request, 'accepted': accepted})
+
+
 @app.route('/rejected', name='rejected')
 @requires('authenticated')
 async def admin_rejected(request: Request):
@@ -116,10 +123,18 @@ class AdminReview(HTTPEndpoint):
         except DoesNotExist:
             raise HTTPException(404)
 
+        warns = {}
+
         async with RESTApp().acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as bot:
             user = await bot.fetch_member(vr.identity.guild_id, vr.identity.user_id)
 
-        return templates.TemplateResponse('admin/review.html', {'request': request, 'vr': vr, 'ds': user})
+        warns['fresh_meat'] = (user.joined_at - user.created_at).days < 365
+        warns['weird_num'] = not re.match(r'^s2[456]\d{3}$', vr.no).group()
+
+        return templates.TemplateResponse(
+            'admin/review.html',
+            {'request': request, 'vr': vr, 'ds': user, 'warns': warns}
+        )
 
     @requires('authenticated')
     async def post(self, request: Request):
@@ -150,7 +165,7 @@ class AdminReview(HTTPEndpoint):
         tasks.add_task(webpanel.tasks.apply_trusted_role, trust, conf)
         tasks.add_task(webpanel.tasks.send_trust_confirmation, vr)
 
-        return RedirectResponse(request.url_for('admin:admin_index'), background=tasks, status_code=302)
+        return RedirectResponse(request.url_for('admin:review', rid=vr.id), background=tasks, status_code=302)
 
 
 @app.route('/id-req/{rid}', name='id required', methods=['POST'])
@@ -161,11 +176,19 @@ async def admin_id_req(request: Request):
     except DoesNotExist:
         raise HTTPException(404)
 
+    tasks = BackgroundTasks()
+
     vr.state = VerificationState.ID_REQUIRED
     vr.reviewer = ObjectId(request.session['reviewer'])
-    vr.save()
 
-    tasks = BackgroundTasks()
+    if vr.trust:
+        trust = vr.trust
+        vr.trust = None
+        vr.save()
+        trust.delete()
+        tasks.add_task(webpanel.tasks.removed_trusted_role, vr)
+
+    vr.save()
     tasks.add_task(webpanel.tasks.notify_requested_id, vr)
 
     return RedirectResponse(request.url_for('admin:review', rid=vr.id), status_code=302, background=tasks)
