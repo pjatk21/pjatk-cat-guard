@@ -116,6 +116,12 @@ class VerificationRequest(Document):
             return 'Ponad dzień'
         return f'{td.seconds // 3600}h {td.seconds % 60}m'
 
+    def remove_trust(self):
+        trust = self.trust
+        self.trust = None
+        self.save()
+        trust.delete()
+
 
 class CaptchaInvites(Document):
     identity = EmbeddedDocumentField(UserIdentity, required=True)

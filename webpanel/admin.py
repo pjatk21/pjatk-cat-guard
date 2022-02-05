@@ -188,10 +188,7 @@ async def admin_id_req(request: Request):
     vr.reviewer = ObjectId(request.session['reviewer'])
 
     if vr.trust:
-        trust = vr.trust
-        vr.trust = None
-        vr.save()
-        trust.delete()
+        vr.remove_trust()
         tasks.add_task(webpanel.tasks.removed_trusted_role, vr)
 
     vr.save()
@@ -216,6 +213,11 @@ async def admin_reject(request: Request):
     vr.save()
 
     tasks = BackgroundTasks()
+
+    if vr.trust:
+        vr.remove_trust()
+        tasks.add_task(webpanel.tasks.removed_trusted_role, vr)
+
     tasks.add_task(webpanel.tasks.send_rejection_mail, vr, form['reason'])
     tasks.add_task(webpanel.tasks.send_rejection_dm, vr, form['reason'])
 

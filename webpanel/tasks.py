@@ -14,7 +14,7 @@ async def apply_trusted_role(tu: TrustedUser, conf: GuildConfiguration):
     async with RESTApp().acquire(os.getenv("DISCORD_TOKEN"), "Bot") as bot:
         user = await bot.fetch_user(tu.identity.user_id)
         await bot.add_role_to_member(
-            conf.guild_id, user, conf.trusted_role_id
+            conf.guild_id, user, conf.trusted_role_id, reason='Marked as trusted!'
         )
 
         embed = Embed(
