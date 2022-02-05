@@ -11,13 +11,13 @@ from lightbulb import Plugin, commands, implements, command, add_checks, Check, 
 from lightbulb.checks import guild_only
 from lightbulb.context import Context
 from mongoengine import Q
-from mongoengine.errors import NotUniqueError
+from mongoengine.errors import NotUniqueError, DoesNotExist
 
 from gadoneko.checks import staff_only, bot_owner_only
 from gadoneko.util.permissions import update_permissions
-from shared.colors import RESULT, OK
+from shared.colors import RESULT, OK, INFO
 from shared.documents import TrustedUser, GuildConfiguration, UserIdentity, VerificationMethod, CronHealthCheck, \
-    Reviewer
+    Reviewer, VerificationRequest
 from shared.formatting import code_block
 from shared.progressbar import ProgressBar
 from shared.util import chunks
@@ -184,9 +184,47 @@ async def query(ctx: Context):
     if ctx.options.by_ns:
         qs &= Q(student_number=ctx.options.by_ns)
 
-    results = TrustedUser.objects(qs)
-    embed = Embed(description=code_block(results.to_json(indent=2)), color=RESULT)
-    await ctx.respond(embed=embed)
+    try:
+        tu: TrustedUser = TrustedUser.objects(qs).get()
+    except DoesNotExist:
+        await ctx.respond('Nie ma takiego użytkownika w bazie')
+        return
+
+    member = await ctx.bot.rest.fetch_member(ctx.guild_id, tu.identity.user_id)
+    embeds = [
+        Embed(
+            title=f'Użytkownik {member}',
+            description=f'{member.mention} był weryfikowany przy użyciu `{tu.verification_method.value}`',
+            color=member.accent_color
+        ).set_thumbnail(
+            member.avatar_url
+        ).add_field(
+            'Numer studenta', tu.student_number
+        ).add_field(
+            'Zweryfikowany', tu.when.isoformat()
+        )
+    ]
+
+    if tu.verification_method == VerificationMethod.REVIEW:
+        vr: VerificationRequest = VerificationRequest.objects(trust=tu).get()
+        reviewer = await ctx.bot.rest.fetch_user(vr.reviewer.identity.user_id)
+        embeds.append(
+            Embed(
+                color=INFO
+            ).add_field(
+                'Sprawdzający', reviewer.mention
+            ).add_field(
+                'Imię i nazwisko', vr.google.name
+            ).add_field(
+                'Email', vr.google.email
+            ).add_field(
+                'Forma weryfikacyjna', f'https://free.itny.me/admin/review/{vr.id}'
+            ).add_field(
+                'Czy sprawdzono dokumenty', 'Tak' if vr.photo_back and vr.photo_front else 'Nie'
+            )
+        )
+
+    await ctx.respond(embeds=embeds)
 
 
 @admin.child()
