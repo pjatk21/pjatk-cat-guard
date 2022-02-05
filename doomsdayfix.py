@@ -31,3 +31,4 @@ async def doomsday_fix(event: ShardReadyEvent):
         except DoesNotExist:
             print('not affected', m)
 
+bot.run()
