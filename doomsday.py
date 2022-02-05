@@ -15,7 +15,6 @@ init_connection()
 
 bot = GatewayBot(os.getenv('DISCORD_TOKEN'))
 
-
 @bot.listen(ShardReadyEvent)
 async def doomsday(event: ShardReadyEvent):
     guild = await bot.rest.fetch_guild(872492754821861387)
@@ -49,3 +48,5 @@ async def doomsday(event: ShardReadyEvent):
             print('reset ✅', member)
         except HikariError as he:
             print(he, member)
+
+bot.run()
