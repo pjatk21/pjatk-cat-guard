@@ -29,6 +29,15 @@
 </nav>
 {% block body %}
     <div class="uk-container">
+        <h2>Statystyki rejestracji</h2>
+        {% for guild, stat in stats.items() %}
+            <p>
+                {% if guild.icon_url %}
+                    <img style="height: 24px" src="{{ guild.icon_url }}" class="uk-margin-small-right">
+                {% endif %}
+                {{ guild }}: {{ stat }}
+            </p>
+        {% endfor %}
         {% if awaiting|length > 0 %}
             <h2>Oczekujące weryfikacje</h2>
             <div uk-filter="target: .js-filter; animation: fade">

@@ -1,3 +1,4 @@
+import asyncio
 import os
 import re
 from datetime import timedelta, datetime
@@ -9,21 +10,21 @@ from hikari import RESTApp
 from mongoengine import DoesNotExist, Q, NotUniqueError
 from starlette.applications import Starlette
 from starlette.authentication import requires
-from starlette.background import BackgroundTask, BackgroundTasks
+from starlette.background import BackgroundTasks
 from starlette.endpoints import HTTPEndpoint
 from starlette.exceptions import HTTPException
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.requests import Request
-from starlette.responses import JSONResponse, RedirectResponse, Response
+from starlette.responses import RedirectResponse, Response
 
+import webpanel.tasks
 from shared.db import init_connection
 from shared.documents import VerificationRequest, GuildConfiguration, VerificationState, TrustedUser, \
     VerificationMethod, Reviewer, VerificationRejection
 from webpanel.common import templates
 from webpanel.middleware.auth import DiscordAuthBackend
-import webpanel.tasks
 
 load_dotenv()
 init_connection()
@@ -96,8 +97,16 @@ async def admin_logout(request: Request):
 @app.route('/')
 @requires('authenticated')
 async def admin_index(request: Request):
+    stats = {}
+
+    async with RESTApp().acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as bot:
+        for gc in GuildConfiguration.objects():
+            members, guild = await asyncio.gather(bot.fetch_members(gc.guild_id), bot.fetch_guild(gc.guild_id))
+            tr_count = len([mem for mem in members if gc.trusted_role_id in mem.role_ids])
+            stats |= {guild: f'{tr_count / len(members):.2f}%'}
+
     awaiting = VerificationRequest.objects(Q(state=VerificationState.IN_REVIEW) | Q(state=VerificationState.ID_REQUIRED)).order_by('-submitted')
-    return templates.TemplateResponse('admin/base.html', {'request': request, 'awaiting': awaiting})
+    return templates.TemplateResponse('admin/base.html', {'request': request, 'awaiting': awaiting, 'stats': stats})
 
 
 @app.route('/accepted', name='accepted')
