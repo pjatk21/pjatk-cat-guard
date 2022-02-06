@@ -6,8 +6,7 @@ from enum import Enum
 from hikari import Member
 from lightbulb import Context
 from mongoengine import Document, LongField, EnumField, DateTimeField, DynamicField, EmbeddedDocumentField, \
-    EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument, ListField, URLField, LazyReferenceField, \
-    BinaryField, CASCADE
+    EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument, ListField, BinaryField, CASCADE
 
 
 class VerificationMethod(Enum):

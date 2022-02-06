@@ -1,20 +1,19 @@
 from dotenv import load_dotenv
 from google.auth.transport import requests
 from google.oauth2 import id_token
-from mongoengine import Q
+from mongoengine.errors import DoesNotExist
 from starlette.applications import Starlette
 from starlette.background import BackgroundTasks
 from starlette.datastructures import UploadFile
 from starlette.endpoints import HTTPEndpoint
 from starlette.exceptions import HTTPException
 from starlette.requests import Request
-from starlette.responses import JSONResponse, PlainTextResponse, RedirectResponse
+from starlette.responses import RedirectResponse
 
 import webpanel.tasks
 from shared.db import init_connection
 from shared.documents import VerificationRequest, VerificationPhoto, VerificationGoogle, TrustedUser, VerificationState
 from webpanel.common import templates
-from mongoengine.errors import DoesNotExist
 
 load_dotenv()
 init_connection()

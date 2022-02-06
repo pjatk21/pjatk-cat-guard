@@ -1,14 +1,12 @@
 import os
-import re
 
 from hikari import RESTApp, Embed, HikariError
 from mongoengine import DoesNotExist
-
 from sendgrid import SendGridAPIClient, Mail
 from starlette.requests import Request
 
 from shared.colors import *
-from shared.documents import VerificationRequest, TrustedUser, VerificationMethod, GuildConfiguration, Reviewer
+from shared.documents import VerificationRequest, TrustedUser, GuildConfiguration, Reviewer
 
 
 async def apply_trusted_role(tu: TrustedUser, conf: GuildConfiguration):

@@ -2,9 +2,8 @@ import logging
 import re
 
 import yaml
-from lightbulb import Plugin
-from webpanel.common import templates
 from hikari.events import GuildMessageCreateEvent
+from lightbulb import Plugin
 
 plugin = Plugin('hehe funny responses')
 logger = logging.getLogger('gadoneko.plugins.funny')

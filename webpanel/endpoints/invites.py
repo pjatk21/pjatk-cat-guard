@@ -1,19 +1,11 @@
 import os
-from datetime import timedelta, datetime
+from datetime import timedelta
 
 from aiohttp import ClientSession
-from google.auth.transport import requests
-from google.oauth2 import id_token
-from hikari import RESTApp, Embed
-from mongoengine import Q
-from starlette.datastructures import UploadFile
+from hikari import RESTApp
 from starlette.endpoints import HTTPEndpoint
-from starlette.exceptions import HTTPException
 from starlette.requests import Request
-from starlette.responses import PlainTextResponse
 
-from shared.colors import OK
-from shared.documents import TrustedUser, GuildConfiguration, VerificationMethod, VerificationRequest
 from webpanel.common import templates
 
 
