@@ -111,7 +111,9 @@ class VerificationRequest(Document):
 
     @property
     def photos_ready(self):
-        return self.photo_front and self.photo_back and self.state == VerificationState.ID_REQUIRED
+        if self.state == VerificationState.ID_REQUIRED or self.state == VerificationState.ACCEPTED:
+            return bool(self.photo_front and self.photo_back)
+        return None
 
     @property
     def wait_time(self):
