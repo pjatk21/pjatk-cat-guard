@@ -8,36 +8,32 @@
             </form>
         </div>
         <h2>Odrzucone weryfikacje</h2>
-        <table class="uk-table uk-table-divider uk-table-striped">
+        <table class="uk-table uk-table-divider">
             <thead>
             <tr>
                 <th>ID formy</th>
                 <th>Numer studenta</th>
                 <th>User</th>
-                <th>Operator</th>
                 <th>Akcja</th>
             </tr>
             </thead>
             <tbody>
             {% for vr in rejected %}
                 <tr>
-                    <td>
-                        {{ vr.id }}
+                    <td class="uk-table-shrink">
+                        <code>{{ vr.id }}</code>
                     </td>
-                    <td>
+                    <td class="uk-table-shrink">
                         {{ vr.no }}
                     </td>
                     <td>
-                        {{ vr.identity.user_name }}
-                    </td>
-                    <td>
-                        {{ vr.reviewer.identity.user_name }}
+                        {{ vr.identity }}
                     </td>
                     <td>
                         <div class="uk-container-small">
                             <a href="{{ request.url_for('admin:review', rid=vr.id) }}"
                                class="uk-button uk-button-primary">
-                                🔍 Sprawdź
+                                🔍
                             </a>
                         </div>
                     </td>

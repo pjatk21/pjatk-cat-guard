@@ -35,8 +35,8 @@
                 <ul class="uk-subnav uk-subnav-pill">
                     <li uk-filter-control><a>Wszystkie</a></li>
                     <li uk-filter-control="[data-state='VerificationState.IN_REVIEW']"><a>Oczekujące</a></li>
-                    <li uk-filter-control="[data-photos-ready=True]"><a>Oczekujące na przesłanie dokumentów</a></li>
-                    <li uk-filter-control="[data-photos-ready=False]"><a>Oczekujące na sprawdzenie dokumentów</a></li>
+                    <li uk-filter-control="[data-photos-ready=True]"><a>Oczekujące na sprawdzenie dokumentów</a></li>
+                    <li uk-filter-control="[data-photos-ready=False]"><a>Oczekujące na przesłanie dokumentów</a></li>
                 </ul>
 
             <table class="uk-table uk-table-divider">
@@ -53,7 +53,7 @@
                 <tbody class="js-filter">
                 {% for vr in awaiting %}
                     <tr data-state="{{ vr.state }}" data-photos-ready="{{ vr.photos_ready }}">
-                        <td>
+                        <td class="uk-table-shrink">
                             {{ vr.no }}
                         </td>
                         <td>
