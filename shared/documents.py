@@ -51,6 +51,9 @@ class UserIdentity(EmbeddedDocument):
         uid.user_name = str(mem.user)
         return uid
 
+    def __str__(self):
+        return self.user_name
+
 
 class TrustedUser(Document):
     identity = EmbeddedDocumentField(UserIdentity, unique=True, required=True)
@@ -117,12 +120,7 @@ class VerificationRequest(Document):
 
     @property
     def wait_time(self):
-        td = datetime.now().astimezone() - self.submitted
-        if td.seconds < 60:
-            return 'Mniej niż minuta'
-        if td.days > 1:
-            return 'Ponad dzień'
-        return f'{td.seconds // 3600}h {(td.seconds // 60) % 60}m'
+        return datetime.now().astimezone() - self.submitted
 
     def remove_trust(self):
         trust = self.trust
