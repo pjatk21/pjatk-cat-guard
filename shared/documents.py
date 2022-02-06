@@ -109,13 +109,18 @@ class VerificationRequest(Document):
     def no(self):
         return re.match(r'(s|pd)\d+', self.google.email).group()
 
+    @property
+    def photos_ready(self):
+        return self.photo_front and self.photo_back and self.state == VerificationState.ID_REQUIRED
+
+    @property
     def wait_time(self):
         td = datetime.now().astimezone() - self.submitted
         if td.seconds < 60:
             return 'Mniej niż minuta'
         if td.days > 1:
             return 'Ponad dzień'
-        return f'{td.seconds // 3600}h {td.seconds % 60}m'
+        return f'{td.seconds // 3600}h {(td.seconds // 60) % 60}m'
 
     def remove_trust(self):
         trust = self.trust
