@@ -103,7 +103,7 @@ async def admin_index(request: Request):
         for gc in GuildConfiguration.objects():
             members, guild = await asyncio.gather(bot.fetch_members(gc.guild_id), bot.fetch_guild(gc.guild_id))
             tr_count = len([mem for mem in members if gc.trusted_role_id in mem.role_ids])
-            stats |= {guild: f'{tr_count / len(members):.2f}%'}
+            stats |= {guild: f'{100 * tr_count / len(members):.2f}%'}
 
     awaiting = VerificationRequest.objects(Q(state=VerificationState.IN_REVIEW) | Q(state=VerificationState.ID_REQUIRED)).order_by('-submitted')
     return templates.TemplateResponse('admin/base.html', {'request': request, 'awaiting': awaiting, 'stats': stats})
