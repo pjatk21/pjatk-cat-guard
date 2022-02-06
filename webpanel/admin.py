@@ -207,7 +207,8 @@ async def admin_id_req(request: Request):
         tasks.add_task(webpanel.tasks.removed_trusted_role, vr)
 
     vr.save()
-    tasks.add_task(webpanel.tasks.notify_requested_id, vr)
+    tasks.add_task(webpanel.tasks.notify_requested_id, vr, request)
+    tasks.add_task(webpanel.tasks.notify_requested_id_mail, vr, request)
 
     return RedirectResponse(request.url_for('admin:review', rid=vr.id), status_code=302, background=tasks)
 

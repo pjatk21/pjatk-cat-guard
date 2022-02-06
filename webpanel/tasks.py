@@ -5,6 +5,7 @@ from hikari import RESTApp, Embed, HikariError
 from mongoengine import DoesNotExist
 
 from sendgrid import SendGridAPIClient, Mail
+from starlette.requests import Request
 
 from shared.colors import *
 from shared.documents import VerificationRequest, TrustedUser, VerificationMethod, GuildConfiguration, Reviewer
@@ -90,21 +91,34 @@ async def send_rejection_dm(vr: VerificationRequest, message: str):
         await user.send(embed=embed)
 
 
-async def notify_requested_id(vr: VerificationRequest):
+async def notify_requested_id(vr: VerificationRequest, request: Request):
     async with RESTApp().acquire(os.getenv("DISCORD_TOKEN"), "Bot") as bot:
         user = await bot.fetch_user(vr.identity.user_id)
         await user.send(
             embed=Embed(
                 title='Papers please!',
-                description=f'Weryfikujący poprosił o wysłanie legitymacji studenckiej w celu potwierdzenia tożsamości, odwiedź {os.getenv("VERIFICATION_URL")}verify/{vr.code} aby przesłać dokument.',
-                url=f'{os.getenv("VERIFICATION_URL")}verify/{vr.code}',
+                description=f'Weryfikujący poprosił o wysłanie legitymacji studenckiej w celu potwierdzenia tożsamości, odwiedź {request.url_for("admin:review", rid=vr.code)} aby przesłać dokument.',
+                url=request.url_for('admin:review', rid=vr.code),
                 colour=WARN
             )
         )
         # await user.send(f'Weryfikujący poprosił o wysłanie legitymacji studenckiej w celu potwierdzenia tożsamości, odwiedź {os.getenv("VERIFICATION_URL")}verify/{vr.code} aby przesłać dokument.')
 
 
-async def notify_reviewers(vr: VerificationRequest):
+async def notify_requested_id_mail(vr: VerificationRequest, request: Request):
+    sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY'))
+    mail = Mail(
+        from_email=('gadoneko@free.itny.me', 'ガード猫'),
+        to_emails=vr.google.email
+    )
+    mail.dynamic_template_data = {
+        'link': request.url_for('verify:form', secret=vr.code),
+    }
+    mail.template_id = 'd-0f04cd5c573b4ed39065dfabd889214b'
+    sg.send(mail)
+
+
+async def notify_reviewers(vr: VerificationRequest, request: Request):
     async with RESTApp().acquire(os.getenv("DISCORD_TOKEN"), "Bot") as bot:
         rs = Reviewer.objects(identity__guild_id=vr.identity.guild_id)
         user = await bot.fetch_user(vr.identity.user_id)
@@ -114,13 +128,13 @@ async def notify_reviewers(vr: VerificationRequest):
                 embed=Embed(
                     title='Nowa osoba do weryfikacji!',
                     description=f'{vr.identity.user_name} oczekuje na weryfikację!',
-                    url=f'https://free.itny.me/admin/review/{vr.id}',
+                    url=request.url_for('admin:review', rid=vr.code),
                     colour=user.accent_colour,
                 ).set_thumbnail(user.avatar_url)
             )
 
 
-async def notify_reviewer_docs(vr: VerificationRequest):
+async def notify_reviewer_docs(vr: VerificationRequest, request: Request):
     async with RESTApp().acquire(os.getenv("DISCORD_TOKEN"), "Bot") as bot:
         rs = Reviewer.objects(id=vr.reviewer.id).get()
         reviewer = await bot.fetch_user(rs.identity.user_id)
@@ -128,7 +142,7 @@ async def notify_reviewer_docs(vr: VerificationRequest):
             embed=Embed(
                 title='Dokumenty do weryfikacji!',
                 description=f'{vr.identity.user_name} oczekuje na weryfikację dokumentów!',
-                url='https://free.itny.me/admin/login',
+                url=request.url_for('admin:review', rid=vr.code),
                 colour=INFO
             )
         )

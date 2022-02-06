@@ -121,11 +121,11 @@ class LoginQueueRequest(HTTPEndpoint):
         tasks = BackgroundTasks()
 
         if vr.state == VerificationState.ID_REQUIRED and vr.photo_back and vr.photo_front:
-            tasks.add_task(webpanel.tasks.notify_reviewer_docs, vr)
+            tasks.add_task(webpanel.tasks.notify_reviewer_docs, vr, request)
 
         if vr.google and vr.state == VerificationState.PENDING:
             vr.state = VerificationState.IN_REVIEW
-            tasks.add_task(webpanel.tasks.notify_reviewers, vr)
+            tasks.add_task(webpanel.tasks.notify_reviewers, vr, request)
 
         vr.save()
 
