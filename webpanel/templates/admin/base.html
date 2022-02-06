@@ -31,19 +31,28 @@
     <div class="uk-container">
         {% if awaiting|length > 0 %}
             <h2>Oczekujące weryfikacje</h2>
-            <table class="uk-table uk-table-divider uk-table-striped">
+            <div uk-filter="target: .js-filter; animation: fade">
+                <ul class="uk-subnav uk-subnav-pill">
+                    <li uk-filter-control><a>Wszystkie</a></li>
+                    <li uk-filter-control="[data-state='VerificationState.IN_REVIEW']"><a>Oczekujące</a></li>
+                    <li uk-filter-control="[data-photos-ready=True]"><a>Oczekujące na przesłanie dokumentów</a></li>
+                    <li uk-filter-control="[data-photos-ready=False]"><a>Oczekujące na sprawdzenie dokumentów</a></li>
+                </ul>
+
+            <table class="uk-table uk-table-divider">
                 <thead>
                 <tr>
                     <th>Nr studenta</th>
                     <th>Imię i nazwisko</th>
                     <th>User</th>
                     <th>Czas oczekiwania</th>
+                    <th>Oznaczenia</th>
                     <th>Akcja</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody class="js-filter">
                 {% for vr in awaiting %}
-                    <tr>
+                    <tr data-state="{{ vr.state }}" data-photos-ready="{{ vr.photos_ready }}">
                         <td>
                             {{ vr.no }}
                         </td>
@@ -54,19 +63,25 @@
                             {{ vr.identity.user_name }}
                         </td>
                         <td>
-                            {{ vr.wait_time() }}
+                            {{ vr.wait_time }}
+                        </td>
+                        <td>
                             {% if vr.state.value == 'id required' %}
-                                <span class="uk-badge">id required</span>
+                                {% if vr.photos_ready %}
+                                    <span class="uk-badge">Przesłano zdjęcia</span>
+                                {% else %}
+                                    <span class="uk-badge">Oczekuje na przesłanie dokumentów</span>
+                                {% endif %}
                             {% endif %}
                         </td>
                         <td>
                             <div class="uk-container-small">
                                 <a href="{{ request.url_for('admin:review', rid=vr.id) }}"
-                                   class="uk-button uk-button-primary">
-                                    🔍 Sprawdź
+                                   class="uk-button uk-button-primary" uk-tooltip="Sprawdź użytkownika">
+                                    🔍
                                 </a>
-                                <button uk-toggle="target: #confirm-{{ vr.id }}" class="uk-button uk-button-secondary">
-                                    🗑 Odrzuć
+                                <button uk-toggle="target: #confirm-{{ vr.id }}" class="uk-button uk-button-secondary" uk-tooltip="Odrzuć użytkownika">
+                                    🗑
                                 </button>
                             </div>
                         </td>
@@ -78,7 +93,7 @@
                                     <label>
                                         Uzasadnienie decyzji
                                         <textarea required name="reason"
-                                                  class="uk-textarea">niezgodność danych</textarea>
+                                                  class="uk-textarea uk-margin-bottom">niezgodność danych</textarea>
                                     </label>
                                     <button class="uk-button uk-button-danger" type="submit">WYJEB GNOJA</button>
                                     <button class="uk-modal-close uk-button uk-button-default" type="button">Anuluj
@@ -90,6 +105,7 @@
                 {% endfor %}
                 </tbody>
             </table>
+            </div>
         {% else %}
             <h2>Brak oczekujących weryfikacji</h2>
         {% endif %}
