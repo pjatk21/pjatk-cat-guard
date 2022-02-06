@@ -113,17 +113,21 @@
             <p>Użytkownik nie został poproszony o dokumenty.</p>
         {% endif %}
 
-        <div class="uk-container-small">
+        <div class="uk-grid">
             {% if vr.state.value in ['in review', 'id required'] %}
-                <form method="post">
-                    <button type="submit" class="uk-button uk-button-primary">✅ Zaakceptuj</button>
-                </form>
+                <div>
+                    <form method="post">
+                        <button type="submit" class="uk-button uk-button-primary">✅ Zaakceptuj</button>
+                    </form>
+                </div>
+
             {% endif %}
 
             {% if vr.state.value != 'rejected' %}
-                <button uk-toggle="target: #confirm-{{ vr.id }}" class="uk-button uk-button-secondary">🗑 Odrzuć
+                <div>
+                    <button uk-toggle="target: #confirm-{{ vr.id }}" class="uk-button uk-button-secondary">🗑 Odrzuć
                 </button>
-                <div id="confirm-{{ vr.id }}" uk-modal>
+                    <div id="confirm-{{ vr.id }}" uk-modal>
                     <div class="uk-modal-dialog uk-modal-body">
                         <h2 class="uk-modal-title">Czy jesteś pewien?</h2>
                         <form method="post" action="{{ request.url_for('admin:reject', rid=vr.id) }}"
@@ -131,7 +135,7 @@
                             <label>
                                 Uzasadnienie decyzji
                                 <textarea required name="reason"
-                                          class="uk-textarea">niezgodność danych</textarea>
+                                          class="uk-textarea uk-margin-bottom">niezgodność danych</textarea>
                             </label>
                             <button class="uk-button uk-button-danger" type="submit">WYJEB GNOJA</button>
                             <button class="uk-modal-close uk-button uk-button-default" type="button">Anuluj
@@ -139,11 +143,12 @@
                         </form>
                     </div>
                 </div>
+                </div>
             {% endif %}
 
-            <form method="post">
+            <!-- <form method="post">
                 <button disabled type="submit" class="uk-button uk-button-danger">🔨 Zbanuj</button>
-            </form>
+            </form> -->
         </div>
     </div>
 {% endblock %}
