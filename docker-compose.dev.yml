@@ -12,7 +12,7 @@ services:
       - database
       - webpanel
     volumes:
-      - ".:/pjatk"
+      - "./:/pjatk"
   webpanel:
     build:
       dockerfile: docker/gadoneko/Dockerfile
@@ -22,7 +22,7 @@ services:
     depends_on:
       - database
     volumes:
-      - ".:/pjatk"
+      - "./:/pjatk"
     ports:
       - "8000:8000"
     entrypoint: poetry run python3 -m uvicorn webpanel:app --host 0.0.0.0 --reload --log-level debug

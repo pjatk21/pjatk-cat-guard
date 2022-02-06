@@ -64,4 +64,4 @@ def guild_not_configured(ctx: Context):
 
 
 def bot_owner_only(ctx: Context):
-    return ctx.user.id == os.environ.get('BOT_CREATOR_ID', 285146237613899776)
+    return ctx.user.id == int(os.getenv('BOT_CREATOR_ID', 285146237613899776))
