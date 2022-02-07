@@ -80,7 +80,7 @@ async def admin_oauth(request: Request):
         user = await client.fetch_my_user()
 
         try:
-            rev = Reviewer.objects(identity__user_id=user.id).get()
+            rev = Reviewer.objects.get(identity__user_id=user.id)
         except DoesNotExist:
             return templates.TemplateResponse('message.html',
                                               {'request': request, 'header': 'Nie jesteś wyznaczony na sprawdzającego.',
@@ -126,7 +126,7 @@ async def admin_index(request: Request):
 @app.route('/bypass/', methods=['POST'])
 async def admin_bypass(request: Request):
     form = await request.form()
-    rev: Reviewer = Reviewer.objects(id=request.session['reviewer']).get()
+    rev: Reviewer = Reviewer.objects.get(id=request.session['reviewer'])
 
     async with RESTApp().acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as bot:
         member = await bot.fetch_member(form['guild'], form['user'])
@@ -181,7 +181,7 @@ class AdminReview(HTTPEndpoint):
     @requires('authenticated')
     async def get(self, request: Request):
         try:
-            vr: VerificationRequest = VerificationRequest.objects(id=request.path_params['rid']).get()
+            vr: VerificationRequest = VerificationRequest.objects.get(id=request.path_params['rid'])
         except DoesNotExist:
             raise HTTPException(404)
 
@@ -201,9 +201,9 @@ class AdminReview(HTTPEndpoint):
     @requires('authenticated')
     async def post(self, request: Request):
         try:
-            vr: VerificationRequest = VerificationRequest.objects(id=request.path_params['rid']).get()
-            conf: GuildConfiguration = GuildConfiguration.objects(guild_id=vr.identity.guild_id).get()
-            rev: Reviewer = Reviewer.objects(id=request.session['reviewer']).get()
+            vr: VerificationRequest = VerificationRequest.objects.get(id=request.path_params['rid'])
+            conf: GuildConfiguration = GuildConfiguration.objects.get(guild_id=vr.identity.guild_id)
+            rev: Reviewer = Reviewer.objects.get(id=request.session['reviewer'])
         except DoesNotExist:
             raise HTTPException(404)
 
@@ -236,8 +236,8 @@ class AdminReview(HTTPEndpoint):
 @requires('authenticated')
 async def admin_id_req(request: Request):
     try:
-        vr: VerificationRequest = VerificationRequest.objects(id=request.path_params['rid']).get()
-        rev: Reviewer = Reviewer.objects(id=request.session['reviewer']).get()
+        vr: VerificationRequest = VerificationRequest.objects.get(id=request.path_params['rid'])
+        rev: Reviewer = Reviewer.objects.get(id=request.session['reviewer'])
     except DoesNotExist:
         raise HTTPException(404)
 
@@ -264,8 +264,8 @@ async def admin_reject(request: Request):
     form = await request.form()
 
     try:
-        vr: VerificationRequest = VerificationRequest.objects(id=request.path_params['rid']).get()
-        rev: Reviewer = Reviewer.objects(id=request.session['reviewer']).get()
+        vr: VerificationRequest = VerificationRequest.objects.get(id=request.path_params['rid'])
+        rev: Reviewer = Reviewer.objects.get(id=request.session['reviewer'])
     except DoesNotExist:
         raise HTTPException(404)
 
@@ -294,7 +294,7 @@ async def photo_proxy(request: Request):
     rid = request.path_params['rid']
 
     try:
-        vr: VerificationRequest = VerificationRequest.objects(id=rid).get()
+        vr: VerificationRequest = VerificationRequest.objects.get(id=rid)
     except DoesNotExist:
         raise HTTPException(404)
 

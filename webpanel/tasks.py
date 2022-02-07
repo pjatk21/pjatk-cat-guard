@@ -30,7 +30,7 @@ async def apply_trusted_role(tu: TrustedUser, conf: GuildConfiguration):
 
 async def removed_trusted_role(vr: VerificationRequest):
     try:
-        conf: GuildConfiguration = GuildConfiguration.objects(guild_id=vr.identity.guild_id).get()
+        conf: GuildConfiguration = GuildConfiguration.objects.get(guild_id=vr.identity.guild_id)
     except DoesNotExist:
         return
 
@@ -134,7 +134,7 @@ async def notify_reviewers(vr: VerificationRequest, request: Request):
 
 async def notify_reviewer_docs(vr: VerificationRequest, request: Request):
     async with RESTApp().acquire(os.getenv("DISCORD_TOKEN"), "Bot") as bot:
-        rs = Reviewer.objects(id=vr.reviewer.id).get()
+        rs = Reviewer.objects.get(id=vr.reviewer.id)
         reviewer = await bot.fetch_user(rs.identity.user_id)
         await reviewer.send(
             embed=Embed(

@@ -185,7 +185,7 @@ async def query(ctx: Context):
         qs &= Q(student_number=ctx.options.by_ns)
 
     try:
-        tu: TrustedUser = TrustedUser.objects(qs).get()
+        tu: TrustedUser = TrustedUser.objects.get(qs)
     except DoesNotExist:
         await ctx.respond('Nie ma takiego użytkownika w bazie')
         return
@@ -206,7 +206,7 @@ async def query(ctx: Context):
     ]
 
     if tu.verification_method == VerificationMethod.REVIEW:
-        vr: VerificationRequest = VerificationRequest.objects(trust=tu).get()
+        vr: VerificationRequest = VerificationRequest.objects.get(trust=tu)
         reviewer = await ctx.bot.rest.fetch_user(vr.reviewer.identity.user_id)
         embeds.append(
             Embed(

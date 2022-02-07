@@ -33,7 +33,7 @@ async def google_oauth(request: Request):
     credential = form["credential"]
 
     try:
-        vr: VerificationRequest = VerificationRequest.objects(code=secret).get()
+        vr: VerificationRequest = VerificationRequest.objects.get(code=secret)
     except DoesNotExist:
         raise HTTPException(404)
 
@@ -82,7 +82,7 @@ async def google_oauth(request: Request):
 
 
 async def bypassed(request: Request, vr: VerificationRequest):
-    conf: GuildConfiguration = GuildConfiguration.objects(guild_id=vr.identity.guild_id).get()
+    conf: GuildConfiguration = GuildConfiguration.objects.get(guild_id=vr.identity.guild_id)
 
     trust = TrustedUser()
     trust.identity = vr.identity
@@ -114,7 +114,7 @@ class LoginQueueRequest(HTTPEndpoint):
         secret = request.path_params["secret"]
 
         try:
-            vr: VerificationRequest = VerificationRequest.objects(code=secret).get()
+            vr: VerificationRequest = VerificationRequest.objects.get(code=secret)
         except DoesNotExist:
             raise HTTPException(404)
 
@@ -128,7 +128,7 @@ class LoginQueueRequest(HTTPEndpoint):
         secret = request.path_params["secret"]
 
         try:
-            vr: VerificationRequest = VerificationRequest.objects(code=secret).get()
+            vr: VerificationRequest = VerificationRequest.objects.get(code=secret)
         except DoesNotExist:
             raise HTTPException(404)
 
