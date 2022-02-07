@@ -17,8 +17,7 @@ python-multipart = "*"
 jinja2 = "*"
 uvicorn = "*"
 # Common dependencies
-mongoengine = ">=0.23.1"
-pymongo = "<4.0"
+mongoengine = {git = "https://github.com/MongoEngine/mongoengine"}
 python-dotenv = "*"
 google-api-python-client = "*"
 sentry-sdk = "*"
