@@ -18,9 +18,9 @@ def fix():
     for pics_path in pictures.glob('*'):
         front, back = [None] * 2
         for pic in pics_path.glob('*'):
-            if re.search(r'photoBack\.\w+', pic.name):
+            if re.search(r'[bB]ack', pic.name):
                 back = str(pic.absolute())
-            if re.search(r'photoFront\.\w+', pic.name):
+            if re.search(r'[fF]ront', pic.name):
                 front = str(pic.absolute())
         print('🔧', front, back)
 
@@ -32,8 +32,9 @@ def fix():
             vr.photos = photos
             vr.save()
         except DoesNotExist:
+            print('❌', pics_path.name, 'does not exist')
             continue
-        print('✅', vr.id)
+        print('✅', vr.id, 'updated')
 
 
 if __name__ == '__main__':
