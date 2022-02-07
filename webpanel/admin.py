@@ -1,10 +1,10 @@
 import asyncio
 import os
 import re
+import uuid
 from datetime import timedelta, datetime
 
 from authlib.integrations.starlette_client import OAuth
-from bson import ObjectId
 from dotenv import load_dotenv
 from hikari import RESTApp
 from mongoengine import DoesNotExist, Q, NotUniqueError
@@ -22,7 +22,7 @@ from starlette.responses import RedirectResponse, Response
 import webpanel.tasks
 from shared.db import init_connection
 from shared.documents import VerificationRequest, GuildConfiguration, VerificationState, TrustedUser, \
-    VerificationMethod, Reviewer, VerificationRejection
+    VerificationMethod, Reviewer, VerificationRejection, UserIdentity
 from webpanel.common import templates
 from webpanel.middleware.auth import DiscordAuthBackend
 
@@ -103,15 +103,45 @@ async def admin_logout(request: Request):
 @requires('authenticated')
 async def admin_index(request: Request):
     stats = {}
+    bypass_guilds = []
 
     async with RESTApp().acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as bot:
         for gc in GuildConfiguration.objects():
             members, guild = await asyncio.gather(bot.fetch_members(gc.guild_id), bot.fetch_guild(gc.guild_id))
             tr_count = len([mem for mem in members if gc.trusted_role_id in mem.role_ids])
             stats |= {guild: f'{100 * tr_count / len(members):.2f}%'}
+            bypass_guilds.append({'id': guild.id, 'name': str(guild)})
 
     awaiting = VerificationRequest.objects(Q(state=VerificationState.IN_REVIEW) | Q(state=VerificationState.ID_REQUIRED)).order_by('-submitted')
-    return templates.TemplateResponse('admin/base.html', {'request': request, 'awaiting': awaiting, 'stats': stats})
+    return templates.TemplateResponse('admin/base.html', {'request': request, 'awaiting': awaiting, 'stats': stats, 'bypass': bypass_guilds})
+
+
+@app.route('/bypass/', methods=['POST'])
+async def admin_bypass(request: Request):
+    form = await request.form()
+    rev: Reviewer = Reviewer.objects(id=request.session['reviewer']).get()
+
+    async with RESTApp().acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as bot:
+        member = await bot.fetch_member(form['guild'], form['user'])
+        identity = UserIdentity()
+        identity.user_id = member.id
+        identity.guild_id = member.guild_id
+        identity.user_name = str(member)
+        identity.guild_name = str(await bot.fetch_guild(member.guild_id))
+
+    email = f'{form["student_no"]}@pjwstk.edu.pl'
+
+    vr = VerificationRequest()
+    vr.identity = identity
+    vr.reviewer = rev
+    vr.code = f'ARB-{str(uuid.uuid4())[:12]}'
+    vr.update_state(VerificationState.BYPASSED, rev)
+    vr.save()
+
+    tasks = BackgroundTasks()
+    tasks.add_task(webpanel.tasks.notify_bypass_email, email, vr, request)
+
+    return RedirectResponse(request.url_for('admin:admin_index'), status_code=302, background=tasks)
 
 
 @app.route('/accepted', name='accepted')

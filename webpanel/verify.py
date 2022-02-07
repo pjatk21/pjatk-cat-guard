@@ -1,7 +1,10 @@
+import re
+from datetime import datetime
+
 from dotenv import load_dotenv
 from google.auth.transport import requests
 from google.oauth2 import id_token
-from mongoengine.errors import DoesNotExist
+from mongoengine.errors import DoesNotExist, NotUniqueError
 from starlette.applications import Starlette
 from starlette.background import BackgroundTasks
 from starlette.datastructures import UploadFile
@@ -12,7 +15,8 @@ from starlette.responses import RedirectResponse
 
 import webpanel.tasks
 from shared.db import init_connection
-from shared.documents import VerificationRequest, VerificationPhoto, VerificationGoogle, TrustedUser, VerificationState
+from shared.documents import VerificationRequest, VerificationPhoto, VerificationGoogle, TrustedUser, VerificationState, \
+    GuildConfiguration, VerificationMethod
 from webpanel.common import templates
 
 load_dotenv()
@@ -70,7 +74,37 @@ async def google_oauth(request: Request):
     vr.google = google_data
     vr.save()
 
+    if re.match(r'ARB-\w{8}-\w{3}', vr.code):
+        return await bypassed(request, vr)
+
     return RedirectResponse(request.url_for('verify:form', secret=secret))
+
+
+async def bypassed(request: Request, vr: VerificationRequest):
+    conf: GuildConfiguration = GuildConfiguration.objects(guild_id=vr.identity.guild_id).get()
+
+    trust = TrustedUser()
+    trust.identity = vr.identity
+    trust.student_number = vr.no
+    trust.verification_method = VerificationMethod.REVIEW
+
+    try:
+        trust.save()
+    except NotUniqueError:
+        vr.delete()
+        return RedirectResponse(request.url_for('verify:form', secret=vr.code))
+
+    vr.trust = trust
+    vr.update_state(VerificationState.ACCEPTED, vr.reviewer)
+    vr.accepted = datetime.now().astimezone()
+    vr.save()
+
+    tasks = BackgroundTasks()
+    tasks.add_task(webpanel.tasks.apply_trusted_role, trust, conf)
+    tasks.add_task(webpanel.tasks.send_trust_confirmation, vr)
+    tasks.add_task(webpanel.tasks.remove_duplicate_requests, vr)
+
+    return RedirectResponse(request.url_for('verify:form', secret=vr.code), background=tasks, status_code=302)
 
 
 @app.route('/{secret}', name='form')

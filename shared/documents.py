@@ -20,6 +20,7 @@ class VerificationMethod(Enum):
 
 class VerificationState(Enum):
     PENDING = 'pending'  # waiting for user to fill all required data
+    BYPASSED = 'bypassed'  # admin created link
     IN_REVIEW = 'in review'  # waiting to be reviewed
     ID_REQUIRED = 'id required'  # waiting to be reviewed
     ACCEPTED = 'accepted'  # accepted by reviewer

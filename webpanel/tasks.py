@@ -149,3 +149,19 @@ async def notify_reviewer_docs(vr: VerificationRequest, request: Request):
 def remove_duplicate_requests(vr: VerificationRequest):
     duplicates = VerificationRequest.objects(identity=vr.identity, id__ne=vr.id, state__nin=[VerificationState.REJECTED, VerificationState.ACCEPTED])
     duplicates.delete()
+
+
+def notify_bypass_email(email: str, vr: VerificationRequest, request: Request):
+    sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY'))
+    mail = Mail(
+        from_email=('gadoneko@free.itny.me', 'ガード猫'),
+        to_emails=email
+    )
+    mail.dynamic_template_data = {
+        'link': request.url_for('verify:form', secret=vr.code),
+        'student_num': email,
+        'guild': vr.identity.guild_name,
+        'discord': vr.identity.user_name,
+    }
+    mail.template_id = 'd-07aa4f50084d4f81bba9ab46c625ff21'
+    sg.send(mail)
