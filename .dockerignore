@@ -9,3 +9,4 @@ CONTRIBUTING.md
 .gitignore
 .dockerignore
 health-*.json
+data/

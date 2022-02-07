@@ -22,14 +22,14 @@ ENV TZ "Europe/Warsaw"
 
 COPY . /pjatk/
 
+RUN mkdir "/pjatk/data"
+
+VOLUME /pjatk/data
+
 # Update permissions
 USER root
 
-RUN chmod -R 777 /pjatk
-
-RUN chmod -R 755 /pjatk/gadoneko /pjatk/doctor /pjatk/shared/ /pjatk/webpanel
-
-RUN chown -R neko /pjatk
+RUN chmod -R 777 /pjatk && chmod -R 755 /pjatk/gadoneko /pjatk/doctor /pjatk/shared/ /pjatk/webpanel && chown -R neko /pjatk
 
 USER neko
 
