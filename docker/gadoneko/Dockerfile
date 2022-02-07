@@ -22,6 +22,17 @@ ENV TZ "Europe/Warsaw"
 
 COPY . /pjatk/
 
+# Update permissions
+USER root
+
+RUN chmod -R 777 /pjatk
+
+RUN chmod -R 755 /pjatk/gadoneko /pjatk/doctor /pjatk/shared/ /pjatk/webpanel
+
+RUN chown -R neko /pjatk
+
+USER neko
+
 FROM base AS bot
 
 HEALTHCHECK CMD python3 -m doctor bot
