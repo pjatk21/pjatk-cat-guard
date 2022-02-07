@@ -220,7 +220,7 @@ async def query(ctx: Context):
             ).add_field(
                 'Forma weryfikacyjna', f'https://free.itny.me/admin/review/{vr.id}'
             ).add_field(
-                'Czy sprawdzono dokumenty', 'Tak' if vr.photo_back and vr.photo_front else 'Nie'
+                'Czy sprawdzono dokumenty', 'Tak' if vr.photos.ready else 'Nie'
             )
         )
 

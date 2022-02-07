@@ -97,8 +97,8 @@
             </div>
         </div>
         <h2>Dokumenty</h2>
-        {% if vr.state.value == 'id required' or (vr.photo_front and vr.photo_back) %}
-            {% if vr.photo_front and vr.photo_back %}
+        {% if vr.state.value == 'id required' or (vr.photos.ready) %}
+            {% if vr.photos.ready %}
                 <div class="uk-margin-small-bottom" uk-lightbox>
                     <a class="uk-button uk-button-default"
                        href="{{ request.url_for('admin:photoproxy', side='front', rid=vr.id) }}" data-alt="Przód">

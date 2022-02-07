@@ -110,7 +110,7 @@
                     </thead>
                     <tbody class="js-filter">
                     {% for vr in awaiting %}
-                        <tr data-state="{{ vr.state }}" data-photos-ready="{{ vr.photos_ready }}">
+                        <tr data-state="{{ vr.state }}" data-photos-ready="{{ vr.photos.ready }}">
                             <td class="uk-table-shrink">
                                 {{ vr.no }}
                             </td>
@@ -125,7 +125,7 @@
                             </td>
                             <td>
                                 {% if vr.state.value == 'id required' %}
-                                    {% if vr.photos_ready %}
+                                    {% if vr.photos.ready %}
                                         <span class="uk-badge">Przesłano zdjęcia</span>
                                     {% else %}
                                         <span class="uk-badge">Oczekuje na przesłanie dokumentów</span>

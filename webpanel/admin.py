@@ -17,7 +17,7 @@ from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.requests import Request
-from starlette.responses import RedirectResponse, Response
+from starlette.responses import RedirectResponse, FileResponse
 
 import webpanel.tasks
 from shared.db import init_connection
@@ -280,7 +280,7 @@ async def admin_reject(request: Request):
     return RedirectResponse(request.url_for('admin:admin_index'), status_code=302, background=tasks)
 
 
-@app.route('/photoproxy/{side}-{rid}.jpg', name='photoproxy')
+@app.route('/photoproxy/{rid}/{side}.jpg', name='photoproxy')
 class PhotoProxy(HTTPEndpoint):
     @requires('authenticated')
     async def get(self, request: Request):
@@ -294,8 +294,8 @@ class PhotoProxy(HTTPEndpoint):
 
         match side:
             case 'front':
-                return Response(content=vr.photo_front.photo, media_type=vr.photo_front.content_type)
+                return FileResponse(vr.photos.front)
             case 'back':
-                return Response(content=vr.photo_back.photo, media_type=vr.photo_back.content_type)
+                return FileResponse(vr.photos.back)
             case _:
                 raise HTTPException(400)

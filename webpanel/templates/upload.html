@@ -34,7 +34,7 @@
                 <div class="input-boxy">
                     <label>
                         Front legitymacji studenckiej
-                        {% if vr.photo_front == None %}
+                        {% if vr.photos.front == None %}
                             <input name="photo-front" type="file" accept="image/*, image/heic">
                         {% else %}
                             ✅ przesłano
@@ -45,14 +45,14 @@
                 <div class="input-boxy">
                     <label>
                         Tył legitymacji studenckiej
-                        {% if vr.photo_back == None %}
+                        {% if vr.photos.back == None %}
                             <input name="photo-back" type="file" accept="image/*, image/heic">
                         {% else %}
                             ✅ przesłano
                         {% endif %}
                     </label>
                 </div>
-            {% if not vr.photo_front and not photo_back %}
+            {% if not (vr.photos.front or vr.photos.back) %}
                 <button type="submit">Wyślij</button>
             {% endif %}
             </form>

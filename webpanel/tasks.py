@@ -147,7 +147,7 @@ async def notify_reviewer_docs(vr: VerificationRequest, request: Request):
 
 
 def remove_duplicate_requests(vr: VerificationRequest):
-    duplicates = VerificationRequest.objects(identity=vr.identity, id__ne=vr.id, state__nin=[VerificationState.REJECTED, VerificationState.ACCEPTED])
+    duplicates = VerificationRequest.objects(identity=vr.identity, id__ne=vr.id, state__nin=[VerificationState.REJECTED, VerificationState.ACCEPTED, VerificationState.PENDING])
     duplicates.delete()
 
 

@@ -14,8 +14,9 @@ from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
 import webpanel.tasks
+from shared.consts import data_path
 from shared.db import init_connection
-from shared.documents import VerificationRequest, VerificationPhoto, VerificationGoogle, TrustedUser, VerificationState, \
+from shared.documents import VerificationRequest, VerificationGoogle, TrustedUser, VerificationState, \
     GuildConfiguration, VerificationMethod
 from webpanel.common import templates
 
@@ -133,27 +134,31 @@ class LoginQueueRequest(HTTPEndpoint):
 
         if vr.state == VerificationState.ID_REQUIRED:
             form = await request.form()
+
+            def save_picture(photo_file: UploadFile, prefix: str):
+                filename = f'verification-{prefix}-{photo_file.filename}'
+                filedir = data_path.joinpath('pictures').joinpath(str(vr.id))
+                filedir.mkdir(parents=True, exist_ok=True)
+                filename = filedir.joinpath(filename)
+
+                with open(filename, 'wb') as f:
+                    f.write(pf.file.read())
+
+                return str(filename.absolute())
+
             if form.get('photo-front'):
                 pf: UploadFile = form['photo-front']
                 if pf.content_type != 'application/octet-stream':
-                    vr.photo_front = VerificationPhoto(
-                        photo=pf.file.read(),
-                        content_type=pf.content_type,
-                        content_name=pf.filename
-                    )
+                    vr.photos.front = save_picture(pf, 'front')
 
             if form.get('photo-back'):
                 pf: UploadFile = form['photo-back']
                 if pf.content_type != 'application/octet-stream':
-                    vr.photo_back = VerificationPhoto(
-                        photo=pf.file.read(),
-                        content_type=pf.content_type,
-                        content_name=pf.filename
-                    )
+                    vr.photos.back = save_picture(pf, 'back')
 
         tasks = BackgroundTasks()
 
-        if vr.state == VerificationState.ID_REQUIRED and vr.photo_back and vr.photo_front:
+        if vr.state == VerificationState.ID_REQUIRED and vr.photos.ready:
             tasks.add_task(webpanel.tasks.notify_reviewer_docs, vr, request)
 
         if vr.google and vr.state == VerificationState.PENDING:

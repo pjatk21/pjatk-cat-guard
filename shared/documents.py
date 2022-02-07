@@ -1,13 +1,11 @@
-import base64
 import re
 from datetime import datetime
 from enum import Enum
-from pathlib import Path
 
 from hikari import Member
 from lightbulb import Context
 from mongoengine import Document, LongField, EnumField, DateTimeField, DynamicField, EmbeddedDocumentField, \
-    EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument, ListField, BinaryField, CASCADE
+    EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument, ListField, CASCADE
 
 
 class VerificationMethod(Enum):
@@ -70,13 +68,6 @@ class GuildConfiguration(DynamicDocument):
     additional_staff_roles = ListField(LongField())
 
 
-class VerificationPhoto(EmbeddedDocument):
-    photo = BinaryField(required=True)
-    content_type = StringField(required=True)
-    content_name = StringField(required=True)
-    uploaded = DateTimeField(default=lambda: datetime.now().astimezone())
-
-
 class VerificationGoogle(EmbeddedDocument):
     email = StringField(required=True)
     name = StringField(required=True)
@@ -109,14 +100,18 @@ class VerificationChange(EmbeddedDocument):
 
 
 class VerificationPhotos(EmbeddedDocument):
-    front = StringField(required=True)
-    back = StringField(required=True)
+    front = StringField(null=True)
+    back = StringField(null=True)
+
+    @property
+    def ready(self):
+        return bool(self.front and self.back)
 
 
 class VerificationRequest(Document):
     identity = EmbeddedDocumentField(UserIdentity, required=True)
     code = StringField(required=True)
-    photos = EmbeddedDocumentField(VerificationPhotos, null=True)
+    photos = EmbeddedDocumentField(VerificationPhotos, default=VerificationPhotos())
     google = EmbeddedDocumentField(VerificationGoogle, null=True)
     submitted = DateTimeField(default=lambda: datetime.now().astimezone())
     accepted = DateTimeField(null=True)
@@ -135,29 +130,9 @@ class VerificationRequest(Document):
         self.changes.append(change)
         self.save()
 
-    def save_photo(self, content, name, side):
-        path = Path('./data/pictures').joinpath(str(self.id))
-
-        if not path.exists():
-            path.mkdir(parents=True)
-
-        fname = f'photo-{side}-{name}'
-
-        with open(path.joinpath(fname, 'wb')) as f:
-            f.write(content)
-
-    def load_photo(self, side):
-        pass
-
     @property
     def no(self):
         return re.match(r'(s|pd)\d+', self.google.email).group()
-
-    @property
-    def photos_ready(self):
-        if self.state == VerificationState.ID_REQUIRED or self.state == VerificationState.ACCEPTED:
-            return bool(self.photo_front and self.photo_back)
-        return None
 
     @property
     def wait_time(self):
