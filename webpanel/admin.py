@@ -47,7 +47,8 @@ app = Starlette(middleware=middleware)
 
 
 @app.exception_handler(403)
-async def admin_forbidden(req, exc):
+async def admin_forbidden(req: Request, exc):
+    req.session['login_redirect'] = str(req.url)
     return templates.TemplateResponse('admin/403.html', {'request': req})
 
 
@@ -84,6 +85,10 @@ async def admin_oauth(request: Request):
         request.session['user'] = str(user)
         request.session['discord']['id'] = user.id
         request.session['reviewer'] = str(rev.id)
+
+    if request.session.get('login_redirect'):
+        lr = request.session.pop('login_redirect')
+        return RedirectResponse(lr, status_code=302)
 
     return RedirectResponse(request.url_for('admin:admin_index'))
 
