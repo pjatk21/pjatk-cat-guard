@@ -2,16 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Przekierowanie do logowania</title>
+    <title>OH FUCK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/css/uikit.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit-icons.min.js"></script>
 </head>
 <body>
-    <div class="uk-container uk-margin-top">
-        <h1>Wymagane zalogowanie</h1>
-        <a class="uk-button uk-button-primary" href="{{ request.url_for('admin:admin_login') }}">Przekieruj mnie do logowania</a>
+    <div class="uk-flex uk-flex-center uk-flex-middle uk-flex-stretch">
+        <div class="uk-card uk-card-primary uk-margin-large-top">
+            <div class="uk-card-body">
+                {% block inner_card %}
+                    <h1>Wymagane zalogowanie</h1>
+                    <a class="uk-button uk-button-primary" href="{{ request.url_for('admin:admin_login') }}">Przekieruj mnie do logowania</a>
+                {% endblock %}
+            </div>
+        </div>
     </div>
 </body>
 </html>

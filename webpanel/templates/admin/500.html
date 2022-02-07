@@ -1,19 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Przekierowanie do logowania</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/css/uikit.min.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit-icons.min.js"></script>
-</head>
-<body>
-    <div class="uk-container uk-margin-top">
-        <h1>Błędzik!</h1>
-        <pre>
-            {{ exc }}
-        </pre>
-    </div>
-</body>
-</html>
+{% extends 'admin/403.html' %}
+{% block inner_card %}
+    <h1>Błędzik!</h1>
+    <pre>
+        {{ exc }}
+    </pre>
+{% endblock %}
