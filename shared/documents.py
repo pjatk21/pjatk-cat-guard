@@ -92,6 +92,19 @@ class VerificationRejection(EmbeddedDocument):
 class Reviewer(Document):
     identity = EmbeddedDocumentField(UserIdentity, required=True)
 
+    def __str__(self):
+        return self.identity.user_name
+
+
+class VerificationChange(EmbeddedDocument):
+    state_before = EnumField(VerificationState, required=True)
+    state_after = EnumField(VerificationState, required=True)
+    when = DateTimeField(default=lambda: datetime.now().astimezone())
+    reviewer = ReferenceField(Reviewer, required=True)
+
+    def __str__(self):
+        return f'{self.reviewer} zmienił stan {self.state_before.value} na {self.state_after.value} o {self.when}'
+
 
 class VerificationRequest(Document):
     identity = EmbeddedDocumentField(UserIdentity, required=True)
@@ -105,6 +118,16 @@ class VerificationRequest(Document):
     trust = ReferenceField(TrustedUser, null=True, reverse_delete_rule=CASCADE)
     reviewer = ReferenceField(Reviewer, null=True, reverse_delete_rule=NULLIFY)
     rejection = EmbeddedDocumentField(VerificationRejection, null=True)
+    changes = ListField(EmbeddedDocumentField(VerificationChange))
+
+    def update_state(self, state: VerificationState, rev: Reviewer):
+        change = VerificationChange()
+        change.state_before = self.state
+        change.state_after = state
+        change.reviewer = rev
+        self.state = state
+        self.changes.append(change)
+        self.save()
 
     @property
     def photos_as_base64(self):

@@ -81,6 +81,20 @@
                     </div>
                 </div>
             </div>
+            <div>
+                <div class="uk-card uk-card-default">
+                    <div class="uk-card-header">
+                        <h3>Zmiany statusu</h3>
+                    </div>
+                    <div class="uk-card-body">
+                        <ol>
+                            {% for change in vr.changes %}
+                                <li>{{ change.reviewer }} zmienił stan <b>{{ change.state_before.value }}</b> na <b>{{ change.state_after.value }}</b> <small>{{ change.when }}</small></li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
         </div>
         <h2>Dokumenty</h2>
         {% if vr.state.value == 'id required' or (vr.photo_front and vr.photo_back) %}

@@ -161,6 +161,7 @@ class AdminReview(HTTPEndpoint):
         try:
             vr: VerificationRequest = VerificationRequest.objects(id=request.path_params['rid']).get()
             conf: GuildConfiguration = GuildConfiguration.objects(guild_id=vr.identity.guild_id).get()
+            rev: Reviewer = Reviewer.objects(id=request.session['reviewer']).get()
         except DoesNotExist:
             raise HTTPException(404)
 
@@ -176,8 +177,8 @@ class AdminReview(HTTPEndpoint):
             return templates.TemplateResponse('admin/autodelete.html', {'request': request})
 
         vr.trust = trust
-        vr.state = VerificationState.ACCEPTED
-        vr.reviewer = ObjectId(request.session['reviewer'])
+        vr.update_state(VerificationState.ACCEPTED, rev)
+        vr.reviewer = rev
         vr.accepted = datetime.now().astimezone()
         vr.save()
 
@@ -194,13 +195,14 @@ class AdminReview(HTTPEndpoint):
 async def admin_id_req(request: Request):
     try:
         vr: VerificationRequest = VerificationRequest.objects(id=request.path_params['rid']).get()
+        rev: Reviewer = Reviewer.objects(id=request.session['reviewer']).get()
     except DoesNotExist:
         raise HTTPException(404)
 
     tasks = BackgroundTasks()
 
-    vr.state = VerificationState.ID_REQUIRED
-    vr.reviewer = ObjectId(request.session['reviewer'])
+    vr.update_state(VerificationState.ID_REQUIRED, rev)
+    vr.reviewer = rev
 
     if vr.trust:
         vr.remove_trust()
@@ -221,12 +223,13 @@ async def admin_reject(request: Request):
 
     try:
         vr: VerificationRequest = VerificationRequest.objects(id=request.path_params['rid']).get()
+        rev: Reviewer = Reviewer.objects(id=request.session['reviewer']).get()
     except DoesNotExist:
         raise HTTPException(404)
 
-    vr.state = VerificationState.REJECTED
+    vr.update_state(VerificationState.REJECTED, rev)
     vr.rejection = VerificationRejection(reason=form['reason'])
-    vr.reviewer = ObjectId(request.session['reviewer'])
+    vr.reviewer = rev
     vr.save()
 
     tasks = BackgroundTasks()
