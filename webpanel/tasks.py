@@ -95,7 +95,7 @@ async def notify_requested_id(vr: VerificationRequest, request: Request):
         await user.send(
             embed=Embed(
                 title='Papers please!',
-                description=f'Weryfikujący poprosił o wysłanie legitymacji studenckiej w celu potwierdzenia tożsamości, odwiedź {request.url_for("admin:review", rid=vr.code)} aby przesłać dokument.',
+                description=f'Weryfikujący poprosił o wysłanie legitymacji studenckiej w celu potwierdzenia tożsamości, odwiedź {request.url_for("verify:form", secret=vr.code)} aby przesłać dokument.',
                 url=request.url_for('verify:form', secret=vr.code),
                 colour=WARN
             )
