@@ -126,7 +126,7 @@ async def notify_reviewers(vr: VerificationRequest, request: Request):
                 embed=Embed(
                     title='Nowa osoba do weryfikacji!',
                     description=f'{vr.identity.user_name} oczekuje na weryfikację!',
-                    url=request.url_for('admin:review', rid=vr.code),
+                    url=request.url_for('admin:review', rid=vr.id),
                     colour=user.accent_colour,
                 ).set_thumbnail(user.avatar_url)
             )
