@@ -85,6 +85,9 @@ class VerificationRejection(EmbeddedDocument):
     reason = StringField()
     when = DateTimeField(default=lambda: datetime.now().astimezone())
 
+    def __str__(self):
+        return self.reason or 'Nie podano przyczyny'
+
 
 class Reviewer(Document):
     identity = EmbeddedDocumentField(UserIdentity, required=True)
