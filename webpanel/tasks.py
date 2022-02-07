@@ -6,7 +6,7 @@ from sendgrid import SendGridAPIClient, Mail
 from starlette.requests import Request
 
 from shared.colors import *
-from shared.documents import VerificationRequest, TrustedUser, GuildConfiguration, Reviewer
+from shared.documents import VerificationRequest, TrustedUser, GuildConfiguration, Reviewer, VerificationState
 
 
 async def apply_trusted_role(tu: TrustedUser, conf: GuildConfiguration):
@@ -144,3 +144,8 @@ async def notify_reviewer_docs(vr: VerificationRequest, request: Request):
                 colour=INFO
             )
         )
+
+
+def remove_duplicate_requests(vr: VerificationRequest):
+    duplicates = VerificationRequest.objects(identity=vr.identity, id__ne=vr.id, state__nin=[VerificationState.REJECTED, VerificationState.ACCEPTED])
+    duplicates.delete()

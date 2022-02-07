@@ -180,16 +180,16 @@ class AdminReview(HTTPEndpoint):
         vr.reviewer = ObjectId(request.session['reviewer'])
         vr.accepted = datetime.now().astimezone()
         vr.save()
-        VerificationRequest.objects(identity=vr.identity, id__ne=vr.id, state=VerificationState.PENDING).delete()
 
         tasks = BackgroundTasks()
         tasks.add_task(webpanel.tasks.apply_trusted_role, trust, conf)
         tasks.add_task(webpanel.tasks.send_trust_confirmation, vr)
+        tasks.add_task(webpanel.tasks.remove_duplicate_requests, vr)
 
         return RedirectResponse(request.url_for('admin:review', rid=vr.id), background=tasks, status_code=302)
 
 
-@app.route('/id-req/{rid}', name='id required', methods=['POST'])
+@app.route('/confirm-id/{rid}', name='id required', methods=['POST'])
 @requires('authenticated')
 async def admin_id_req(request: Request):
     try:
@@ -209,6 +209,7 @@ async def admin_id_req(request: Request):
     vr.save()
     tasks.add_task(webpanel.tasks.notify_requested_id, vr, request)
     tasks.add_task(webpanel.tasks.notify_requested_id_mail, vr, request)
+    tasks.add_task(webpanel.tasks.remove_duplicate_requests, vr)
 
     return RedirectResponse(request.url_for('admin:review', rid=vr.id), status_code=302, background=tasks)
 
@@ -236,6 +237,7 @@ async def admin_reject(request: Request):
 
     tasks.add_task(webpanel.tasks.send_rejection_mail, vr, form['reason'])
     tasks.add_task(webpanel.tasks.send_rejection_dm, vr, form['reason'])
+    tasks.add_task(webpanel.tasks.remove_duplicate_requests, vr)
 
     return RedirectResponse(request.url_for('admin:admin_index'), status_code=302, background=tasks)
 
