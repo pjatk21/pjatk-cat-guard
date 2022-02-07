@@ -140,7 +140,7 @@ async def notify_reviewer_docs(vr: VerificationRequest, request: Request):
             embed=Embed(
                 title='Dokumenty do weryfikacji!',
                 description=f'{vr.identity.user_name} oczekuje na weryfikację dokumentów!',
-                url=request.url_for('admin:review', rid=vr.code),
+                url=request.url_for('admin:review', rid=vr.id),
                 colour=INFO
             )
         )
