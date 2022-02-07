@@ -100,8 +100,8 @@ class VerificationChange(EmbeddedDocument):
 
 
 class VerificationPhotos(EmbeddedDocument):
-    front = StringField(null=True)
-    back = StringField(null=True)
+    front = StringField()
+    back = StringField()
 
     @property
     def ready(self):

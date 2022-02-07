@@ -18,7 +18,7 @@ from shared.consts import data_path
 from shared.db import init_connection
 from shared.documents import VerificationRequest, VerificationGoogle, TrustedUser, VerificationState, \
     GuildConfiguration, VerificationMethod
-from webpanel.common import templates
+from webpanel.common import templates, save_picture
 
 load_dotenv()
 init_connection()
@@ -135,26 +135,15 @@ class LoginQueueRequest(HTTPEndpoint):
         if vr.state == VerificationState.ID_REQUIRED:
             form = await request.form()
 
-            def save_picture(photo_file: UploadFile, prefix: str):
-                filename = f'verification-{prefix}-{photo_file.filename}'
-                filedir = data_path.joinpath('pictures').joinpath(str(vr.id))
-                filedir.mkdir(parents=True, exist_ok=True)
-                filename = filedir.joinpath(filename)
-
-                with open(filename, 'wb') as f:
-                    f.write(pf.file.read())
-
-                return str(filename.absolute())
-
             if form.get('photo-front'):
                 pf: UploadFile = form['photo-front']
                 if pf.content_type != 'application/octet-stream':
-                    vr.photos.front = save_picture(pf, 'front')
+                    vr.photos.front = save_picture(vr, pf, 'front')
 
             if form.get('photo-back'):
                 pf: UploadFile = form['photo-back']
                 if pf.content_type != 'application/octet-stream':
-                    vr.photos.back = save_picture(pf, 'back')
+                    vr.photos.back = save_picture(vr, pf, 'back')
 
         tasks = BackgroundTasks()
 

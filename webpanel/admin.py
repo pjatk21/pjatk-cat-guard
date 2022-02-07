@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 import re
 import uuid
@@ -39,7 +40,8 @@ oauth_discord.register(
 )
 
 middleware = [
-    Middleware(SessionMiddleware, secret_key=os.getenv('COOKIE_SECRET', 'someoneforgotcookiesecretrecipe'), max_age=timedelta(hours=6).seconds),
+    Middleware(SessionMiddleware, secret_key=os.getenv('COOKIE_SECRET', 'someoneforgotcookiesecretrecipe'),
+               max_age=timedelta(hours=6).seconds),
     Middleware(AuthenticationMiddleware, backend=DiscordAuthBackend())
 ]
 
@@ -66,7 +68,8 @@ async def admin_forbidden(req, exc):
 async def admin_login(request: Request):
     ds = oauth_discord.create_client('discord')
     redirect = request.url_for('admin:admin_oauth')
-    return await ds.authorize_redirect(request, redirect_uri=redirect, scope='identify email guilds guilds.members.read')
+    return await ds.authorize_redirect(request, redirect_uri=redirect,
+                                       scope='identify email guilds guilds.members.read')
 
 
 @app.route('/oauth')
@@ -79,7 +82,9 @@ async def admin_oauth(request: Request):
         try:
             rev = Reviewer.objects(identity__user_id=user.id).get()
         except DoesNotExist:
-            return templates.TemplateResponse('message.html', {'request': request, 'header': 'Nie jesteś wyznaczony na sprawdzającego.', 'paragraphs': ['sorka']})
+            return templates.TemplateResponse('message.html',
+                                              {'request': request, 'header': 'Nie jesteś wyznaczony na sprawdzającego.',
+                                               'paragraphs': ['sorka']})
 
         request.session['discord'] = token
         request.session['user'] = str(user)
@@ -112,8 +117,10 @@ async def admin_index(request: Request):
             stats |= {guild: f'{100 * tr_count / len(members):.2f}%'}
             bypass_guilds.append({'id': guild.id, 'name': str(guild)})
 
-    awaiting = VerificationRequest.objects(Q(state=VerificationState.IN_REVIEW) | Q(state=VerificationState.ID_REQUIRED)).order_by('-submitted')
-    return templates.TemplateResponse('admin/base.html', {'request': request, 'awaiting': awaiting, 'stats': stats, 'bypass': bypass_guilds})
+    awaiting = VerificationRequest.objects(
+        Q(state=VerificationState.IN_REVIEW) | Q(state=VerificationState.ID_REQUIRED)).order_by('-submitted')
+    return templates.TemplateResponse('admin/base.html', {'request': request, 'awaiting': awaiting, 'stats': stats,
+                                                          'bypass': bypass_guilds})
 
 
 @app.route('/bypass/', methods=['POST'])
@@ -280,22 +287,26 @@ async def admin_reject(request: Request):
     return RedirectResponse(request.url_for('admin:admin_index'), status_code=302, background=tasks)
 
 
-@app.route('/photoproxy/{rid}/{side}.jpg', name='photoproxy')
-class PhotoProxy(HTTPEndpoint):
-    @requires('authenticated')
-    async def get(self, request: Request):
-        side = request.path_params['side']
-        rid = request.path_params['rid']
+@app.route('/photoproxy/{rid}/{side}.jpg', name='photoproxy', methods=['GET'])
+@requires('authenticated')
+async def photo_proxy(request: Request):
+    side = request.path_params['side']
+    rid = request.path_params['rid']
 
-        try:
-            vr: VerificationRequest = VerificationRequest.objects(id=rid).get()
-        except DoesNotExist:
-            raise HTTPException(404)
+    try:
+        vr: VerificationRequest = VerificationRequest.objects(id=rid).get()
+    except DoesNotExist:
+        raise HTTPException(404)
 
-        match side:
-            case 'front':
-                return FileResponse(vr.photos.front)
-            case 'back':
-                return FileResponse(vr.photos.back)
-            case _:
-                raise HTTPException(400)
+    if not vr.photos.ready:
+        raise HTTPException(404)
+
+    match side:
+        case 'front':
+            logging.info('photoproxy front %s -> %s', str(vr.id), vr.photos.front)
+            return FileResponse(vr.photos.front)
+        case 'back':
+            logging.info('photoproxy back %s -> %s', str(vr.id), vr.photos.back)
+            return FileResponse(vr.photos.back)
+        case _:
+            raise HTTPException(400)
