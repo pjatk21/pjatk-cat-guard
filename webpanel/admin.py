@@ -51,17 +51,17 @@ app = Starlette(middleware=middleware)
 @app.exception_handler(403)
 async def admin_forbidden(req: Request, exc):
     req.session['login_redirect'] = str(req.url)
-    return templates.TemplateResponse('admin/403.html', {'request': req})
+    return templates.TemplateResponse('admin/403.html', {'request': req}, status_code=403)
 
 
 @app.exception_handler(404)
 async def admin_forbidden(req, exc):
-    return templates.TemplateResponse('admin/404.html', {'request': req})
+    return templates.TemplateResponse('admin/404.html', {'request': req}, status_code=404)
 
 
 @app.exception_handler(500)
 async def admin_forbidden(req, exc):
-    return templates.TemplateResponse('admin/500.html', {'request': req, 'exc': exc})
+    return templates.TemplateResponse('admin/500.html', {'request': req, 'exc': exc}, status_code=500)
 
 
 @app.route('/login')
