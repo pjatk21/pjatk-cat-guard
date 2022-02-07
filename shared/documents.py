@@ -2,6 +2,7 @@ import base64
 import re
 from datetime import datetime
 from enum import Enum
+from pathlib import Path
 
 from hikari import Member
 from lightbulb import Context
@@ -107,11 +108,15 @@ class VerificationChange(EmbeddedDocument):
         return f'{self.reviewer} zmienił stan {self.state_before.value} na {self.state_after.value} o {self.when}'
 
 
+class VerificationPhotos(EmbeddedDocument):
+    front = StringField(required=True)
+    back = StringField(required=True)
+
+
 class VerificationRequest(Document):
     identity = EmbeddedDocumentField(UserIdentity, required=True)
     code = StringField(required=True)
-    photo_front = EmbeddedDocumentField(VerificationPhoto, null=True)
-    photo_back = EmbeddedDocumentField(VerificationPhoto, null=True)
+    photos = EmbeddedDocumentField(VerificationPhotos, null=True)
     google = EmbeddedDocumentField(VerificationGoogle, null=True)
     submitted = DateTimeField(default=lambda: datetime.now().astimezone())
     accepted = DateTimeField(null=True)
@@ -130,9 +135,19 @@ class VerificationRequest(Document):
         self.changes.append(change)
         self.save()
 
-    @property
-    def photos_as_base64(self):
-        return base64.b64encode(self.photo_front.photo).decode(), base64.b64encode(self.photo_back.photo).decode()
+    def save_photo(self, content, name, side):
+        path = Path('./data/pictures').joinpath(str(self.id))
+
+        if not path.exists():
+            path.mkdir(parents=True)
+
+        fname = f'photo-{side}-{name}'
+
+        with open(path.joinpath(fname, 'wb')) as f:
+            f.write(content)
+
+    def load_photo(self, side):
+        pass
 
     @property
     def no(self):
