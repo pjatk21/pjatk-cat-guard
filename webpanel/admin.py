@@ -303,10 +303,10 @@ async def photo_proxy(request: Request):
 
     match side:
         case 'front':
-            logging.info('photoproxy front %s -> %s', str(vr.id), vr.photos.front)
+            print('photoproxy front', str(vr.id), '->', vr.photos.front)
             return FileResponse(vr.photos.front)
         case 'back':
-            logging.info('photoproxy back %s -> %s', str(vr.id), vr.photos.back)
+            print('photoproxy back', str(vr.id), '->', vr.photos.back)
             return FileResponse(vr.photos.back)
         case _:
             raise HTTPException(400)
