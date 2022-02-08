@@ -41,7 +41,7 @@ ENTRYPOINT poetry run python3 -O -m gadoneko.bot
 
 FROM base AS web
 
-ENTRYPOINT poetry run python -m uvicorn webpanel:app --host 0.0.0.0 --proxy-headers --forwarded-allow-ips="*"
+ENTRYPOINT poetry run python -m uvicorn webpanel:app --host 0.0.0.0 --proxy-headers --forwarded-allow-ips="*" --workers=2 --log-level=debug
 
 FROM base AS cron
 
