@@ -93,8 +93,7 @@
                 <ul class="uk-subnav uk-subnav-pill">
                     <li uk-filter-control><a>Wszystkie</a></li>
                     <li uk-filter-control="[data-state='VerificationState.IN_REVIEW']"><a>Oczekujące</a></li>
-                    <li uk-filter-control="[data-photos-ready=True]"><a>Oczekujące na sprawdzenie dokumentów</a></li>
-                    <li uk-filter-control="[data-photos-ready=False]"><a>Oczekujące na przesłanie dokumentów</a></li>
+                    <li uk-filter-control="[data-state='VerificationState.ID_REQUIRED']"><a>Oczekujące na dokumenty</a></li>
                 </ul>
 
                 <table class="uk-table uk-table-divider">
@@ -110,7 +109,7 @@
                     </thead>
                     <tbody class="js-filter">
                     {% for vr in awaiting %}
-                        <tr data-state="{{ vr.state }}" data-photos-ready="{{ vr.photos.ready }}">
+                        <tr data-state="{{ vr.state }}">
                             <td class="uk-table-shrink">
                                 {{ vr.no }}
                             </td>
@@ -125,10 +124,10 @@
                             </td>
                             <td>
                                 {% if vr.state.value == 'id required' %}
+                                    <span class="uk-badge">Oczekuje na przesłanie dokumentów</span>
+                                {% elif vr.state.value == 'in review' %}
                                     {% if vr.photos.ready %}
                                         <span class="uk-badge">Przesłano zdjęcia</span>
-                                    {% else %}
-                                        <span class="uk-badge">Oczekuje na przesłanie dokumentów</span>
                                     {% endif %}
                                 {% endif %}
                             </td>
@@ -144,7 +143,8 @@
                                     </button>
                                 </div>
                             </td>
-                            <div id="confirm-{{ vr.id }}" uk-modal>
+                        </tr>
+                        <div id="confirm-{{ vr.id }}" uk-modal>
                                 <div class="uk-modal-dialog uk-modal-body">
                                     <h2 class="uk-modal-title">Czy jesteś pewien?</h2>
                                     <form method="post" action="{{ request.url_for('admin:reject', rid=vr.id) }}"
@@ -160,7 +160,6 @@
                                     </form>
                                 </div>
                             </div>
-                        </tr>
                     {% endfor %}
                     </tbody>
                 </table>

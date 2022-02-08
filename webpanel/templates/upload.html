@@ -35,7 +35,7 @@
                     <label>
                         Front legitymacji studenckiej
                         {% if vr.photos.front == None %}
-                            <input name="photo-front" type="file" accept="image/*, image/heic">
+                            <input name="photo-front" type="file" accept="image/*">
                         {% else %}
                             ✅ przesłano
                         {% endif %}
@@ -46,13 +46,13 @@
                     <label>
                         Tył legitymacji studenckiej
                         {% if vr.photos.back == None %}
-                            <input name="photo-back" type="file" accept="image/*, image/heic">
+                            <input name="photo-back" type="file" accept="image/*">
                         {% else %}
                             ✅ przesłano
                         {% endif %}
                     </label>
                 </div>
-            {% if not (vr.photos.front or vr.photos.back) %}
+            {% if not vr.photos.ready %}
                 <button type="submit">Wyślij</button>
             {% endif %}
             </form>
@@ -73,7 +73,7 @@
         <p>Logując się studenckim kontem Google, akceptujesz <a href="https://github.com/pjatk21/pjatk-cat-guard/blob/main/PRIVACY.md">politykę prywatności</a></p>
         {% endif %}
 
-        {% if vr.state.value == 'in review' or vr.state.value == 'id required' %}
+        {% if vr.state.value == 'in review' %}
             <p style="color: greenyellow">Oczekuj kolejnych wiadomości na mailu/Discord DM</p>
         {% endif %}
     </div>

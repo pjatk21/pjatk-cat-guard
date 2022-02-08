@@ -18,7 +18,7 @@ from shared.consts import data_path
 from shared.db import init_connection
 from shared.documents import VerificationRequest, VerificationGoogle, TrustedUser, VerificationState, \
     GuildConfiguration, VerificationMethod
-from webpanel.common import templates, save_picture
+from webpanel.common import templates
 
 load_dotenv()
 init_connection()
@@ -137,23 +137,32 @@ class LoginQueueRequest(HTTPEndpoint):
 
             if form.get('photo-front'):
                 pf: UploadFile = form['photo-front']
-                if pf.content_type != 'application/octet-stream':
-                    vr.photos.front = save_picture(vr, pf, 'front')
+                vr.photos.front = self.save_picture(vr, pf, 'front')
 
             if form.get('photo-back'):
-                pf: UploadFile = form['photo-back']
-                if pf.content_type != 'application/octet-stream':
-                    vr.photos.back = save_picture(vr, pf, 'back')
+                pb: UploadFile = form['photo-back']
+                vr.photos.back = self.save_picture(vr, pb, 'back')
 
         tasks = BackgroundTasks()
 
         if vr.state == VerificationState.ID_REQUIRED and vr.photos.ready:
+            vr.state = VerificationState.IN_REVIEW
             tasks.add_task(webpanel.tasks.notify_reviewer_docs, vr, request)
-
-        if vr.google and vr.state == VerificationState.PENDING:
+        elif vr.google and vr.state == VerificationState.PENDING:
             vr.state = VerificationState.IN_REVIEW
             tasks.add_task(webpanel.tasks.notify_reviewers, vr, request)
 
         vr.save()
 
         return RedirectResponse(request.url_for('verify:form', secret=secret), status_code=302, background=tasks)
+
+    def save_picture(self, vr: VerificationRequest, photo_file: UploadFile, prefix: str):
+        filename = f'verification-{prefix}-{photo_file.filename}'
+        filedir = data_path.joinpath('pictures').joinpath(str(vr.id))
+        filedir.mkdir(parents=True, exist_ok=True)
+        filename = filedir.joinpath(filename)
+
+        with open(filename, 'wb') as f:
+            f.write(photo_file.file.read())
+
+        return str(filename.absolute())
