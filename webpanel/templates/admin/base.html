@@ -5,8 +5,8 @@
     <title>Admin: {{ request.session["user"] }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/css/uikit.min.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit-icons.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.11.1/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.11.1/dist/js/uikit-icons.min.js"></script>
 </head>
 <body>
 <nav class="uk-navbar-container" uk-navbar>
@@ -93,7 +93,7 @@
                 <ul class="uk-subnav uk-subnav-pill">
                     <li class="uk-active" uk-filter-control="[data-state='VerificationState.IN_REVIEW']"><a>Oczekujące</a></li>
                     <li uk-filter-control="[data-state='VerificationState.ID_REQUIRED']"><a>Oczekujące na dokumenty</a>
-                    <li uk-filter-control><a>Wszystkie</a></li>
+                    <li uk-filter-control><a>Wszystkie<span class="uk-badge">{{ awaiting|length }}</span></a></li>
                     </li>
                 </ul>
 
