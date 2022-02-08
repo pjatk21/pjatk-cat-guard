@@ -1,11 +1,16 @@
+import logging
 import re
 from datetime import datetime
 from enum import Enum
+from pathlib import Path
 
 from hikari import Member
 from lightbulb import Context
 from mongoengine import Document, LongField, EnumField, DateTimeField, DynamicField, EmbeddedDocumentField, \
     EmbeddedDocument, StringField, ReferenceField, NULLIFY, DynamicDocument, ListField, CASCADE
+
+
+logger = logging.getLogger('mongomodels')
 
 
 class VerificationMethod(Enum):
@@ -100,12 +105,25 @@ class VerificationChange(EmbeddedDocument):
 
 
 class VerificationPhotos(EmbeddedDocument):
-    front = StringField()
-    back = StringField()
+    front = StringField(null=True)
+    back = StringField(null=True)
 
     @property
     def ready(self):
         return bool(self.front and self.back)
+
+    @property
+    def read(self):
+        with open(self.front, 'rb') as ff:
+            front = ff.read()
+
+        with open(self.back, 'rb') as bf:
+            back = bf.read()
+
+        return front, back
+
+    def __str__(self):
+        return f'front: {self.front} | back: {self.back} | ready: {self.ready}'
 
 
 class VerificationRequest(Document):
