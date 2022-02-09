@@ -1,14 +1,14 @@
 [tool.poetry]
 name = "gadoneko"
-version = "1.5.0"
+version = "1.6.0"
 description = "Just an overegnieered discord bot for students."
 authors = ["Krystian Postek <krystian@postek.eu>"]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"
 # Bot related dependencies
-hikari = {extras = ["speedups"], version = "^2.0.0-alpha.104"}
-hikari-lightbulb = "^2.2.0"
+hikari = {extras = ["speedups"], version = "^2.0.0-alpha.106"}
+hikari-lightbulb = {git = "https://github.com/tandemdude/hikari-lightbulb"}
 # Cron related dependencies
 aiocron = "*"
 # Web related dependencies
