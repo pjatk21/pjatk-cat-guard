@@ -170,8 +170,8 @@ async def staff_ls(ctx: Context):
 
 
 @admin.child()
-@option('by_user', 'Szukaj według użytkownika', required=False, type=User)
-@option('by_ns', 'Szukaj według numeru studenta', required=False)
+@option('user', 'Szukaj według użytkownika', required=False, type=User)
+@option('eska', 'Szukaj według numeru studenta', required=False)
 # @option('after_date', 'Szukaj zweryfikowanych po wskazanej dacie (ISO format)', required=False)
 # @option('before_date', 'Szukaj zweryfikowanych przed wskazaną datą (ISO format)', required=False)
 @command('query', 'Zapytanie do bazy danych', inherit_checks=True)
@@ -179,10 +179,11 @@ async def staff_ls(ctx: Context):
 async def query(ctx: Context):
     qs = Q(identity__guild_id=ctx.guild_id)
 
-    if ctx.options.by_user:
-        qs &= Q(identity__user_id=ctx.options.by_user.id)
+    if ctx.options.by_user or ctx.options.target:
+        user = ctx.options.user or ctx.options.target
+        qs &= Q(identity__user_id=user.id)
     if ctx.options.by_ns:
-        qs &= Q(student_number=ctx.options.by_ns)
+        qs &= Q(student_number=ctx.options.eska)
 
     try:
         tu: TrustedUser = TrustedUser.objects.get(qs)
@@ -225,6 +226,14 @@ async def query(ctx: Context):
         )
 
     await ctx.respond(embeds=embeds)
+
+
+@plugin.command()
+@add_checks(guild_only, Check(staff_only))
+@command('Mod info', '', ephemeral=True)
+@implements(commands.UserCommand)
+async def menu_query(ctx: Context):
+    await query(ctx)
 
 
 @admin.child()

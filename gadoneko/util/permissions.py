@@ -36,8 +36,9 @@ async def update_permissions(ctx: Context, conf: GuildConfiguration):
         ctx.app.application.id,
         ctx.get_guild(),
         {
-            ctx.bot.slash_commands.get('adm').instances[None].id: computed_permissions,
-            ctx.bot.slash_commands.get('reload').instances[None].id: computed_permissions,
+            ctx.bot.slash_commands.get('adm').instances[None].id: computed_permissions,  # All major admin commands
+            ctx.bot.slash_commands.get('reload').instances[None].id: computed_permissions,  # Debug, why it is here
+            ctx.bot.user_commands.get('Mod info').instances[None].id: computed_permissions,  # Menu variant of /adm query
         }
     )
 
