@@ -94,7 +94,8 @@
             <h2>Oczekujące weryfikacje</h2>
             <div uk-filter="target: .js-filter">
                 <ul class="uk-subnav uk-subnav-pill">
-                    <li class="uk-active" uk-filter-control="[data-state='VerificationState.IN_REVIEW']"><a>Oczekujące</a></li>
+                    <li class="uk-active" uk-filter-control="[data-state='VerificationState.IN_REVIEW']">
+                        <a>Oczekujące</a></li>
                     <li uk-filter-control="[data-state='VerificationState.ID_REQUIRED']"><a>Oczekujące na dokumenty</a>
                     <li uk-filter-control><a>Wszystkie<span class="uk-badge">{{ awaiting|length }}</span></a></li>
                     </li>
@@ -124,6 +125,22 @@
                                     class="uk-button uk-button-secondary" uk-tooltip="Odrzuć użytkownika">
                                 🗑
                             </button>
+                            <div id="confirm-{{ vr.id }}" uk-modal>
+                                <div class="uk-modal-dialog uk-modal-body">
+                                    <h2 class="uk-modal-title">Czy jesteś pewien?</h2>
+                                    <form method="post" action="{{ request.url_for('admin:reject', rid=vr.id) }}"
+                                          enctype="multipart/form-data">
+                                        <label>
+                                            Uzasadnienie decyzji
+                                            <textarea required name="reason"
+                                                      class="uk-textarea uk-margin-bottom">niezgodność danych</textarea>
+                                        </label>
+                                        <button class="uk-button uk-button-danger" type="submit">WYJEB GNOJA</button>
+                                        <button class="uk-modal-close uk-button uk-button-default" type="button">Anuluj
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     {% endfor %}
                 </div>

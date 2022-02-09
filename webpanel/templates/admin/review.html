@@ -93,7 +93,8 @@
                     <div class="uk-card-body">
                         <ol>
                             {% for change in vr.changes %}
-                                <li>{{ change.reviewer }} zmienił stan <b>{{ change.state_before.value }}</b> na <b>{{ change.state_after.value }}</b> <small>{{ change.when }}</small></li>
+                                <li>{{ change.reviewer }} zmienił stan <b>{{ change.state_before.value }}</b> na
+                                    <b>{{ change.state_after.value }}</b> <small>{{ change.when }}</small></li>
                             {% endfor %}
                         </ol>
                     </div>
@@ -144,23 +145,23 @@
             {% if vr.state.value != 'rejected' %}
                 <div>
                     <button uk-toggle="target: #confirm-{{ vr.id }}" class="uk-button uk-button-secondary">🗑 Odrzuć
-                </button>
+                    </button>
                     <div id="confirm-{{ vr.id }}" uk-modal>
-                    <div class="uk-modal-dialog uk-modal-body">
-                        <h2 class="uk-modal-title">Czy jesteś pewien?</h2>
-                        <form method="post" action="{{ request.url_for('admin:reject', rid=vr.id) }}"
-                              enctype="multipart/form-data">
-                            <label>
-                                Uzasadnienie decyzji
-                                <textarea required name="reason"
-                                          class="uk-textarea uk-margin-bottom">niezgodność danych</textarea>
-                            </label>
-                            <button class="uk-button uk-button-danger" type="submit">WYJEB GNOJA</button>
-                            <button class="uk-modal-close uk-button uk-button-default" type="button">Anuluj
-                            </button>
-                        </form>
+                        <div class="uk-modal-dialog uk-modal-body">
+                            <h2 class="uk-modal-title">Czy jesteś pewien?</h2>
+                            <form method="post" action="{{ request.url_for('admin:reject', rid=vr.id) }}"
+                                  enctype="multipart/form-data">
+                                <label>
+                                    Uzasadnienie decyzji
+                                    <textarea required name="reason"
+                                              class="uk-textarea uk-margin-bottom">niezgodność danych</textarea>
+                                </label>
+                                <button class="uk-button uk-button-danger" type="submit">WYJEB GNOJA</button>
+                                <button class="uk-modal-close uk-button uk-button-default" type="button">Anuluj
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
                 </div>
             {% endif %}
 
