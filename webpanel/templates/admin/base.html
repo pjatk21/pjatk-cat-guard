@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin: {{ request.session["user"] }}</title>
+    <title>Admin pan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/css/uikit.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.11.1/dist/js/uikit.min.js"></script>
@@ -21,6 +21,9 @@
     </div>
     <div class="uk-navbar-right">
         <ul class="uk-navbar-nav">
+            <li>
+                {{ request.session["user"] }}
+            </li>
             <li>
                 <a uk-icon="icon: sign-out; ratio: 1.25" href="{{ request.url_for('admin:admin_logout') }}">Wyloguj
                     się</a>
