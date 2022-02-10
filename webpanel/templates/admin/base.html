@@ -14,28 +14,37 @@
 </head>
 
 <body>
-    <nav >
-        <div>
-            <div>ガード猫</div>
-            <ul>
-                <li><a href="{{ request.url_for('admin:admin_index') }}">Pulpit</a></li>
-                <li><a href="{{ request.url_for('admin:accepted') }}">Zatwierdzeni</a></li>
-                <li><a href="{{ request.url_for('admin:rejected') }}">Odrzuceni</a></li>
-            </ul>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand">ガード猫</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        </div>
-        <div>
-            <ul>
-                <li>
-                    <a>
-                        {{ request.session["user"] }}
-                    </a>
-                </li>
-                <li>
-                    <a  href="{{ request.url_for('admin:admin_logout') }}">Wyloguj
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <a class="nav-link" href="{{ request.url_for('admin:admin_index') }}">Pulpit</a></li>
+                    <a class="nav-link" href="{{ request.url_for('admin:accepted') }}">Zatwierdzeni</a></li>
+                    <a class="nav-link" href="{{ request.url_for('admin:rejected') }}">Odrzuceni</a></li>
+
+                </div>
+                <div class="d-flex">
+                    <span class="navbar-text me-2">
+                        {{ request.session["user"] }}</span>
+
+
+                    <a class="btn btn-outline-danger" href="{{ request.url_for('admin:admin_logout') }}">Wyloguj
                         się</a>
-                </li>
-            </ul>
+                </div>
+            </div>
+
+
+
+
+
+
+
         </div>
     </nav>
     {% block body %}
@@ -43,45 +52,46 @@
         <div>
             <div>
                 <h2>Generuj link</h2>
-                <button >Otwórz generator</button>
-                <div id="link-gen" >
-                    <div>
-                        <button type="button" ></button>
-                        <div>
-                            <h2>Generate link</h2>
+                <button data-bs-toggle="modal" data-bs-target="#link-gen">Otwórz generator</button>
+                <div class="modal" id="link-gen" aria-labelledby="link-gen">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2>Generate link</h2>
+                            </div>
+                            <form class="modal-body" method="post" action="{{ request.url_for('admin:admin_bypass') }}">
+                                <div>
+                                    <div>
+                                        <div>ID serwera</div>
+                                        <div>
+                                            <select required name="guild">
+                                                {% for guild in bypass %}
+                                                <option value="{{ guild.id }}">{{ guild.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div>ID użytkownika</div>
+                                        <div>
+                                            <span></span>
+                                            <input required name="user" pattern="\d{18}">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div>Numer studenta (eska)</div>
+                                        <div>
+                                            <span></span>
+                                            <input required name="student_no" pattern="s\d+">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+                                <button type="submit" class="btn btn-primary">Wyślij link</button>
+                            </div>
                         </div>
-                        <form method="post" action="{{ request.url_for('admin:admin_bypass') }}">
-                            <div>
-                                <div>
-                                    <div>ID serwera</div>
-                                    <div>
-                                        <select required name="guild">
-                                            {% for guild in bypass %}
-                                            <option value="{{ guild.id }}">{{ guild.name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>ID użytkownika</div>
-                                    <div>
-                                        <span ></span>
-                                        <input required name="user" pattern="\d{18}">
-                                    </div>
-                                </div>
-                                <div>
-                                    <div>Numer studenta (eska)</div>
-                                    <div>
-                                        <span ></span>
-                                        <input required name="student_no" pattern="s\d+">
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <button>Wyślij link</button>
-                            </div>
-                        </form>
-
                     </div>
                 </div>
             </div>
@@ -99,7 +109,7 @@
         </div>
         {% if awaiting|length > 0 %}
         <h2>Oczekujące weryfikacje</h2>
-        <div >
+        <div>
             <ul>
                 <li -control="[data-state='VerificationState.IN_REVIEW']">
                     <a>Oczekujące</a>
@@ -109,7 +119,7 @@
                 </li>
             </ul>
 
-            <div >
+            <div>
                 {% for vr in awaiting %}
                 <div data-state="{{ vr.state }}">
                     <h3>{{ vr.google.name }}</h3>
@@ -125,23 +135,20 @@
                         {% endif %}
                         {% endif %}
                     </p>
-                    <a href="{{ request.url_for('admin:review', rid=vr.id) }}"
-                        >
+                    <a href="{{ request.url_for('admin:review', rid=vr.id) }}">
                         🔍
                     </a>
-                    <button 
-                        >
+                    <button>
                         🗑
                     </button>
-                    <div id="confirm-{{ vr.id }}" >
+                    <div id="confirm-{{ vr.id }}">
                         <div>
                             <h2>Czy jesteś pewien?</h2>
                             <form method="post" action="{{ request.url_for('admin:reject', rid=vr.id) }}"
                                 enctype="multipart/form-data">
                                 <label>
                                     Uzasadnienie decyzji
-                                    <textarea required name="reason"
-                                       >niezgodność danych</textarea>
+                                    <textarea required name="reason">niezgodność danych</textarea>
                                 </label>
                                 <button type="submit">WYJEB GNOJA</button>
                                 <button type="button">Anuluj
