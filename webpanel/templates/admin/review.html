@@ -1,56 +1,56 @@
 {% extends 'admin/base.html' %}
 {% block body %}
-    <div class="uk-container">
-        <h1><a href="{{ request.url_for('admin:admin_index') }}" uk-icon="icon: arrow-left; ratio: 2"></a> Forma
+    <div class="">
+        <h1><a href="{{ request.url_for('admin:admin_index') }}" ></a> Forma
             weryfikacyjna</h1>
         {% if vr.state.value == 'id required' %}
-            <div class="uk-alert-warning" uk-alert>
+            <div class="" >
                 <p>Ten użytkownik oczekuje na sprawdzenie dokumentów!</p>
             </div>
         {% elif vr.state.value == 'accepted' %}
-            <div class="uk-alert-primary" uk-alert>
+            <div class="" >
                 <p>Ten użytkownik już został zweryfikowany przez <b>{{ vr.reviewer.identity.user_name }}</b>!</p>
             </div>
         {% endif %}
         {% if warns.fresh_meat %}
-            <div class="uk-alert-danger" uk-alert>
+            <div class="" >
                 <p>Data utworzenia konta i dołączenia jest krótsza niż rok ({{ (ds.joined_at - ds.created_at).days }}
                     dni)</p>
             </div>
         {% endif %}
         {% if warns.weird_num %}
-            <div class="uk-alert-danger" uk-alert>
+            <div class="" >
                 <p>Numer studenta wygląda podejrzanie ({{ vr.no }})</p>
             </div>
         {% endif %}
         {% if vr.rejection %}
-            <div class="uk-comment uk-comment-primary uk-margin-bottom">
-                <div class="uk-comment-header">
+            <div class="  ">
+                <div class="">
                     <h4>Powód odrzucenia <small>z dnia {{ vr.rejection.when }}</small></h4>
                 </div>
-                <div class="uk-comment-body">
+                <div class="">
                     <p>{{ vr.rejection.reason }}</p>
                 </div>
             </div>
         {% endif %}
-        <div class="uk-child-width-1-3@m uk-grid-small uk-grid-match" uk-grid>
+        <div class="@m  " >
             <div>
-                <div class="uk-card uk-card-default">
-                    <div class="uk-card-header">
-                        <div class="uk-grid-small uk-flex-middle" uk-grid>
-                            <div class="uk-width-auto">
-                                <img class="uk-border-circle" width="40" height="40"
+                <div class=" ">
+                    <div class="">
+                        <div class=" " >
+                            <div class="">
+                                <img class="" width="40" height="40"
                                      src="{{ vr.google.raw['picture'] }}">
                             </div>
-                            <div class="uk-width-expand">
-                                <h3 class="uk-card-title uk-margin-remove-bottom">{{ vr.google.name }}</h3>
-                                <p class="uk-text-meta uk-margin-remove-top">
+                            <div class="">
+                                <h3 class=" ">{{ vr.google.name }}</h3>
+                                <p class=" ">
                                     {{ vr.no }}
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <div class="uk-card-body">
+                    <div class="">
                         <p>Email: <b>{{ vr.google.email }}</b></p>
                         <p>Złożenie weryfikacji: <b>{{ vr.submitted }}</b></p>
                         {% if vr.reviewer %}
@@ -60,25 +60,25 @@
                 </div>
             </div>
             <div>
-                <div class="uk-card uk-card-default">
-                    <div class="uk-card-header">
-                        <div class="uk-grid-small uk-flex-middle" uk-grid>
-                            <div class="uk-width-auto">
+                <div class=" ">
+                    <div class="">
+                        <div class=" " >
+                            <div class="">
                                 {% if ds.avatar_url %}
-                                    <img class="uk-border-circle" width="40" height="40" src="{{ ds.avatar_url }}">
+                                    <img class="" width="40" height="40" src="{{ ds.avatar_url }}">
                                 {% endif %}
                             </div>
-                            <div class="uk-width-expand">
-                                <h3 class="uk-card-title uk-margin-remove-bottom">{{ ds }}</h3>
+                            <div class="">
+                                <h3 class=" ">{{ ds }}</h3>
                                 {% if ds.nickname %}
-                                    <p class="uk-text-meta uk-margin-remove-top">
+                                    <p class=" ">
                                         aka {{ ds.nickname }}
                                     </p>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
-                    <div class="uk-card-body">
+                    <div class="">
                         <p>Discord ID: <code>{{ ds.id }}</code></p>
                         <p>Dołączenie do discorda: <b>{{ ds.created_at }}</b></p>
                         <p>Dołączenie do serwera: <b>{{ ds.joined_at }}</b></p>
@@ -86,11 +86,11 @@
                 </div>
             </div>
             <div>
-                <div class="uk-card uk-card-default">
-                    <div class="uk-card-header">
+                <div class=" ">
+                    <div class="">
                         <h3>Zmiany statusu</h3>
                     </div>
-                    <div class="uk-card-body">
+                    <div class="">
                         <ol>
                             {% for change in vr.changes %}
                                 <li>{{ change.reviewer }} zmienił stan <b>{{ change.state_before.value }}</b> na
@@ -104,14 +104,14 @@
         <h2>Dokumenty</h2>
         {% if vr.state.value == 'id required' or (vr.photos.ready) %}
             {% if vr.photos.ready %}
-                <div class="uk-margin-small-bottom" uk-lightbox>
-                    <a class="uk-button uk-button-default"
+                <div class="" >
+                    <a class=" "
                        href="{{ request.url_for('admin:photoproxy', side='front', rid=vr.id) }}" data-alt="Przód">
                         Przednia strona dokumentu
                         <img style="height: 120px; margin: 20px" loading="lazy"
                              src="{{ request.url_for('admin:photoproxy', side='front', rid=vr.id) }}">
                     </a>
-                    <a class="uk-button uk-button-default"
+                    <a class=" "
                        href="{{ request.url_for('admin:photoproxy', side='back', rid=vr.id) }}" data-alt="Tył">
                         Tylna strona dokumentu
                         <img style="height: 120px; margin: 20px" loading="lazy"
@@ -122,9 +122,9 @@
                 <p>Użytkownik jeszcze nie przesłał dokumentów</p>
             {% endif %}
         {% elif vr.state.value != 'rejected' %}
-            <div class="uk-margin-small-bottom">
+            <div class="">
                 <form method="post" action="{{ request.url_for('admin:id required', rid=vr.id) }}">
-                    <button type="submit" class="uk-button uk-button-default">🚨 Poproś o przesłanie legitymacji
+                    <button type="submit" class=" ">🚨 Poproś o przesłanie legitymacji
                     </button>
                 </form>
             </div>
@@ -132,11 +132,11 @@
             <p>Użytkownik nie został poproszony o dokumenty.</p>
         {% endif %}
 
-        <div class="uk-grid">
+        <div class="">
             {% if vr.state.value in ['in review', 'id required'] %}
                 <div>
                     <form method="post">
-                        <button type="submit" class="uk-button uk-button-primary">✅ Zaakceptuj</button>
+                        <button type="submit" class=" ">✅ Zaakceptuj</button>
                     </form>
                 </div>
 
@@ -144,20 +144,20 @@
 
             {% if vr.state.value != 'rejected' %}
                 <div>
-                    <button uk-toggle="target: #confirm-{{ vr.id }}" class="uk-button uk-button-secondary">🗑 Odrzuć
+                    <button  class=" ">🗑 Odrzuć
                     </button>
-                    <div id="confirm-{{ vr.id }}" uk-modal>
-                        <div class="uk-modal-dialog uk-modal-body">
-                            <h2 class="uk-modal-title">Czy jesteś pewien?</h2>
+                    <div id="confirm-{{ vr.id }}" >
+                        <div class=" ">
+                            <h2 class="">Czy jesteś pewien?</h2>
                             <form method="post" action="{{ request.url_for('admin:reject', rid=vr.id) }}"
                                   enctype="multipart/form-data">
                                 <label>
                                     Uzasadnienie decyzji
                                     <textarea required name="reason"
-                                              class="uk-textarea uk-margin-bottom">niezgodność danych</textarea>
+                                              class=" ">niezgodność danych</textarea>
                                 </label>
-                                <button class="uk-button uk-button-danger" type="submit">WYJEB GNOJA</button>
-                                <button class="uk-modal-close uk-button uk-button-default" type="button">Anuluj
+                                <button class=" " type="submit">WYJEB GNOJA</button>
+                                <button class="  " type="button">Anuluj
                                 </button>
                             </form>
                         </div>
@@ -166,7 +166,7 @@
             {% endif %}
 
             <!-- <form method="post">
-                <button disabled type="submit" class="uk-button uk-button-danger">🔨 Zbanuj</button>
+                <button disabled type="submit" class=" ">🔨 Zbanuj</button>
             </form> -->
         </div>
     </div>

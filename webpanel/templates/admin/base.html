@@ -1,79 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Admin pan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/css/uikit.min.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.11.1/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.11.1/dist/js/uikit-icons.min.js"></script>
-</head>
-<body>
-<nav class="uk-navbar-container" uk-navbar>
-    <div class="uk-navbar-left">
-        <div class="uk-navbar-item uk-logo">ガード猫</div>
-        <ul class="uk-navbar-nav">
-            <li><a href="{{ request.url_for('admin:admin_index') }}">Pulpit</a></li>
-            <li><a href="{{ request.url_for('admin:accepted') }}">Zatwierdzeni</a></li>
-            <li><a href="{{ request.url_for('admin:rejected') }}">Odrzuceni</a></li>
-        </ul>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
 
-    </div>
-    <div class="uk-navbar-right">
-        <ul class="uk-navbar-nav">
-            <li>
-                <a>
-                    {{ request.session["user"] }}
-                </a>
-            </li>
-            <li>
-                <a uk-icon="icon: sign-out; ratio: 1.25" href="{{ request.url_for('admin:admin_logout') }}">Wyloguj
-                    się</a>
-            </li>
-        </ul>
-    </div>
-</nav>
-{% block body %}
-    <div class="uk-container">
-        <div class="uk-flex uk-flex-row">
-            <div class="uk-margin-right">
+</head>
+
+<body>
+    <nav >
+        <div>
+            <div>ガード猫</div>
+            <ul>
+                <li><a href="{{ request.url_for('admin:admin_index') }}">Pulpit</a></li>
+                <li><a href="{{ request.url_for('admin:accepted') }}">Zatwierdzeni</a></li>
+                <li><a href="{{ request.url_for('admin:rejected') }}">Odrzuceni</a></li>
+            </ul>
+
+        </div>
+        <div>
+            <ul>
+                <li>
+                    <a>
+                        {{ request.session["user"] }}
+                    </a>
+                </li>
+                <li>
+                    <a  href="{{ request.url_for('admin:admin_logout') }}">Wyloguj
+                        się</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    {% block body %}
+    <div>
+        <div>
+            <div>
                 <h2>Generuj link</h2>
-                <button class="uk-button uk-button-default" uk-toggle="target: #link-gen">Otwórz generator</button>
-                <div id="link-gen" uk-modal>
-                    <div class="uk-modal-dialog">
-                        <button class="uk-modal-close-default" type="button" uk-close></button>
-                        <div class="uk-modal-header">
-                            <h2 class="uk-modal-title">Generate link</h2>
+                <button >Otwórz generator</button>
+                <div id="link-gen" >
+                    <div>
+                        <button type="button" ></button>
+                        <div>
+                            <h2>Generate link</h2>
                         </div>
                         <form method="post" action="{{ request.url_for('admin:admin_bypass') }}">
-                            <div class="uk-modal-body">
-                                <div class="uk-margin">
-                                    <div class="uk-form-label">ID serwera</div>
-                                    <div class="uk-inline">
-                                        <select required name="guild" class="uk-select">
+                            <div>
+                                <div>
+                                    <div>ID serwera</div>
+                                    <div>
+                                        <select required name="guild">
                                             {% for guild in bypass %}
-                                                <option value="{{ guild.id }}">{{ guild.name }}</option>
+                                            <option value="{{ guild.id }}">{{ guild.name }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
                                 </div>
-                                <div class="uk-margin">
-                                    <div class="uk-form-label">ID użytkownika</div>
-                                    <div class="uk-inline">
-                                        <span class="uk-form-icon" uk-icon="icon: discord"></span>
-                                        <input required name="user" class="uk-input" pattern="\d{18}">
+                                <div>
+                                    <div>ID użytkownika</div>
+                                    <div>
+                                        <span ></span>
+                                        <input required name="user" pattern="\d{18}">
                                     </div>
                                 </div>
-                                <div class="uk-margin">
-                                    <div class="uk-form-label">Numer studenta (eska)</div>
-                                    <div class="uk-inline">
-                                        <span class="uk-form-icon" uk-icon="icon: users"></span>
-                                        <input required name="student_no" class="uk-input" pattern="s\d+">
+                                <div>
+                                    <div>Numer studenta (eska)</div>
+                                    <div>
+                                        <span ></span>
+                                        <input required name="student_no" pattern="s\d+">
                                     </div>
                                 </div>
                             </div>
-                            <div class="uk-modal-footer">
-                                <button class="uk-button uk-button-primary">Wyślij link</button>
+                            <div>
+                                <button>Wyślij link</button>
                             </div>
                         </form>
 
@@ -83,74 +88,76 @@
             <div>
                 <h2>Statystyki rejestracji</h2>
                 {% for guild, stat in stats.items() %}
-                    <p>
-                        {% if guild.icon_url %}
-                            <img style="height: 24px" src="{{ guild.icon_url }}" class="uk-margin-small-right">
-                        {% endif %}
-                        {{ guild }}: {{ stat }}
-                    </p>
+                <p>
+                    {% if guild.icon_url %}
+                    <img style="height: 24px" src="{{ guild.icon_url }}">
+                    {% endif %}
+                    {{ guild }}: {{ stat }}
+                </p>
                 {% endfor %}
             </div>
         </div>
         {% if awaiting|length > 0 %}
-            <h2>Oczekujące weryfikacje</h2>
-            <div uk-filter="target: .js-filter">
-                <ul class="uk-subnav uk-subnav-pill">
-                    <li class="uk-active" uk-filter-control="[data-state='VerificationState.IN_REVIEW']">
-                        <a>Oczekujące</a></li>
-                    <li uk-filter-control="[data-state='VerificationState.ID_REQUIRED']"><a>Oczekujące na dokumenty</a>
-                    <li uk-filter-control><a>Wszystkie<span class="uk-badge">{{ awaiting|length }}</span></a></li>
-                    </li>
-                </ul>
+        <h2>Oczekujące weryfikacje</h2>
+        <div >
+            <ul>
+                <li -control="[data-state='VerificationState.IN_REVIEW']">
+                    <a>Oczekujące</a>
+                </li>
+                <li -control="[data-state='VerificationState.ID_REQUIRED']"><a>Oczekujące na dokumenty</a>
+                <li -control><a>Wszystkie<span>{{ awaiting|length }}</span></a></li>
+                </li>
+            </ul>
 
-                <div class="js-filter" uk-grid>
-                    {% for vr in awaiting %}
-                        <div class="uk-card uk-card-hover uk-card-body uk-width-1-3@m" data-state="{{ vr.state }}">
-                            <h3 class="uk-card-title">{{ vr.google.name }}</h3>
-                            <p>{{ vr.identity }}</p>
-                            <p>{{ vr.no }}</p>
-                            <p>
-                                Oznaczenia:
-                                {% if vr.state.value == 'id required' %}
-                                    <span class="uk-badge">Oczekuje na przesłanie dokumentów</span>
-                                {% elif vr.state.value == 'in review' %}
-                                    {% if vr.photos.ready %}
-                                        <span class="uk-badge">Przesłano zdjęcia</span>
-                                    {% endif %}
-                                {% endif %}
-                            </p>
-                            <a href="{{ request.url_for('admin:review', rid=vr.id) }}"
-                               class="uk-button uk-button-primary" uk-tooltip="Sprawdź użytkownika">
-                                🔍
-                            </a>
-                            <button uk-toggle="target: #confirm-{{ vr.id }}"
-                                    class="uk-button uk-button-secondary" uk-tooltip="Odrzuć użytkownika">
-                                🗑
-                            </button>
-                            <div id="confirm-{{ vr.id }}" uk-modal>
-                                <div class="uk-modal-dialog uk-modal-body">
-                                    <h2 class="uk-modal-title">Czy jesteś pewien?</h2>
-                                    <form method="post" action="{{ request.url_for('admin:reject', rid=vr.id) }}"
-                                          enctype="multipart/form-data">
-                                        <label>
-                                            Uzasadnienie decyzji
-                                            <textarea required name="reason"
-                                                      class="uk-textarea uk-margin-bottom">niezgodność danych</textarea>
-                                        </label>
-                                        <button class="uk-button uk-button-danger" type="submit">WYJEB GNOJA</button>
-                                        <button class="uk-modal-close uk-button uk-button-default" type="button">Anuluj
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
+            <div >
+                {% for vr in awaiting %}
+                <div data-state="{{ vr.state }}">
+                    <h3>{{ vr.google.name }}</h3>
+                    <p>{{ vr.identity }}</p>
+                    <p>{{ vr.no }}</p>
+                    <p>
+                        Oznaczenia:
+                        {% if vr.state.value == 'id required' %}
+                        <span>Oczekuje na przesłanie dokumentów</span>
+                        {% elif vr.state.value == 'in review' %}
+                        {% if vr.photos.ready %}
+                        <span>Przesłano zdjęcia</span>
+                        {% endif %}
+                        {% endif %}
+                    </p>
+                    <a href="{{ request.url_for('admin:review', rid=vr.id) }}"
+                        >
+                        🔍
+                    </a>
+                    <button 
+                        >
+                        🗑
+                    </button>
+                    <div id="confirm-{{ vr.id }}" >
+                        <div>
+                            <h2>Czy jesteś pewien?</h2>
+                            <form method="post" action="{{ request.url_for('admin:reject', rid=vr.id) }}"
+                                enctype="multipart/form-data">
+                                <label>
+                                    Uzasadnienie decyzji
+                                    <textarea required name="reason"
+                                       >niezgodność danych</textarea>
+                                </label>
+                                <button type="submit">WYJEB GNOJA</button>
+                                <button type="button">Anuluj
+                                </button>
+                            </form>
                         </div>
-                    {% endfor %}
+                    </div>
                 </div>
+                {% endfor %}
             </div>
+        </div>
         {% else %}
-            <h2>Brak oczekujących weryfikacji</h2>
+        <h2>Brak oczekujących weryfikacji</h2>
         {% endif %}
     </div>
-{% endblock %}
+    {% endblock %}
 </body>
+
 </html>
