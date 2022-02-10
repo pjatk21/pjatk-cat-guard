@@ -1,23 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>OH FUCK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/css/uikit.min.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.10.1/dist/js/uikit-icons.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
 </head>
+
 <body>
-    <div class="   ">
-        <div class="  ">
-            <div class="">
-                {% block inner_card %}
-                    <h1>Wymagane zalogowanie</h1>
-                    <a class=" " href="{{ request.url_for('admin:admin_login') }}">Przekieruj mnie do logowania</a>
-                {% endblock %}
+    <div style="height: 100vh;width:100vw" class="d-flex justify-content-center align-items-center">
+        <div class="card text-center w-50">
+
+
+            {% block inner_card %}
+            <div class="card-header">
+                Brak poświadczeń
             </div>
+            <div class="card-body">
+                <h1 class="card-title">Wymagane zalogowanie</h1>
+                <a class=" btn btn-primary" href="{{ request.url_for('admin:admin_login') }}">Przekieruj mnie do
+                    logowania</a>
+            </div>
+            {% endblock %}
+
+
         </div>
     </div>
 </body>
+
 </html>

@@ -27,13 +27,13 @@
                     <a class="nav-link" href="{{ request.url_for('admin:admin_index') }}">Pulpit</a></li>
                     <a class="nav-link" href="{{ request.url_for('admin:accepted') }}">Zatwierdzeni</a></li>
                     <a class="nav-link" href="{{ request.url_for('admin:rejected') }}">Odrzuceni</a></li>
-
+                    
                 </div>
                 <div class="d-flex">
                     <span class="navbar-text me-2">
                         {{ request.session["user"] }}</span>
 
-
+                        <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#link-gen">Generuj link</button>
                     <a class="btn btn-outline-danger" href="{{ request.url_for('admin:admin_logout') }}">Wyloguj
                         się</a>
                 </div>
@@ -48,11 +48,10 @@
         </div>
     </nav>
     {% block body %}
-    <div>
+    <div class="container">
         <div>
-            <div>
-                <h2>Generuj link</h2>
-                <button data-bs-toggle="modal" data-bs-target="#link-gen">Otwórz generator</button>
+
+                
                 <div class="modal" id="link-gen" aria-labelledby="link-gen">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -94,7 +93,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+
             <div>
                 <h2>Statystyki rejestracji</h2>
                 {% for guild, stat in stats.items() %}

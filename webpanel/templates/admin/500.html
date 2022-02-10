@@ -1,7 +1,9 @@
 {% extends 'admin/403.html' %}
 {% block inner_card %}
-    <h1>Błędzik!</h1>
-    <pre>
+<div class="card-header">
+    Błędzik!
+</div>
+    <samp class="p-1">
         {{ exc }}
-    </pre>
+    </samp>
 {% endblock %}
