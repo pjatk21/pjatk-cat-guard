@@ -4,14 +4,14 @@ Bot do weryfikacji studentów.
 ## Features
  - Weryfikacja przy użyciu logowania OAuth
  - Prawie zerowa konfiguracja
- - Wsparcie dla *slash commands*
- - Indeksowanie plików według ich zawartości
+ - Wsparcie dla *slash commands* oraz *user commands*
  - Budowane na nowych technologiach
    - Python 3.10 + hikari + starlette
    - MongoDB
    - Docker
    - Uvicorn
-   - Tika
+ - Weryfikacja na podstawie dokumentów
+ - Panel administracyjny
 
 > Więcej o tym jak użwać bota, jest w [instrukcji obsługi](https://github.com/pjatk21/pjatk-cat-guard/blob/main/MANUAL.md)
 
