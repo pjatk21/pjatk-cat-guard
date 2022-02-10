@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 
+from PIL import Image
 from dotenv import load_dotenv
 from google.auth.transport import requests
 from google.oauth2 import id_token
@@ -157,12 +158,19 @@ class LoginQueueRequest(HTTPEndpoint):
         return RedirectResponse(request.url_for('verify:form', secret=secret), status_code=302, background=tasks)
 
     def save_picture(self, vr: VerificationRequest, photo_file: UploadFile, prefix: str):
-        filename = f'verification-{prefix}-{photo_file.filename}'
+        filename_original = f'original-{prefix}-{photo_file.filename}'
+        filename = f'verification-{prefix}-id.jpeg'
         filedir = data_path.joinpath('pictures').joinpath(str(vr.id))
         filedir.mkdir(parents=True, exist_ok=True)
         filename = filedir.joinpath(filename)
 
-        with open(filename, 'wb') as f:
+        with open(filedir.joinpath(filename_original), 'wb') as f:
             f.write(photo_file.file.read())
+
+        image: Image = Image.open(filedir.joinpath(filename_original))
+        image = image.convert('RGB')
+        image.thumbnail((2080, 2080))  # Consult someone about this one
+
+        image.save(filename, 'jpeg', quality=90, progressive=True)
 
         return str(filename.absolute())

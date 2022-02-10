@@ -32,6 +32,7 @@ httpx = "^0.22.0"
 Authlib = "^0.15.5"
 kaleido = "0.2.1"
 sendgrid = "^6.9.5"
+Pillow = "^9.0.1"
 
 [tool.poetry.dev-dependencies]
 black = "*"

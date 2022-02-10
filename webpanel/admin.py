@@ -287,7 +287,7 @@ async def admin_reject(request: Request):
     return RedirectResponse(request.url_for('admin:admin_index'), status_code=302, background=tasks)
 
 
-@app.route('/photoproxy/{rid}/{side}.jpg', name='photoproxy', methods=['GET'])
+@app.route('/photoproxy/{rid}/{side}.jpeg', name='photoproxy', methods=['GET'])
 @requires('authenticated')
 async def photo_proxy(request: Request):
     side = request.path_params['side']
