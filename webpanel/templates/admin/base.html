@@ -27,13 +27,14 @@
                     <a class="nav-link" href="{{ request.url_for('admin:admin_index') }}">Pulpit</a></li>
                     <a class="nav-link" href="{{ request.url_for('admin:accepted') }}">Zatwierdzeni</a></li>
                     <a class="nav-link" href="{{ request.url_for('admin:rejected') }}">Odrzuceni</a></li>
-                    
+
                 </div>
                 <div class="d-flex">
                     <span class="navbar-text me-2">
                         {{ request.session["user"] }}</span>
 
-                        <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#link-gen">Generuj link</button>
+                    <button class="btn btn-outline-primary me-2" data-bs-toggle="modal"
+                        data-bs-target="#link-gen">Generuj link</button>
                     <a class="btn btn-outline-danger" href="{{ request.url_for('admin:admin_logout') }}">Wyloguj
                         się</a>
                 </div>
@@ -50,40 +51,34 @@
     {% block body %}
     <div class="container">
         <div>
+            <div>
 
-                
-                <div class="modal" id="link-gen" aria-labelledby="link-gen">
+
+                <div class="modal fade" id="link-gen" aria-labelledby="link-gen">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h2>Generate link</h2>
                             </div>
                             <form class="modal-body" method="post" action="{{ request.url_for('admin:admin_bypass') }}">
-                                <div>
-                                    <div>
-                                        <div>ID serwera</div>
-                                        <div>
-                                            <select required name="guild">
-                                                {% for guild in bypass %}
-                                                <option value="{{ guild.id }}">{{ guild.name }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div>ID użytkownika</div>
-                                        <div>
-                                            <span></span>
-                                            <input required name="user" pattern="\d{18}">
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div>Numer studenta (eska)</div>
-                                        <div>
-                                            <span></span>
-                                            <input required name="student_no" pattern="s\d+">
-                                        </div>
-                                    </div>
+
+                                <div class="form-floating mb-3">
+                                    <select class="form-select" id="ID_floating" required name="guild">
+                                        {% for guild in bypass %}
+                                        <option value="{{ guild.id }}">{{ guild.name }}</option>
+                                        {% endfor %}
+                                    </select><label for="ID_floating">ID serwera</label>
+
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="discord_floating" required name="user"
+                                        pattern="\d{18}">
+                                    <label for="discord_floating">ID użytkownika</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="Eska_floating" required name="student_no"
+                                        pattern="s\d+">
+                                    <label for="Eska_floating">Numer studenta (eska)
                                 </div>
                             </form>
                             <div class="modal-footer">
@@ -93,6 +88,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
             <div>
                 <h2>Statystyki rejestracji</h2>
@@ -107,52 +103,66 @@
             </div>
         </div>
         {% if awaiting|length > 0 %}
-        <h2>Oczekujące weryfikacje</h2>
-        <div>
-            <ul>
-                <li -control="[data-state='VerificationState.IN_REVIEW']">
-                    <a>Oczekujące</a>
-                </li>
-                <li -control="[data-state='VerificationState.ID_REQUIRED']"><a>Oczekujące na dokumenty</a>
-                <li -control><a>Wszystkie<span>{{ awaiting|length }}</span></a></li>
-                </li>
-            </ul>
 
-            <div>
+        <div>
+            <h2 class="nav-text">Oczekujące weryfikacje</h2>
+            <div class="nav nav-pills mb-2">
+
+                <a class="nav-link active" -control="[data-state='VerificationState.IN_REVIEW']">
+                    Oczekujące
+                </a>
+                <a class="nav-link" -control="[data-state='VerificationState.ID_REQUIRED']">Oczekujące na dokumenty</a>
+                <a class="nav-link" -control>Wszystkie<span class="badge bg-secondary">{{ awaiting|length }}</span></a>
+                </a>
+            </div>
+
+            <div class="d-flex ">
                 {% for vr in awaiting %}
-                <div data-state="{{ vr.state }}">
-                    <h3>{{ vr.google.name }}</h3>
-                    <p>{{ vr.identity }}</p>
-                    <p>{{ vr.no }}</p>
-                    <p>
-                        Oznaczenia:
-                        {% if vr.state.value == 'id required' %}
-                        <span>Oczekuje na przesłanie dokumentów</span>
-                        {% elif vr.state.value == 'in review' %}
-                        {% if vr.photos.ready %}
-                        <span>Przesłano zdjęcia</span>
-                        {% endif %}
-                        {% endif %}
-                    </p>
-                    <a href="{{ request.url_for('admin:review', rid=vr.id) }}">
-                        🔍
-                    </a>
-                    <button>
-                        🗑
-                    </button>
-                    <div id="confirm-{{ vr.id }}">
-                        <div>
-                            <h2>Czy jesteś pewien?</h2>
-                            <form method="post" action="{{ request.url_for('admin:reject', rid=vr.id) }}"
-                                enctype="multipart/form-data">
-                                <label>
-                                    Uzasadnienie decyzji
-                                    <textarea required name="reason">niezgodność danych</textarea>
-                                </label>
-                                <button type="submit">WYJEB GNOJA</button>
-                                <button type="button">Anuluj
-                                </button>
-                            </form>
+                <div class="card" data-state="{{ vr.state }}">
+                    <h3 class="card-header">{{ vr.google.name }}</h3>
+                    <div class="card-body">
+                        <p class="card-title">{{ vr.identity }}</p>
+                        <p>{{ vr.no }}</p>
+                        <p>
+                            {% if vr.state.value == 'id required' %}
+                            <span class="badge bg-primary">Oczekuje na przesłanie dokumentów</span>
+                            {% elif vr.state.value == 'in review' %}
+                            {% if vr.photos.ready %}
+                            <span class="badge bg-primary">Przesłano zdjęcia</span>
+                            {% endif %}
+                            {% endif %}
+                        </p>
+                        <a class="btn btn-outline-primary" href="{{ request.url_for('admin:review', rid=vr.id) }}">
+                            🔍 Wgląd
+                        </a>
+                        <button class="btn btn-outline-danger" data-bs-toggle="modal"
+                            data-bs-target="#confirm-{{ vr.id }}">
+                            🗑 Odrzuć
+                        </button>
+                        <div class="modal fade" aria-labelledby="expelModal" id="confirm-{{ vr.id }}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h2>Czy jesteś pewien?</h2>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <form class="form-floating mb-3" method="post"
+                                            action="{{ request.url_for('admin:reject', rid=vr.id) }}"
+                                            enctype="multipart/form-data">
+
+                                            <textarea class="form-control" id="reason_text" required
+                                                name="reason">niezgodność danych</textarea>
+                                            <label for="reason_text">
+                                                Uzasadnienie decyzji</label>
+
+                                        </form>
+                                        <button class="btn btn-danger" type="submit">WYJEB GNOJA</button>
+                                        <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Anuluj
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -162,6 +172,7 @@
         {% else %}
         <h2>Brak oczekujących weryfikacji</h2>
         {% endif %}
+    </div>
     </div>
     {% endblock %}
 </body>
