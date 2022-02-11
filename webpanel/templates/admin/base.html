@@ -10,7 +10,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
+        integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -97,20 +98,22 @@
 
         <div>
             <div class="nav nav-pills mb-2">
-                <a class="nav-link active" -control="[data-state='VerificationState.IN_REVIEW']">
+                <a class="nav-link active" data-state='VerificationState.IN_REVIEW'>
                     Oczekujące
                 </a>
-                <a class="nav-link" -control="[data-state='VerificationState.ID_REQUIRED']">Oczekujące na dokumenty</a>
-                <a class="nav-link" -control>Wszystkie <span class="badge bg-secondary">{{ awaiting|length }}</span></a>
+                <a class="nav-link" data-state='VerificationState.ID_REQUIRED'>Oczekujące na dokumenty</a>
+                <a class="nav-link" data-state='ALL'>Wszystkie <span class="badge bg-secondary">{{ awaiting|length
+                        }}</span></a>
                 </a>
             </div>
 
-            <div class="d-flex ">
+            <div id="cards" class="d-flex gap-2">
                 {% for vr in awaiting %}
                 <div class="card" data-state="{{ vr.state }}">
-                    <h3 class="card-header">{{ vr.google.name }}</h3>
+                    <!-- <img src="{{ vr.google.raw['picture'] }}" class="card-img-top" /> -->
                     <div class="card-body">
-                        <p class="card-title">{{ vr.identity }}</p>
+                        <h3 class="card-title">{{ vr.google.name }}</h3>
+                        <p>{{ vr.identity }}</p>
                         <p>{{ vr.no }}</p>
                         <p>
                             {% if vr.state.value == 'id required' %}
@@ -121,13 +124,6 @@
                             {% endif %}
                             {% endif %}
                         </p>
-                        <a class="btn btn-outline-primary" href="{{ request.url_for('admin:review', rid=vr.id) }}">
-                            🔍 Wgląd
-                        </a>
-                        <button class="btn btn-outline-danger" data-bs-toggle="modal"
-                            data-bs-target="#confirm-{{ vr.id }}">
-                            🗑 Odrzuć
-                        </button>
                         <div class="modal fade" aria-labelledby="expelModal" id="confirm-{{ vr.id }}">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -136,7 +132,7 @@
                                     </div>
 
                                     <div class="modal-body">
-                                        <form class="form-floating mb-3" method="post"
+                                        <form class="form-floating" method="post"
                                             action="{{ request.url_for('admin:reject', rid=vr.id) }}"
                                             enctype="multipart/form-data">
 
@@ -144,15 +140,27 @@
                                                 name="reason">niezgodność danych</textarea>
                                             <label for="reason_text">
                                                 Uzasadnienie decyzji</label>
-
+                                            <div class="modal-footer">
+                                                <button class="btn btn-danger" type="submit">WYJEB GNOJA</button>
+                                                <button class="btn btn-secondary" data-bs-dismiss="modal"
+                                                    type="button">Anuluj
+                                            </div>
                                         </form>
-                                        <button class="btn btn-danger" type="submit">WYJEB GNOJA</button>
-                                        <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Anuluj
+
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-outline-primary" href="{{ request.url_for('admin:review', rid=vr.id) }}">
+                            🔍 Wgląd
+                        </a>
+                        <button class="btn btn-outline-danger" data-bs-toggle="modal"
+                            data-bs-target="#confirm-{{ vr.id }}">
+                            🗑 Odrzuć
+                        </button>
                     </div>
                 </div>
                 {% endfor %}
@@ -162,7 +170,26 @@
         <h2>Brak oczekujących weryfikacji</h2>
         {% endif %}
     </div>
-    </div>
+    <script type="text/javascript">
+        $("a[data-state='VerificationState.IN_REVIEW']").click(() => {
+            $(".nav a").removeClass("active");
+            $("a[data-state='VerificationState.IN_REVIEW']").addClass("active");
+            $(".card").hide();
+            $("div[data-state='VerificationState.IN_REVIEW']").show()
+        });
+        $("a[data-state='VerificationState.ID_REQUIRED']").click(() => {
+            $(".nav a").removeClass("active");
+            $("a[data-state='VerificationState.ID_REQUIRED']").addClass("active");
+            $(".card").hide();
+            $("div[data-state='VerificationState.ID_REQUIRED']").show()
+        })
+        $("a[data-state='ALL']").click(() => {
+            $(".nav a").removeClass("active");
+            $("a[data-state='ALL']").addClass("active");
+            $(".card").show();
+        })
+        $("a[data-state='VerificationState.IN_REVIEW']").trigger("click");
+    </script>
     {% endblock %}
 </body>
 
