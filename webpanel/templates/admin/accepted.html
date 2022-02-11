@@ -7,39 +7,41 @@
         <button class="btn btn-outline-primary">Szukaj</button>
     </form>
     <h2>Zatwierdzone weryfikacje</h2>
-    <table class="table-hover table align-middle">
-        <thead>
-            <tr>
-                <th>Numer studenta</th>
-                <th>User</th>
-                <th>Data</th>
-                <th>Akcja</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for vr in accepted %}
-            <tr>
-                <td>
-                    <samp>
-                        {{ vr.no }}
-                    </samp>
-                </td>
-                <td>
-                    {{ vr.identity.user_name }}
-                </td>
-                <td>
-                    {{ vr.accepted }}
-                </td>
-                <td>
+    <div class="table-responsive">
+        <table class="table-hover table align-middle">
+            <thead>
+                <tr>
+                    <th>Numer studenta</th>
+                    <th>User</th>
+                    <th>Data</th>
+                    <th>Akcja</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vr in accepted %}
+                <tr>
+                    <td>
+                        <samp>
+                            {{ vr.no }}
+                        </samp>
+                    </td>
+                    <td>
+                        {{ vr.identity.user_name }}
+                    </td>
+                    <td>
+                        {{ vr.accepted }}
+                    </td>
+                    <td>
 
-                    <a href="{{ request.url_for('admin:review', rid=vr.id) }}" class="btn btn-outline-primary ">
-                        🔍 Wgląd
-                    </a>
+                        <a href="{{ request.url_for('admin:review', rid=vr.id) }}" class="btn btn-outline-primary" style="word-break:keep-all">
+                            🔍 Wgląd
+                        </a>
 
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

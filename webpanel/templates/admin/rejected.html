@@ -7,41 +7,44 @@
         <button class="btn btn-outline-primary">Szukaj</button>
     </form>
     <h2>Odrzucone weryfikacje</h2>
-    <table class=" table table-hover align-middle">
-        <thead>
-            <tr>
-                <th>ID formy</th>
-                <th>Numer studenta</th>
-                <th>User</th>
-                <th>Powód</th>
-                <th>Akcja</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for vr in rejected %}
-            <tr>
-                <td class="">
-                    <code>{{ vr.id }}</code>
-                </td>
-                <td>
-                    <samp>
-                        {{ vr.no }}
-                    </samp>
-                </td>
-                <td>
-                    {{ vr.identity }}
-                </td>
-                <td>
-                    {{ vr.rejection }}
-                </td>
-                <td>
-                    <a href="{{ request.url_for('admin:review', rid=vr.id) }}" class="btn btn-outline-primary ">
-                        🔍 Wgląd
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class=" table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>ID formy</th>
+                    <th>Numer studenta</th>
+                    <th>User</th>
+                    <th>Powód</th>
+                    <th>Akcja</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vr in rejected %}
+                <tr>
+                    <td class="">
+                        <code>{{ vr.id }}</code>
+                    </td>
+                    <td>
+                        <samp>
+                            {{ vr.no }}
+                        </samp>
+                    </td>
+                    <td>
+                        {{ vr.identity }}
+                    </td>
+                    <td>
+                        {{ vr.rejection }}
+                    </td>
+                    <td>
+                        <a href="{{ request.url_for('admin:review', rid=vr.id) }}" class="btn btn-outline-primary"
+                            style="word-break:keep-all">
+                            🔍 Wgląd
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
