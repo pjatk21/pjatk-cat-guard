@@ -1,173 +1,182 @@
 {% extends 'admin/base.html' %}
 {% block body %}
+<div class="container">
+
+    <h1><a href="{{ request.url_for('admin:admin_index') }}"></a> Forma
+        weryfikacyjna</h1>
+    {% if vr.state.value == 'id required' %}
+    <div class="alert alert-info">
+        <p>Ten użytkownik oczekuje na sprawdzenie dokumentów!</p>
+    </div>
+    {% elif vr.state.value == 'accepted' %}
+    <div class="alert alert-success">
+        <p>Ten użytkownik już został zweryfikowany przez <b>{{ vr.reviewer.identity.user_name }}</b>!</p>
+    </div>
+    {% endif %}
+    {% if warns.fresh_meat %}
+    <div class="alert alert-danger">
+        <p>Data utworzenia konta i dołączenia jest krótsza niż rok ({{ (ds.joined_at - ds.created_at).days }}
+            dni)</p>
+    </div>
+    {% endif %}
+    {% if warns.weird_num %}
+    <div class="alert alert-danger">
+        <p>Numer studenta wygląda podejrzanie ({{ vr.no }})</p>
+    </div>
+    {% endif %}
+    {% if vr.rejection %}
+    <div class="alert alert-info " role="alert">
+
+        <h4 class="alert-heading">Powód odrzucenia <small>z dnia {{ vr.rejection.when }}</small></h4>
+
+        <hr>
+
+        <p class="mb-0">{{ vr.rejection.reason }}</p>
+
+    </div>
+    {% endif %}
     <div class="">
-        <h1><a href="{{ request.url_for('admin:admin_index') }}" ></a> Forma
-            weryfikacyjna</h1>
-        {% if vr.state.value == 'id required' %}
-            <div class="" >
-                <p>Ten użytkownik oczekuje na sprawdzenie dokumentów!</p>
-            </div>
-        {% elif vr.state.value == 'accepted' %}
-            <div class="" >
-                <p>Ten użytkownik już został zweryfikowany przez <b>{{ vr.reviewer.identity.user_name }}</b>!</p>
-            </div>
-        {% endif %}
-        {% if warns.fresh_meat %}
-            <div class="" >
-                <p>Data utworzenia konta i dołączenia jest krótsza niż rok ({{ (ds.joined_at - ds.created_at).days }}
-                    dni)</p>
-            </div>
-        {% endif %}
-        {% if warns.weird_num %}
-            <div class="" >
-                <p>Numer studenta wygląda podejrzanie ({{ vr.no }})</p>
-            </div>
-        {% endif %}
-        {% if vr.rejection %}
-            <div class="  ">
+        <div class="card">
+            <div class=" card-body">
                 <div class="">
-                    <h4>Powód odrzucenia <small>z dnia {{ vr.rejection.when }}</small></h4>
-                </div>
-                <div class="">
-                    <p>{{ vr.rejection.reason }}</p>
-                </div>
-            </div>
-        {% endif %}
-        <div class="@m  " >
-            <div>
-                <div class=" ">
-                    <div class="">
-                        <div class=" " >
-                            <div class="">
-                                <img class="" width="40" height="40"
-                                     src="{{ vr.google.raw['picture'] }}">
-                            </div>
-                            <div class="">
-                                <h3 class=" ">{{ vr.google.name }}</h3>
-                                <p class=" ">
-                                    {{ vr.no }}
-                                </p>
-                            </div>
+                    <div class="d-flex gap-2">
+                        <div class="">
+                            <img class="rounded-circle" width="40" height="40" src="{{ vr.google.raw['picture'] }}">
+                        </div>
+                        <div class="">
+                            <h3 class=" ">{{ vr.google.name }} ({{ vr.no }})</h3>
+
                         </div>
                     </div>
-                    <div class="">
-                        <p>Email: <b>{{ vr.google.email }}</b></p>
-                        <p>Złożenie weryfikacji: <b>{{ vr.submitted }}</b></p>
-                        {% if vr.reviewer %}
-                            <p>Operator: <b>{{ vr.reviewer.identity.user_name }}</b></p>
-                        {% endif %}
-                    </div>
                 </div>
-            </div>
-            <div>
-                <div class=" ">
-                    <div class="">
-                        <div class=" " >
-                            <div class="">
-                                {% if ds.avatar_url %}
-                                    <img class="" width="40" height="40" src="{{ ds.avatar_url }}">
-                                {% endif %}
-                            </div>
-                            <div class="">
-                                <h3 class=" ">{{ ds }}</h3>
-                                {% if ds.nickname %}
-                                    <p class=" ">
-                                        aka {{ ds.nickname }}
-                                    </p>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="">
-                        <p>Discord ID: <code>{{ ds.id }}</code></p>
-                        <p>Dołączenie do discorda: <b>{{ ds.created_at }}</b></p>
-                        <p>Dołączenie do serwera: <b>{{ ds.joined_at }}</b></p>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <div class=" ">
-                    <div class="">
-                        <h3>Zmiany statusu</h3>
-                    </div>
-                    <div class="">
-                        <ol>
-                            {% for change in vr.changes %}
-                                <li>{{ change.reviewer }} zmienił stan <b>{{ change.state_before.value }}</b> na
-                                    <b>{{ change.state_after.value }}</b> <small>{{ change.when }}</small></li>
-                            {% endfor %}
-                        </ol>
-                    </div>
+                <div class="">
+                    <p>Email: <b>{{ vr.google.email }}</b></p>
+                    <p>Złożenie weryfikacji: <b>{{ vr.submitted }}</b></p>
+                    {% if vr.reviewer %}
+                    <p>Operator: <b>{{ vr.reviewer.identity.user_name }}</b></p>
+                    {% endif %}
                 </div>
             </div>
         </div>
-        <h2>Dokumenty</h2>
-        {% if vr.state.value == 'id required' or (vr.photos.ready) %}
-            {% if vr.photos.ready %}
-                <div class="" >
-                    <a class=" "
-                       href="{{ request.url_for('admin:photoproxy', side='front', rid=vr.id) }}" data-alt="Przód">
-                        Przednia strona dokumentu
-                        <img style="height: 120px; margin: 20px" loading="lazy"
-                             src="{{ request.url_for('admin:photoproxy', side='front', rid=vr.id) }}">
-                    </a>
-                    <a class=" "
-                       href="{{ request.url_for('admin:photoproxy', side='back', rid=vr.id) }}" data-alt="Tył">
-                        Tylna strona dokumentu
-                        <img style="height: 120px; margin: 20px" loading="lazy"
-                             src="{{ request.url_for('admin:photoproxy', side='back', rid=vr.id) }}">
-                    </a>
+        <div>
+            <div class="card ">
+                <div class="card-body">
+                    <div class="d-flex gap-2">
+                        {% if ds.avatar_url %}
+                        <img class="rounded-circle" width="40" height="40" src="{{ ds.avatar_url }}">
+                        {% endif %}
+
+                        <h3 class=" ">{{ ds }}</h3>
+                        {% if ds.nickname %}
+                        <p class=" ">
+                            aka {{ ds.nickname }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    <p>Discord ID: <code>{{ ds.id }}</code></p>
+                    <p>Dołączenie do discorda: <b>{{ ds.created_at }}</b></p>
+                    <p>Dołączenie do serwera: <b>{{ ds.joined_at }}</b></p>
                 </div>
-            {% else %}
-                <p>Użytkownik jeszcze nie przesłał dokumentów</p>
-            {% endif %}
-        {% elif vr.state.value != 'rejected' %}
-            <div class="">
-                <form method="post" action="{{ request.url_for('admin:id required', rid=vr.id) }}">
-                    <button type="submit" class=" ">🚨 Poproś o przesłanie legitymacji
-                    </button>
-                </form>
             </div>
+        </div>
+        <div class="card ">
+            <div class="card-body">
+                <div class="">
+                    <h3>Zmiany statusu</h3>
+                </div>
+                <div class="">
+                    <ol>
+                        {% for change in vr.changes %}
+                        <li>{{ change.reviewer }} zmienił stan <b>{{ change.state_before.value }}</b> na
+                            <b>{{ change.state_after.value }}</b> <small>{{ change.when }}</small>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if vr.state.value == 'id required' or (vr.photos.ready) %}
+    <div class="card">
+        <div class="card-header">
+            <h2>Dokumenty</h2>
+        </div>
+        <div class="card-body">
+            {% if vr.photos.ready %}
+
+            <a class=" " href="{{ request.url_for('admin:photoproxy', side='front', rid=vr.id) }}" data-alt="Przód">
+                Przednia strona dokumentu
+                <img style="height: 120px; margin: 20px" loading="lazy"
+                    src="{{ request.url_for('admin:photoproxy', side='front', rid=vr.id) }}">
+            </a>
+            <a class=" " href="{{ request.url_for('admin:photoproxy', side='back', rid=vr.id) }}" data-alt="Tył">Tylna
+                strona dokumentu
+                <img style="height: 120px; margin: 20px" loading="lazy"
+                    src="{{ request.url_for('admin:photoproxy', side='back', rid=vr.id) }}">
+            </a>
+
+            {% else %}
+            <p>Użytkownik jeszcze nie przesłał dokumentów</p>
+            {% endif %}
+        </div>
+        {% elif vr.state.value != 'rejected' %}
+
+        <form method="post" action="{{ request.url_for('admin:id required', rid=vr.id) }}">
+            <button type="submit" class=" btn btn-outline-warning">🚨 Poproś o przesłanie legitymacji
+            </button>
+        </form>
+
         {% else %}
-            <p>Użytkownik nie został poproszony o dokumenty.</p>
+        <p>Użytkownik nie został poproszony o dokumenty.</p>
         {% endif %}
 
-        <div class="">
+        <div class="d-flex gap-1">
             {% if vr.state.value in ['in review', 'id required'] %}
-                <div>
-                    <form method="post">
-                        <button type="submit" class=" ">✅ Zaakceptuj</button>
-                    </form>
-                </div>
+            <div>
+                <form method="post">
+                    <button type="submit" class=" btn btn-outline-success">✅ Zaakceptuj</button>
+                </form>
+            </div>
 
             {% endif %}
 
             {% if vr.state.value != 'rejected' %}
-                <div>
-                    <button  class=" ">🗑 Odrzuć
-                    </button>
-                    <div id="confirm-{{ vr.id }}" >
-                        <div class=" ">
-                            <h2 class="">Czy jesteś pewien?</h2>
-                            <form method="post" action="{{ request.url_for('admin:reject', rid=vr.id) }}"
-                                  enctype="multipart/form-data">
-                                <label>
-                                    Uzasadnienie decyzji
-                                    <textarea required name="reason"
-                                              class=" ">niezgodność danych</textarea>
-                                </label>
-                                <button class=" " type="submit">WYJEB GNOJA</button>
-                                <button class="  " type="button">Anuluj
+            <div>
+                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirm-{{ vr.id }}">
+                    🗑 Odrzuć
+                </button>
+                <div class="modal fade" aria-labelledby="expelModal" id="confirm-{{ vr.id }}">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2>Czy jesteś pewien?</h2>
+                            </div>
+
+                            <div class="modal-body">
+                                <form class="form-floating mb-3" method="post"
+                                    action="{{ request.url_for('admin:reject', rid=vr.id) }}"
+                                    enctype="multipart/form-data">
+
+                                    <textarea class="form-control" id="reason_text" required
+                                        name="reason">niezgodność danych</textarea>
+                                    <label for="reason_text">
+                                        Uzasadnienie decyzji</label>
+
+                                </form>
+                                <button class="btn btn-danger" type="submit">WYJEB GNOJA</button>
+                                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Anuluj
                                 </button>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
             {% endif %}
-
-            <!-- <form method="post">
+        </div>
+        <!-- <form method="post">
                 <button disabled type="submit" class=" ">🔨 Zbanuj</button>
             </form> -->
-        </div>
     </div>
+</div>
 {% endblock %}
