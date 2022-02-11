@@ -4,13 +4,14 @@ import random
 from datetime import datetime
 
 from hikari import Guild, User, Embed
-from hikari.events import MemberCreateEvent
+from hikari.events import MemberCreateEvent, BanCreateEvent, GuildLeaveEvent
 from lightbulb import command, implements, commands, add_checks, Plugin, Check, guild_only
 from lightbulb.context import Context
+from mongoengine import DoesNotExist
 
 from gadoneko.checks import untrusted_only, trusted_only, guild_configured
 from shared.colors import INFO
-from shared.documents import UserIdentity, TrustedUser, GuildConfiguration, VerificationRequest
+from shared.documents import UserIdentity, TrustedUser, GuildConfiguration, VerificationRequest, VerificationState
 
 plugin = Plugin('Trust')
 
@@ -66,6 +67,29 @@ async def auto_verify(event: MemberCreateEvent):
     )
 
     await event.user.send(embed=embed)
+
+
+@plugin.listener(BanCreateEvent)
+async def ban_cleanup(event: BanCreateEvent):
+    try:
+        tu = TrustedUser.objects.get(identity__user_id=event.user.id, identity__guild_id=event.guild_id)
+        vr: VerificationRequest = VerificationRequest.objects.get(trust=tu)
+    except DoesNotExist:
+        return
+
+    vr.state = VerificationState.BANNED
+    vr.save()
+    tu.delete()
+
+
+@plugin.listener(GuildLeaveEvent)
+async def kick_leave_cleanup(event: GuildLeaveEvent):
+    try:
+        tu = TrustedUser.objects.get(identity__user_id=event.user.id, identity__guild_id=event.guild_id)
+    except DoesNotExist:
+        return
+
+    tu.delete()
 
 
 @plugin.command()
