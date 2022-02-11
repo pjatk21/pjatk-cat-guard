@@ -34,55 +34,53 @@
                     <span class="navbar-text me-2">
                         {{ request.session["user"] }}</span>
 
-                    <button class="btn btn-outline-primary me-2" data-bs-toggle="modal"
-                        data-bs-target="#link-gen">Generuj link</button>
+
                     <a class="btn btn-outline-danger" href="{{ request.url_for('admin:admin_logout') }}">Wyloguj
                         się</a>
                 </div>
             </div>
         </div>
     </nav>
-    <div class="modal fade" id="link-gen" aria-labelledby="link-gen">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Generate link</h2>
-                </div>
-                <form class="modal-body" method="post" action="{{ request.url_for('admin:admin_bypass') }}">
 
-                    <div class="form-floating mb-3">
-                        <select class="form-select" id="ID_floating" required name="guild">
-                            {% for guild in bypass %}
-                            <option value="{{ guild.id }}">{{ guild.name }}</option>
-                            {% endfor %}
-                        </select><label for="ID_floating">ID serwera</label>
-
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input class="form-control" id="discord_floating" required name="user" pattern="\d{18}">
-                        <label for="discord_floating">ID użytkownika</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input class="form-control" id="Eska_floating" required name="student_no"
-                            pattern="s\d+">
-                        <label for="Eska_floating">Numer studenta (eska)
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
-                        <button type="submit" class="btn btn-primary">Wyślij link</button>
-                    </div>
-                </form>
-
-            </div>
-        </div>
     </div>
     {% block body %}
     <div class="container">
         <div>
 
-            
+            <div class="modal fade" id="link-gen" aria-labelledby="link-gen">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Generate link</h2>
+                        </div>
+                        <form class="modal-body" method="post" action="{{ request.url_for('admin:admin_bypass') }}">
 
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="ID_floating" required name="guild">
+                                    {% for guild in bypass %}
+                                    <option value="{{ guild.id }}">{{ guild.name }}</option>
+                                    {% endfor %}
+                                </select><label for="ID_floating">ID serwera</label>
 
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="discord_floating" required name="user" pattern="\d{18}">
+                                <label for="discord_floating">ID użytkownika</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="Eska_floating" required name="student_no"
+                                    pattern="s\d+">
+                                <label for="Eska_floating">Numer studenta (eska)
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+                                <button type="submit" class="btn btn-primary">Wyślij link</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
             <div>
                 <h2>Statystyki rejestracji</h2>
                 {% for guild, stat in stats.items() %}
@@ -95,6 +93,8 @@
                 {% endfor %}
             </div>
         </div>
+        <button class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#link-gen">Generuj
+            link</button>
         {% if awaiting|length > 0 %}
 
         <div>
