@@ -5,178 +5,188 @@
     <h1><a href="{{ request.url_for('admin:admin_index') }}"></a> Forma
         weryfikacyjna</h1>
     {% if vr.state.value == 'id required' %}
-    <div class="alert alert-info">
-        <p>Ten użytkownik oczekuje na sprawdzenie dokumentów!</p>
+    <div class="alert alert-info mb-1">
+        <span>Ten użytkownik oczekuje na sprawdzenie dokumentów!</span>
     </div>
     {% elif vr.state.value == 'accepted' %}
-    <div class="alert alert-success">
-        <p>Ten użytkownik już został zweryfikowany przez <b>{{ vr.reviewer.identity.user_name }}</b>!</p>
+    <div class="alert alert-success mb-1">
+        <span>Ten użytkownik już został zweryfikowany przez <b>{{ vr.reviewer.identity.user_name }}</b>!</span>
     </div>
     {% endif %}
     {% if warns.fresh_meat %}
-    <div class="alert alert-danger">
-        <p>Data utworzenia konta i dołączenia jest krótsza niż rok ({{ (ds.joined_at - ds.created_at).days }}
-            dni)</p>
+    <div class="alert alert-danger mb-1">
+        <span>Data utworzenia konta i dołączenia jest krótsza niż rok ({{ (ds.joined_at - ds.created_at).days }}
+            dni)</span>
     </div>
     {% endif %}
     {% if warns.weird_num %}
-    <div class="alert alert-danger">
-        <p>Numer studenta wygląda podejrzanie ({{ vr.no }})</p>
+    <div class="alert alert-danger mb-1">
+        <span>Numer studenta wygląda podejrzanie ({{ vr.no }})</span>
     </div>
     {% endif %}
     {% if vr.rejection %}
-    <div class="alert alert-info " role="alert">
+    <div class="alert alert-info mb-1" role="alert">
 
         <h4 class="alert-heading">Powód odrzucenia <small>z dnia {{ vr.rejection.when }}</small></h4>
 
         <hr>
 
-        <p class="mb-0">{{ vr.rejection.reason }}</p>
+        <span>{{ vr.rejection.reason }}</span>
 
     </div>
     {% endif %}
-    <div class="">
-        <div class="card">
-            <div class=" card-body">
-                <div class="">
-                    <div class="d-flex gap-2">
-                        <div class="">
-                            <img class="rounded-circle" width="40" height="40" src="{{ vr.google.raw['picture'] }}">
-                        </div>
-                        <div class="">
-                            <h3 class=" ">{{ vr.google.name }} ({{ vr.no }})</h3>
-
-                        </div>
+    <div class="row g-1">
+        <div class="col mb-1">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="google_user_info mb-1 d-flex gap-2">
+                        <img class="rounded-circle" width="40" height="40" src="{{ vr.google.raw['picture'] }}">
+                        <h3 class=" ">{{ vr.google.name }} ({{ vr.no }})</h3>
                     </div>
-                </div>
-                <div class="">
-                    <p>Email: <b>{{ vr.google.email }}</b></p>
-                    <p>Złożenie weryfikacji: <b>{{ vr.submitted }}</b></p>
-                    {% if vr.reviewer %}
-                    <p>Operator: <b>{{ vr.reviewer.identity.user_name }}</b></p>
-                    {% endif %}
+                    <div class="google_user_details d-flex flex-column">
+                        <p>Email: <b>{{ vr.google.email }}</b></p>
+                        <p>Złożenie weryfikacji: <b>{{ vr.submitted }}</b></p>
+                        {% if vr.reviewer %}
+                        <p>Operator: <b>{{ vr.reviewer.identity.user_name }}</b></p>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
-        <div>
-            <div class="card ">
+        <div class="col mb-1">
+            <div class="card h-100">
                 <div class="card-body">
-                    <div class="d-flex gap-2">
+                    <div class="discord_user_info d-flex gap-2 mb-1">
                         {% if ds.avatar_url %}
                         <img class="rounded-circle" width="40" height="40" src="{{ ds.avatar_url }}">
                         {% endif %}
 
-                        <h3 class=" ">{{ ds }}</h3>
+                        <h3>{{ ds }}</h3>
                         {% if ds.nickname %}
                         <p class=" ">
                             aka {{ ds.nickname }}
                         </p>
                         {% endif %}
                     </div>
-                    <p>Discord ID: <code>{{ ds.id }}</code></p>
-                    <p>Dołączenie do discorda: <b>{{ ds.created_at }}</b></p>
-                    <p>Dołączenie do serwera: <b>{{ ds.joined_at }}</b></p>
+                    <div class="discord_user_details d-flex flex-column">
+                        <p>Discord ID: <code>{{ ds.id }}</code></p>
+                        <p>Dołączenie do discorda: <b>{{ ds.created_at }}</b></p>
+                        <p>Dołączenie do serwera: <b>{{ ds.joined_at }}</b></p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="card ">
-            <div class="card-body">
-                <div class="">
-                    <h3>Zmiany statusu</h3>
-                </div>
-                <div class="">
-                    <ol>
-                        {% for change in vr.changes %}
-                        <li>{{ change.reviewer }} zmienił stan <b>{{ change.state_before.value }}</b> na
-                            <b>{{ change.state_after.value }}</b> <small>{{ change.when }}</small>
-                        </li>
-                        {% endfor %}
-                    </ol>
+        {% if vr.changes %}
+        <div class="col mb-1">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="">
+                        <h3>Zmiany statusu</h3>
+                    </div>
+                    <div class="">
+                        <ol>
+                            {% for change in vr.changes %}
+                            <li>{{ change.reviewer }} zmienił stan <b>{{ change.state_before.value }}</b> na
+                                <b>{{ change.state_after.value }}</b> <small>{{ change.when }}</small>
+                            </li>
+                            {% endfor %}
+                        </ol>
+                    </div>
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 
     {% if vr.state.value == 'id required' or (vr.photos.ready) %}
-    <div class="card">
+    <div class="card mb-1">
         <div class="card-header">
             <h2>Dokumenty</h2>
         </div>
-        <div class="card-body">
+        <div class="card-body d-flex text-center gap-1">
             {% if vr.photos.ready %}
-
-            <a class=" " href="{{ request.url_for('admin:photoproxy', side='front', rid=vr.id) }}" data-alt="Przód">
-                Przednia strona dokumentu
-                <img style="height: 120px; margin: 20px" loading="lazy"
+            <figure class="figure border p-3">
+                <img class="figure-img img-fluid rounded" style="height: 120px; margin: 20px" loading="lazy"
                     src="{{ request.url_for('admin:photoproxy', side='front', rid=vr.id) }}">
-            </a>
-            <a class=" " href="{{ request.url_for('admin:photoproxy', side='back', rid=vr.id) }}" data-alt="Tył">Tylna
-                strona dokumentu
-                <img style="height: 120px; margin: 20px" loading="lazy"
+                <figcaption class="figure-caption">
+                    <a class="btn btn-primary btn-sm"
+                        href="{{ request.url_for('admin:photoproxy', side='front', rid=vr.id) }}" data-alt="Przód">
+                        Przednia strona dokumentu
+                    </a>
+                </figcaption>
+            </figure>
+            <figure class="figure border p-3">
+                <img class="figure-img img-fluid rounded" style="height: 120px; margin: 20px" loading="lazy"
                     src="{{ request.url_for('admin:photoproxy', side='back', rid=vr.id) }}">
-            </a>
-
+                <figcaption class="figure-caption"> <a class="btn btn-primary btn-sm "
+                        href="{{ request.url_for('admin:photoproxy', side='back', rid=vr.id) }}" data-alt="Tył">Tylna
+                        strona dokumentu
+                    </a>
+                </figcaption>
+            </figure>
             {% else %}
             <p>Użytkownik jeszcze nie przesłał dokumentów</p>
             {% endif %}
         </div>
-        {% elif vr.state.value != 'rejected' %}
+    </div>
+    {% elif vr.state.value != 'rejected' %}
 
-        <form method="post" action="{{ request.url_for('admin:id required', rid=vr.id) }}">
-            <button type="submit" class=" btn btn-outline-warning">🚨 Poproś o przesłanie legitymacji
-            </button>
-        </form>
+    <form method="post" action="{{ request.url_for('admin:id required', rid=vr.id) }}">
+        <button type="submit" class="mb-1 btn btn-outline-warning">🚨 Poproś o przesłanie legitymacji
+        </button>
+    </form>
 
-        {% else %}
-        <p>Użytkownik nie został poproszony o dokumenty.</p>
+    {% else %}
+    <p>Użytkownik nie został poproszony o dokumenty.</p>
+    {% endif %}
+
+    <div class="d-flex gap-1 mb-1">
+        {% if vr.state.value in ['in review', 'id required'] %}
+        <div>
+            <form method="post">
+                <button type="submit" class=" btn btn-outline-success">✅ Zaakceptuj</button>
+            </form>
+        </div>
+
         {% endif %}
 
-        <div class="d-flex gap-1">
-            {% if vr.state.value in ['in review', 'id required'] %}
-            <div>
-                <form method="post">
-                    <button type="submit" class=" btn btn-outline-success">✅ Zaakceptuj</button>
-                </form>
-            </div>
+        {% if vr.state.value != 'rejected' %}
+        <div>
+            <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirm-{{ vr.id }}">
+                🗑 Odrzuć
+            </button>
+            <div class="modal fade" aria-labelledby="expelModal" id="confirm-{{ vr.id }}">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Czy jesteś pewien?</h2>
+                        </div>
 
-            {% endif %}
+                        <div class="modal-body">
+                            <form class="form-floating" method="post"
+                                action="{{ request.url_for('admin:reject', rid=vr.id) }}" enctype="multipart/form-data">
 
-            {% if vr.state.value != 'rejected' %}
-            <div>
-                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirm-{{ vr.id }}">
-                    🗑 Odrzuć
-                </button>
-                <div class="modal fade" aria-labelledby="expelModal" id="confirm-{{ vr.id }}">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h2>Czy jesteś pewien?</h2>
-                            </div>
+                                <textarea class="form-control" id="reason_text" required
+                                    name="reason">niezgodność danych</textarea>
+                                <label for="reason_text">
+                                    Uzasadnienie decyzji</label>
+                                <div class="modal-footer">
+                                    <button class="btn btn-danger" type="submit">WYJEB GNOJA</button>
+                                    <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Anuluj
+                                </div>
+                            </form>
 
-                            <div class="modal-body">
-                                <form class="form-floating mb-3" method="post"
-                                    action="{{ request.url_for('admin:reject', rid=vr.id) }}"
-                                    enctype="multipart/form-data">
-
-                                    <textarea class="form-control" id="reason_text" required
-                                        name="reason">niezgodność danych</textarea>
-                                    <label for="reason_text">
-                                        Uzasadnienie decyzji</label>
-
-                                </form>
-                                <button class="btn btn-danger" type="submit">WYJEB GNOJA</button>
-                                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Anuluj
-                                </button>
-                            </div>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-            {% endif %}
         </div>
-        <!-- <form method="post">
+        {% endif %}
+    </div>
+    <!-- <form method="post">
                 <button disabled type="submit" class=" ">🔨 Zbanuj</button>
             </form> -->
-    </div>
+
 </div>
 {% endblock %}
