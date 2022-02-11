@@ -39,56 +39,47 @@
                         się</a>
                 </div>
             </div>
-
-
-
-
-
-
-
         </div>
     </nav>
     {% block body %}
     <div class="container">
         <div>
-            <div>
 
+            <div class="modal fade" id="link-gen" aria-labelledby="link-gen">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Generate link</h2>
+                        </div>
+                        <form class="modal-body" method="post" action="{{ request.url_for('admin:admin_bypass') }}">
 
-                <div class="modal fade" id="link-gen" aria-labelledby="link-gen">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h2>Generate link</h2>
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="ID_floating" required name="guild">
+                                    {% for guild in bypass %}
+                                    <option value="{{ guild.id }}">{{ guild.name }}</option>
+                                    {% endfor %}
+                                </select><label for="ID_floating">ID serwera</label>
+
                             </div>
-                            <form class="modal-body" method="post" action="{{ request.url_for('admin:admin_bypass') }}">
-
-                                <div class="form-floating mb-3">
-                                    <select class="form-select" id="ID_floating" required name="guild">
-                                        {% for guild in bypass %}
-                                        <option value="{{ guild.id }}">{{ guild.name }}</option>
-                                        {% endfor %}
-                                    </select><label for="ID_floating">ID serwera</label>
-
-                                </div>
-                                <div class="form-floating mb-3">
-                                    <input class="form-control" id="discord_floating" required name="user"
-                                        pattern="\d{18}">
-                                    <label for="discord_floating">ID użytkownika</label>
-                                </div>
-                                <div class="form-floating mb-3">
-                                    <input class="form-control" id="Eska_floating" required name="student_no"
-                                        pattern="s\d+">
-                                    <label for="Eska_floating">Numer studenta (eska)
-                                </div>
-                            </form>
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="discord_floating" required name="user" pattern="\d{18}">
+                                <label for="discord_floating">ID użytkownika</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="Eska_floating" required name="student_no"
+                                    pattern="s\d+">
+                                <label for="Eska_floating">Numer studenta (eska)
+                            </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
                                 <button type="submit" class="btn btn-primary">Wyślij link</button>
                             </div>
-                        </div>
+                        </form>
+
                     </div>
                 </div>
             </div>
+
 
             <div>
                 <h2>Statystyki rejestracji</h2>
@@ -105,14 +96,12 @@
         {% if awaiting|length > 0 %}
 
         <div>
-            <h2 class="nav-text">Oczekujące weryfikacje</h2>
             <div class="nav nav-pills mb-2">
-
                 <a class="nav-link active" -control="[data-state='VerificationState.IN_REVIEW']">
                     Oczekujące
                 </a>
                 <a class="nav-link" -control="[data-state='VerificationState.ID_REQUIRED']">Oczekujące na dokumenty</a>
-                <a class="nav-link" -control>Wszystkie<span class="badge bg-secondary">{{ awaiting|length }}</span></a>
+                <a class="nav-link" -control>Wszystkie <span class="badge bg-secondary">{{ awaiting|length }}</span></a>
                 </a>
             </div>
 

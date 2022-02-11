@@ -1,7 +1,7 @@
 {% extends 'admin/base.html' %}
 {% block body %}
 <div class="container">
-    <form class="form d-flex gap-1" method="get">
+    <form class="form d-flex gap-1 mt-1 mb-1" method="get">
         <input type="text" class="form-control" name="search" placeholder="Szukaj..." style="width: 60%"
             value="{{ request.query_params['search'] }}">
         <button class="btn btn-outline-primary">Szukaj</button>
