@@ -24,12 +24,11 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <a class="nav-link" href="{{ request.url_for('admin:admin_index') }}">Pulpit</a></li>
-                    <a class="nav-link" href="{{ request.url_for('admin:accepted') }}">Zatwierdzeni</a></li>
-                    <a class="nav-link" href="{{ request.url_for('admin:rejected') }}">Odrzuceni</a></li>
-
-                </div>
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li><a class="nav-link" href="{{ request.url_for('admin:admin_index') }}">Pulpit</a></li>
+                    <li><a class="nav-link" href="{{ request.url_for('admin:accepted') }}">Zatwierdzeni</a></li>
+                    <li><a class="nav-link" href="{{ request.url_for('admin:rejected') }}">Odrzuceni</a></li>
+                </ul>
                 <div class="d-flex">
                     <span class="navbar-text me-2">
                         {{ request.session["user"] }}</span>
@@ -41,8 +40,6 @@
             </div>
         </div>
     </nav>
-
-    </div>
     {% block body %}
     <div class="container">
         <div>
@@ -70,7 +67,7 @@
                             <div class="form-floating mb-3">
                                 <input class="form-control" id="Eska_floating" required name="student_no"
                                     pattern="s\d+">
-                                <label for="Eska_floating">Numer studenta (eska)
+                                <label for="Eska_floating">Numer studenta (eska)</label>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
@@ -86,7 +83,7 @@
                 {% for guild, stat in stats.items() %}
                 <p>
                     {% if guild.icon_url %}
-                    <img style="height: 24px" src="{{ guild.icon_url }}">
+                        <img loading="lazy" style="height: 24px" src="{{ guild.icon_url }}">
                     {% endif %}
                     {{ guild }}: {{ stat }}
                 </p>
@@ -105,7 +102,6 @@
                 <a class="nav-link" data-state='VerificationState.ID_REQUIRED'>Oczekujące na dokumenty</a>
                 <a class="nav-link" data-state='ALL'>Wszystkie <span class="badge bg-secondary">{{ awaiting|length
                         }}</span></a>
-                </a>
             </div>
 
             <div id="cards" class="d-flex gap-2">
@@ -144,11 +140,9 @@
                                             <div class="modal-footer">
                                                 <button class="btn btn-danger" type="submit">WYJEB GNOJA</button>
                                                 <button class="btn btn-secondary" data-bs-dismiss="modal"
-                                                    type="button">Anuluj
+                                                        type="button">Anuluj</button>
                                             </div>
                                         </form>
-
-                                        </button>
                                     </div>
                                 </div>
                             </div>
