@@ -29,7 +29,15 @@ def unload(bot):
 async def reply_for_match(event: GuildMessageCreateEvent):
     if event.content and event.is_human:
         for rule in hehe_funny:
-            if re.search(rule['regex'], event.content) and not (event.channel_id in rule.get('whitelist', []) and event.channel_id in rule.get('blacklist', [])):
+            if rule.get('whitelist'):
+                if event.channel_id not in rule['whitelist']:
+                    return
+
+            if rule.get('blacklist'):
+                if event.channel_id in rule['blacklist']:
+                    return
+
+            if re.search(rule['regex'], event.content):
                 if rule.get('reply'):
                     await plugin.bot.rest.create_message(
                         event.channel_id,
