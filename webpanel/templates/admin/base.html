@@ -104,9 +104,9 @@
                         }}</span></a>
             </div>
 
-            <div id="cards" class="d-flex gap-2 flex-wrap" style="width: 20em">
+            <div id="cards" class="d-flex gap-2 flex-wrap">
                 {% for vr in awaiting %}
-                <div class="card" data-state="{{ vr.state }}">
+                <div class="card" data-state="{{ vr.state }}" style="width: 20em">
                     <!-- <img src="{{ vr.google.raw['picture'] }}" class="card-img-top" /> -->
                     <div class="card-body">
                         <h3 class="card-title">{{ vr.google.name }}</h3>
