@@ -24,11 +24,11 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li><a class="nav-link" href="{{ request.url_for('admin:admin_index') }}">Pulpit</a></li>
-                    <li><a class="nav-link" href="{{ request.url_for('admin:accepted') }}">Zatwierdzeni</a></li>
-                    <li><a class="nav-link" href="{{ request.url_for('admin:rejected') }}">Odrzuceni</a></li>
-                </ul>
+                <div class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <a class="nav-link" href="{{ request.url_for('admin:admin_index') }}">Pulpit</a>
+                    <a class="nav-link" href="{{ request.url_for('admin:accepted') }}">Zatwierdzeni</a>
+                    <a class="nav-link" href="{{ request.url_for('admin:rejected') }}">Odrzuceni</a>
+                </div>
                 <div class="d-flex">
                     <span class="navbar-text me-2">
                         {{ request.session["user"] }}</span>
@@ -104,9 +104,9 @@
                         }}</span></a>
             </div>
 
-            <div id="cards" class="d-flex gap-2">
+            <div id="cards" class="d-flex gap-2 flex-wrap">
                 {% for vr in awaiting %}
-                <div class="card" data-state="{{ vr.state }}">
+                <div class="card" data-state="{{ vr.state }}" style="width: 18em">
                     <!-- <img src="{{ vr.google.raw['picture'] }}" class="card-img-top" /> -->
                     <div class="card-body">
                         <h3 class="card-title">{{ vr.google.name }}</h3>
