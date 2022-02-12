@@ -1,15 +1,13 @@
 import asyncio
-import json
-import logging
 import os
 import functools
 from datetime import timedelta, datetime
 
 import millify
-from aiohttp import ClientSession
 from celery import Celery
 from celery.schedules import crontab
 from celery.utils.log import get_logger
+from dotenv import load_dotenv
 from hikari import Embed, RESTApp, ForbiddenError
 from httpx import AsyncClient
 
@@ -18,6 +16,8 @@ from shared.colors import RESULT
 from shared.db import init_connection
 from shared.documents import VerificationRequest, VerificationState, VerificationRejection
 from shared.graphs import create_graph
+
+load_dotenv()
 
 app = Celery('gadoneko', broker=os.getenv('RABBITMQ_URL', 'amqp://localhost//'))
 logger = get_logger('gadoneko.tasks')
