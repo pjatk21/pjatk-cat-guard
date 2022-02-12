@@ -1,6 +1,6 @@
 import os
 
-from hikari import RESTApp, Embed, HikariError
+from hikari import RESTApp, Embed, HikariError, ForbiddenError
 from mongoengine import DoesNotExist
 from sendgrid import SendGridAPIClient, Mail
 from starlette.requests import Request
@@ -85,8 +85,10 @@ async def send_rejection_dm(vr: VerificationRequest, message: str):
             description=f"Nie udało się pomyślnie zweryfikować twojego konta z powodu: {message}",
             color=WARN
         )
-
-        await user.send(embed=embed)
+        try:
+            await user.send(embed=embed)
+        except ForbiddenError:
+            pass
 
 
 async def notify_requested_id(vr: VerificationRequest, request: Request):

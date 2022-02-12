@@ -32,9 +32,9 @@ app.conf.beat_schedule = {
     },
     'remove-dandling': {
         'task': 'clean-dandling-verifications',
-        'schedule': crontab(minute='*/10'),
+        'schedule': crontab(minute='*/5'),
         'options': {
-            'expires': timedelta(minutes=5).total_seconds()
+            'expires': timedelta(minutes=4).total_seconds()
         }
     }
 }
