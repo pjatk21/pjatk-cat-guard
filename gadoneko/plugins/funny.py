@@ -1,10 +1,12 @@
 import logging
+import random
 import re
+import subprocess
 
 import yaml
 from hikari.events import GuildMessageCreateEvent
 from hikari.errors import ForbiddenError
-from lightbulb import Plugin
+from lightbulb import Plugin, command, implements, commands, Context, option
 
 plugin = Plugin('hehe funny responses')
 logger = logging.getLogger('gadoneko.plugins.funny')
@@ -65,3 +67,54 @@ async def reply_for_match(event: GuildMessageCreateEvent):
                                 await plugin.bot.rest.kick_member(event.guild_id, event.member, reason='Funny rule.')
                             except ForbiddenError:
                                 await plugin.bot.rest.create_message(event.channel_id, f'{event.member.mention}, normalnie dałbym ci kopa w dupe, ale nie mam uprawnień.')
+
+
+@plugin.command()
+@option('text', 'To co powie krowa', type=str)
+@command('cowsay', 'Krowa mądrze ci powie')
+@implements(commands.MessageCommand, commands.SlashCommand)
+async def cowsay(ctx: Context):
+    text = ctx.options.text or ctx.options.target.content or 'mooo'
+    if len(text) > 1000:
+        text = 'max 1000 znaków'
+
+    if re.search('```*.```', text):
+        text = 'm000'
+
+    result = subprocess.check_output(
+        ['cowsay', text]
+    ).decode()
+
+    await ctx.respond(
+        f'```\n{result}\n```'
+    )
+
+
+__fonts = [
+    'acrobatic', 'alligator2', 'alphabet', 'basic', 'cybersmall', 'doom', 'thin', 'standard', 'starwars', 'mini'
+]
+__fonts.sort()
+
+
+@plugin.command()
+@option('font', 'Czcionka dla figleta', choices=__fonts)
+@option('text', 'To co powie krowa', type=str)
+@command('figlet', 'Krowa mądrze ci powie')
+@implements(commands.MessageCommand, commands.SlashCommand)
+async def figlet(ctx: Context):
+    text = ctx.options.text or ctx.options.target.content or 'c00l'
+    font = ctx.options.font or 'standard'
+    if len(text) > 100:
+        text = 'm100'
+
+    if re.search('```*.```', text):
+        text = 'c00l'
+
+    result = subprocess.check_output(
+        ['figlet', '-f', font, text]
+    ).decode()
+
+    await ctx.respond(
+        f'```\n{result}\n```'
+    )
+

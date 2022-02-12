@@ -1,6 +1,6 @@
 FROM python:3.10 AS base
 
-RUN apt update && apt install -y build-essential git
+RUN apt update && apt install -y build-essential git figlet cowsay
 
 RUN adduser --disabled-login --shell /bin/bash neko
 
