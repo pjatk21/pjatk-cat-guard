@@ -4,7 +4,7 @@ import random
 from datetime import datetime
 
 from hikari import Guild, User, Embed
-from hikari.events import MemberCreateEvent, BanCreateEvent, GuildLeaveEvent
+from hikari.events import MemberCreateEvent, BanCreateEvent, MemberDeleteEvent
 from lightbulb import command, implements, commands, add_checks, Plugin, Check, guild_only
 from lightbulb.context import Context
 from mongoengine import DoesNotExist
@@ -43,7 +43,7 @@ def start_verification_flow(guild: Guild, user: User):
 
 @plugin.command()
 @add_checks(guild_only, Check(guild_configured), Check(untrusted_only))
-@command('verify', 'Przypisuje numer studenta do twojego konta discord')
+@command('verify', 'Przypisuje numer studenta do twojego konta discord', ephemeral=True)
 @implements(commands.SlashCommand)
 async def verify(ctx: Context):
     link = start_verification_flow(ctx.get_guild(), ctx.user)
@@ -82,10 +82,10 @@ async def ban_cleanup(event: BanCreateEvent):
     tu.delete()
 
 
-@plugin.listener(GuildLeaveEvent)
-async def kick_leave_cleanup(event: GuildLeaveEvent):
+@plugin.listener(MemberDeleteEvent)
+async def kick_leave_cleanup(event: MemberDeleteEvent):
     try:
-        tu = TrustedUser.objects.get(identity__user_id=event.user.id, identity__guild_id=event.guild_id)
+        tu = TrustedUser.objects.get(identity__user_id=event.user_id, identity__guild_id=event.guild_id)
     except DoesNotExist:
         return
 
@@ -101,7 +101,7 @@ async def manage(ctx: Context):
 
 
 @manage.child()
-@command('sign-out', 'Wypisz swój numer studenta z bazy danych', inherit_checks=True)
+@command('sign-out', 'Wypisz swój numer studenta z bazy danych', inherit_checks=True, ephemeral=True)
 @implements(commands.SlashSubCommand)
 async def sign_out(ctx: Context):
     conf: GuildConfiguration = GuildConfiguration.objects(guild_id=ctx.guild_id).first()
