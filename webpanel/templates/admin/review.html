@@ -1,9 +1,7 @@
 {% extends 'admin/base.html' %}
 {% block body %}
     <div class="container">
-
-        <h1><a href="{{ request.url_for('admin:admin_index') }}"></a> Forma
-            weryfikacyjna</h1>
+        <h1><a href="{{ request.url_for('admin:admin_index') }}"></a>Forma weryfikacyjna</h1>
         {% if vr.state.value == 'id required' %}
             <div class="alert alert-info mb-1">
                 <span>Ten użytkownik oczekuje na sprawdzenie dokumentów!</span>
@@ -15,8 +13,9 @@
         {% endif %}
         {% if warns.fresh_meat %}
             <div class="alert alert-danger mb-1">
-        <span>Data utworzenia konta i dołączenia jest krótsza niż rok ({{ (ds.joined_at - ds.created_at).days }}
-            dni)</span>
+                <span>
+                    Data utworzenia konta i dołączenia jest krótsza niż rok ({{ (ds.joined_at - ds.created_at).days }} dni)
+                </span>
             </div>
         {% endif %}
         {% if warns.weird_num %}
@@ -26,29 +25,26 @@
         {% endif %}
         {% if vr.rejection %}
             <div class="alert alert-info mb-1" role="alert">
-
                 <h4 class="alert-heading">Powód odrzucenia <small>z dnia {{ vr.rejection.when }}</small></h4>
-
-                <hr>
-
+                <hr/>
                 <span>{{ vr.rejection.reason }}</span>
-
             </div>
         {% endif %}
         <div class="row g-1">
             <div class="col mb-1">
                 <div class="card h-100">
                     <div class="card-header">
-                        <div class="google_user_info mb-1 d-flex gap-2">
+                        <div class="google_user_info mb-1 d-flex gap-2 align-items-center">
                             <img class="rounded-circle" width="40" height="40" src="{{ vr.google.raw['picture'] }}">
                             <div class="flex-column">
                                 <h3>{{ vr.google.name }}</h3>
-                                <h6 class="margin">{{ vr.no }}</h6>
+                                
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="google_user_details d-flex flex-column">
+                            <p>Indeks: <b>{{ vr.no }}</b></p>
                             <p>Email: <b>{{ vr.google.email }}</b></p>
                             <p>Złożenie weryfikacji: <b>{{ vr.submitted }}</b></p>
                             {% if vr.reviewer %}
@@ -61,7 +57,7 @@
             <div class="col mb-1">
                 <div class="card h-100">
                     <div class="card-header">
-                        <div class="discord_user_info d-flex gap-2 mb-1">
+                        <div class="discord_user_info d-flex gap-2 mb-1 align-items-center">
                             {% if ds.avatar_url %}
                                 <img class="rounded-circle" width="40" height="40" src="{{ ds.avatar_url }}">
                             {% endif %}
@@ -113,10 +109,10 @@
                 <div class="card-header">
                     <h2>Dokumenty</h2>
                 </div>
-                <div class="card-body d-flex text-center gap-1">
+                <div class="card-body d-flex flex-wrap text-center gap-1">
                     {% if vr.photos.ready %}
                         <figure class="figure border p-3">
-                            <img class="figure-img img-fluid rounded" style="height: 120px; margin: 20px" loading="lazy"
+                            <img class="figure-img img-fluid rounded" style="height: 120px" loading="lazy"
                                  src="{{ request.url_for('admin:photoproxy', side='front', rid=vr.id) }}">
                             <figcaption class="figure-caption">
                                 <a class="btn btn-primary btn-sm"
@@ -127,7 +123,7 @@
                             </figcaption>
                         </figure>
                         <figure class="figure border p-3">
-                            <img class="figure-img img-fluid rounded" style="height: 120px; margin: 20px" loading="lazy"
+                            <img class="figure-img img-fluid rounded" style="height: 120px" loading="lazy"
                                  src="{{ request.url_for('admin:photoproxy', side='back', rid=vr.id) }}">
                             <figcaption class="figure-caption"><a class="btn btn-primary btn-sm "
                                                                   href="{{ request.url_for('admin:photoproxy', side='back', rid=vr.id) }}"
