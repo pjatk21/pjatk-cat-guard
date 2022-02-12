@@ -5,7 +5,6 @@ services:
     build:
       dockerfile: docker/gadoneko/Dockerfile
       target: bot
-    image: pjatk21/discordcat:bot
     env_file:
       - .production.env
     depends_on:
@@ -13,25 +12,35 @@ services:
       - webpanel
       - tika
     restart: unless-stopped
-  cron:
-    image: pjatk21/discordcat:cron
+    volumes:
+      - data:/pjatk/data
+  celery:
+    build:
+      dockerfile: docker/gadoneko/Dockerfile
+      target: celery
     env_file:
       - .production.env
     depends_on:
       - mongol
     restart: unless-stopped
+    volumes:
+      - data:/pjatk/data
   webpanel:
     build:
       dockerfile: docker/gadoneko/Dockerfile
       target: web
-    image: pjatk21/discordcat:web
     ports:
-      - '9093:8000'
+      - '8000:8000'
     env_file:
       - .production.env
     depends_on:
       - mongol
     restart: unless-stopped
+    volumes:
+      - data:/pjatk/data
   mongol:
     image: mongo:latest
     restart: unless-stopped
+
+volumes:
+  data:

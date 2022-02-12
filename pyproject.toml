@@ -10,7 +10,7 @@ python = ">=3.10,<3.11"
 hikari = {extras = ["speedups"], version = "^2.0.0-alpha.106"}
 hikari-lightbulb = {git = "https://github.com/tandemdude/hikari-lightbulb"}
 # Cron related dependencies
-aiocron = "*"
+celery = "^5.2.3"
 # Web related dependencies
 starlette = "*"
 python-multipart = "*"

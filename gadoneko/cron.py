@@ -39,40 +39,6 @@ if os.getenv('SENTRY'):  # Init error reporting to sentry
 init_connection()
 
 
-@aiocron.crontab('11 11 * * *', loop=loop)
-async def announce_covid_stats():
-    logger.info('Sending embed')
-    embed = Embed(
-        title='COVID 19 (statystyki)', description='Dane rządowe', color=RESULT
-    )
-
-    with open('hist.json') as file:
-        embed.set_image(create_graph(file).to_image(format='png'))
-
-    extract_keys = (
-        ('dailyInfected', 'Zakażono dziś'),
-        ('dailyTested', 'Przetestowano dziś'),
-        ('dailyDeceased', 'Zmarło dziś'),
-        ('dailyRecovered', 'Wyzdrowiało dziś'),
-        ('dailyQuarantine', 'Obecnie na kwarantannie')
-    )
-
-    async with ClientSession() as session:
-        async with session.get(os.getenv('APIFY_COVID')) as response:
-            data = await response.json()
-            for ext_key, title in extract_keys:
-                embed.add_field(title, millify.millify(data[ext_key], 1))
-
-            embed.set_footer(f'Ostatnia aktualizajca danych: {data["txtDate"]}')
-
-    async with RESTApp().acquire(os.getenv('DISCORD_TOKEN'), 'Bot') as client:
-        covid_message = await client.create_message(
-            os.getenv('COVID_UPDATES', 918167880535773194),
-            embed=embed
-        )
-        await client.crosspost_message(covid_message.channel_id, covid_message.id)
-
-
 @aiocron.crontab('*/5 * * * *', loop=loop)
 async def health_check():
     logger.debug('Updating health checks...')
@@ -102,19 +68,6 @@ async def health_check():
         await asyncio.gather(
             *[update(widget) for widget in widgets]
         )
-
-
-@aiocron.crontab('05 11 * * *', loop=loop)
-async def update_hist_data():
-    logger.info('Downloading hist data...')
-    async with ClientSession() as client:
-        async with client.get(os.getenv('APIFY_COVID_HISTORICAL')) as response:
-            data = await response.json()
-            data = data[-14:]
-            store = open('hist.json', 'w')
-            json.dump(data, store)
-    store.close()
-    logger.info('Data downloaded!')
 
 
 @aiocron.crontab("14 14 24 12 *", loop=loop)
