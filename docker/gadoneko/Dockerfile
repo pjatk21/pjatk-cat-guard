@@ -18,6 +18,8 @@ RUN poetry install --no-dev
 
 ENV PYTHONPATH "${PYTHONPATH}:/pjatk/"
 
+ENV PATH "${PATH}:/usr/games"
+
 ENV TZ "Europe/Warsaw"
 
 COPY . /pjatk/
