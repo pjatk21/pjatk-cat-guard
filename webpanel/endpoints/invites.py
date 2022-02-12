@@ -39,7 +39,7 @@ class GuildInviteEndpoint(HTTPEndpoint):
             {
                 "request": request,
                 "invitation_url": str(
-                    await gen_guild_invite(891588026780770344)
+                    await gen_guild_invite(916369267648266261)
                 ),
             },
         )
