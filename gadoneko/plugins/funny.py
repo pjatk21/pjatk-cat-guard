@@ -3,6 +3,7 @@ import re
 
 import yaml
 from hikari.events import GuildMessageCreateEvent
+from hikari.errors import ForbiddenError
 from lightbulb import Plugin
 
 plugin = Plugin('hehe funny responses')
@@ -26,7 +27,7 @@ def unload(bot):
 async def reply_for_match(event: GuildMessageCreateEvent):
     if event.content and event.is_human:
         for rule in hehe_funny:
-            if re.search(rule['regex'], event.content):
+            if re.search(rule['regex'], event.content) and not (event.channel_id in rule.get('whitelist', []) and event.channel_id in rule.get('blacklist', [])):
                 if rule.get('reply'):
                     await plugin.bot.rest.create_message(
                         event.channel_id,
@@ -50,3 +51,17 @@ async def reply_for_match(event: GuildMessageCreateEvent):
                         event.message_id,
                         emoji=rule.get('reaction')
                     )
+                if rule.get('dm'):
+                    try:
+                        await event.member.send(rule.get('dm'))
+                    except ForbiddenError:
+                        pass
+                if rule.get('action'):
+                    match rule['action']:
+                        case 'delete':
+                            await plugin.bot.rest.delete_message(event.channel_id, event.message_id)
+                        case 'kick':
+                            try:
+                                await plugin.bot.rest.kick_member(event.guild_id, event.member, reason='Funny rule.')
+                            except ForbiddenError:
+                                await plugin.bot.rest.create_message(event.channel_id, f'{event.member.mention}, normalnie dałbym ci kopa w dupe, ale nie mam uprawnień.')
