@@ -1,9 +1,12 @@
 import logging
+import random
 import re
+import subprocess
 
 import yaml
 from hikari.events import GuildMessageCreateEvent
-from lightbulb import Plugin
+from hikari.errors import ForbiddenError
+from lightbulb import Plugin, command, implements, commands, Context, option
 
 plugin = Plugin('hehe funny responses')
 logger = logging.getLogger('gadoneko.plugins.funny')
@@ -26,6 +29,14 @@ def unload(bot):
 async def reply_for_match(event: GuildMessageCreateEvent):
     if event.content and event.is_human:
         for rule in hehe_funny:
+            if rule.get('whitelist'):
+                if event.channel_id not in rule['whitelist']:
+                    continue
+
+            if rule.get('blacklist'):
+                if event.channel_id in rule['blacklist']:
+                    continue
+
             if re.search(rule['regex'], event.content):
                 if rule.get('reply'):
                     await plugin.bot.rest.create_message(
@@ -50,3 +61,68 @@ async def reply_for_match(event: GuildMessageCreateEvent):
                         event.message_id,
                         emoji=rule.get('reaction')
                     )
+                if rule.get('dm'):
+                    try:
+                        await event.member.send(rule.get('dm'))
+                    except ForbiddenError:
+                        pass
+                if rule.get('action'):
+                    match rule['action']:
+                        case 'delete':
+                            await plugin.bot.rest.delete_message(event.channel_id, event.message_id)
+                        case 'kick':
+                            try:
+                                await plugin.bot.rest.kick_member(event.guild_id, event.member, reason='Funny rule.')
+                            except ForbiddenError:
+                                await plugin.bot.rest.create_message(event.channel_id, f'{event.member.mention}, normalnie dałbym ci kopa w dupe, ale nie mam uprawnień.')
+
+
+@plugin.command()
+@option('text', 'To co powie krowa', type=str)
+@command('cowsay', 'Krowa mądrze ci powie')
+@implements(commands.MessageCommand, commands.SlashCommand)
+async def cowsay(ctx: Context):
+    text = ctx.options.text or ctx.options.target.content or 'mooo'
+    if len(text) > 1000:
+        text = 'max 1000 znaków'
+
+    if re.search('```*.```', text):
+        text = 'm000'
+
+    result = subprocess.check_output(
+        ['cowsay', text]
+    ).decode()
+
+    await ctx.respond(
+        f'```\n{result}\n```'
+    )
+
+
+__fonts = [
+    'acrobatic', 'alligator2', 'alphabet', 'basic', 'cybersmall', 'doom', 'thin', 'standard', 'starwars', 'mini'
+]
+__fonts.sort()
+
+
+@plugin.command()
+@option('font', 'Czcionka dla figleta', choices=__fonts)
+@option('text', 'To co powie krowa', type=str)
+@command('figlet', 'Krowa mądrze ci powie')
+@implements(commands.MessageCommand, commands.SlashCommand)
+async def figlet(ctx: Context):
+    text = ctx.options.text or ctx.options.target.content or 'c00l'
+    font = ctx.options.font or 'standard'
+    if len(text) > 100:
+        text = 'm100'
+
+    if re.search('```*.```', text):
+        text = 'c00l'
+
+    result = subprocess.check_output(
+        ['figlet', '-f', font, text]
+    ).decode()
+
+    await ctx.respond(
+        f'```\n{result}\n```'
+    )
+

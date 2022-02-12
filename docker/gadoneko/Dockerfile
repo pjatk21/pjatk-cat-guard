@@ -1,6 +1,6 @@
 FROM python:3.10 AS base
 
-RUN apt update && apt install -y build-essential git
+RUN apt update && apt install -y build-essential git figlet cowsay
 
 RUN adduser --disabled-login --shell /bin/bash neko
 
@@ -43,6 +43,6 @@ FROM base AS web
 
 ENTRYPOINT poetry run python -m uvicorn webpanel:app --host 0.0.0.0 --proxy-headers --forwarded-allow-ips="*" --workers=2 --log-level=debug
 
-FROM base AS cron
+FROM base AS celery
 
-ENTRYPOINT poetry run python3 -O -m gadoneko.cron
+ENTRYPOINT poetry run celery -A gadoneko.tasks worker -l INFO -B -P threads
