@@ -19,13 +19,13 @@
   reply: "<:yes:893989851425308693>"
 - regex: "[Ii] forgor"
   reaction: 💀
-- regex: "(((tak|TAK)i?)|Dańczak)"
-  action: delete
-  whitelist:
-    - 872492755501350944 # bzdety
-    - 891588026780770344
-  reply: "https://cdn.discordapp.com/attachments/891588073668882472/942069500608663592/1984.mp4"
-- regex: "[Tt]aki to potrzebny przedmiot"
+# - regex: "(((tak|TAK)i?)|Dańczak)"
+#   action: delete
+#   whitelist:
+#     - 872492755501350944 # bzdety
+#     - 891588026780770344
+#   reply: "https://cdn.discordapp.com/attachments/891588073668882472/942069500608663592/1984.mp4"
+- regex: "^[Ll]ubię (TAK|tak)i?$"
   reply: "Gratulacje, ten pan/pani/osoba niebinrana wygrała wycieczkę do gułagu."
   dm: "https://cdn.discordapp.com/attachments/891588073668882472/942070714293444709/Welcome_to_the_Gulag_Meme_Template_tzGrB4Km9-I.webm"
   action: kick

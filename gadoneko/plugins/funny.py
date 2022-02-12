@@ -31,11 +31,11 @@ async def reply_for_match(event: GuildMessageCreateEvent):
         for rule in hehe_funny:
             if rule.get('whitelist'):
                 if event.channel_id not in rule['whitelist']:
-                    return
+                    continue
 
             if rule.get('blacklist'):
                 if event.channel_id in rule['blacklist']:
-                    return
+                    continue
 
             if re.search(rule['regex'], event.content):
                 if rule.get('reply'):
