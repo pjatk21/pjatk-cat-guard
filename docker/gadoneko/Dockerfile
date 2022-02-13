@@ -4,9 +4,9 @@ RUN apt update && apt install -y build-essential git cowsay figlet
 
 WORKDIR /usr/share/figlet
 
-COPY docker/gadoneko/download_fonts.sh .
+COPY docker/gadoneko/download_assets.sh .
 
-RUN bash download_assets.sh && rm download_fonts.sh
+RUN bash download_assets.sh && rm download_assets.sh
 
 RUN adduser --disabled-login --shell /bin/bash neko
 
