@@ -48,8 +48,7 @@ def start_verification_flow(guild: Guild, user: User):
 async def verify(ctx: Context):
     link = start_verification_flow(ctx.get_guild(), ctx.user)
 
-    await ctx.author.send(f"Link do logowania: {os.getenv('VERIFICATION_URL')}verify/{link.code}")
-    await ctx.respond("Wysłano link do logowania na DM.")
+    await ctx.respond(f"Link do logowania: {os.getenv('VERIFICATION_URL')}verify/{link.code}")
 
 
 @plugin.listener(MemberCreateEvent)
