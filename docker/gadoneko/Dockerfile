@@ -1,6 +1,12 @@
 FROM python:3.10 AS base
 
-RUN apt update && apt install -y build-essential git figlet cowsay
+RUN apt update && apt install -y build-essential git cowsay figlet
+
+WORKDIR /usr/share/figlet
+
+COPY docker/gadoneko/download_fonts.sh .
+
+RUN bash download_fonts.sh && rm download_fonts.sh
 
 RUN adduser --disabled-login --shell /bin/bash neko
 

@@ -1,5 +1,4 @@
 import logging
-import random
 import re
 import subprocess
 
@@ -77,20 +76,21 @@ async def reply_for_match(event: GuildMessageCreateEvent):
                                 await plugin.bot.rest.create_message(event.channel_id, f'{event.member.mention}, normalnie dałbym ci kopa w dupe, ale nie mam uprawnień.')
 
 
+__cows = ['cheese', 'suse', 'amogus', 'tux', 'vader', 'cock', 'default', 'moose', 'moofasa']
+__cows.sort()
+
+
 @plugin.command()
+@option('character', 'Wybierz postać', choices=__cows, default='default')
 @option('text', 'To co powie krowa', type=str)
 @command('cowsay', 'Krowa mądrze ci powie')
 @implements(commands.MessageCommand, commands.SlashCommand)
 async def cowsay(ctx: Context):
-    text = ctx.options.text or ctx.options.target.content or 'mooo'
-    if len(text) > 1000:
-        text = 'max 1000 znaków'
-
-    if re.search('```*.```', text):
-        text = 'm000'
+    text = ctx.options.text or ctx.options.target.content or 'None'
+    cow = ctx.options.character or 'default'
 
     result = subprocess.check_output(
-        ['cowsay', text]
+        ['cowsay', '-f', cow, text]
     ).decode()
 
     await ctx.respond(
@@ -99,24 +99,20 @@ async def cowsay(ctx: Context):
 
 
 __fonts = [
-    'acrobatic', 'alligator2', 'alphabet', 'basic', 'cybersmall', 'doom', 'thin', 'standard', 'starwars', 'mini'
+    'doom', 'standard', 'starwars', 'mini', 'epic', 'digital', 'wavy', 'morse'
 ]
 __fonts.sort()
 
 
 @plugin.command()
-@option('font', 'Czcionka dla figleta', choices=__fonts)
-@option('text', 'To co powie krowa', type=str)
-@command('figlet', 'Krowa mądrze ci powie')
+@option('custom-font', 'Specjalna czcionka figleta', required=False)
+@option('font', 'Czcionka dla figleta', choices=__fonts, required=False, default='standard')
+@option('text', 'Cool text', type=str)
+@command('figlet', 'Super cool text')
 @implements(commands.MessageCommand, commands.SlashCommand)
 async def figlet(ctx: Context):
-    text = ctx.options.text or ctx.options.target.content or 'c00l'
-    font = ctx.options.font or 'standard'
-    if len(text) > 100:
-        text = 'm100'
-
-    if re.search('```*.```', text):
-        text = 'c00l'
+    text = ctx.options.text or ctx.options.target.content or 'None'
+    font = ctx.options.font or ctx.options.custom_font or 'standard'
 
     result = subprocess.check_output(
         ['figlet', '-f', font, text]
