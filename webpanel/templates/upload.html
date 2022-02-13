@@ -5,11 +5,11 @@
          data-context="signup" data-ux_mode="popup" data-state="{{ secret }}" data-login_uri="{{ redirect }}"
          data-auto_prompt="false">
     </div>
-    <div class="content-frame">
+    <div >
         <h1>Dodatkowe formalności</h1>
         <p>Status zgłoszenia: <span style="font-weight: bold; color: greenyellow">{{ vr.state.value }}</span></p>
         {% if vr.state.value == 'id required' %}
-            <div class="content-frame">
+            <div >
                 <h3 style="color: red; font-weight: bold">Zanim wyślesz</h3>
                 <a href="https://www.figma.com/file/EHwLOQ7iPOlhORCCF1tx8r/Doodles?node-id=0%3A1">
                     <button type="button">Jak cenzurować legitymację</button>
@@ -31,7 +31,7 @@
                 <h3>Dokumenty</h3>
                 <p>Wszystkie zdjęcia są usuwane po stwierdzeniu zgodności danych.</p>
 
-                <div class="input-boxy">
+                <div >
                     <label>
                         Front legitymacji studenckiej
                         {% if vr.photos.front == None %}
@@ -42,7 +42,7 @@
                     </label>
                 </div>
 
-                <div class="input-boxy">
+                <div >
                     <label>
                         Tył legitymacji studenckiej
                         {% if vr.photos.back == None %}
@@ -58,9 +58,9 @@
             </form>
         {% else %}
         <h3>Konto studenckie</h3>
-        <div class="input-boxy">
+        <div >
             {% if vr.google == None %}
-                <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_black"
+                <div class="g_id_signin"  data-type="standard" data-shape="pill" data-theme="filled_black"
                      data-text="continue_with"
                      data-size="large" data-logo_alignment="left">
                 </div>
