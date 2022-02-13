@@ -6,7 +6,7 @@ WORKDIR /usr/share/figlet
 
 COPY docker/gadoneko/download_fonts.sh .
 
-RUN bash download_fonts.sh && rm download_fonts.sh
+RUN bash download_assets.sh && rm download_fonts.sh
 
 RUN adduser --disabled-login --shell /bin/bash neko
 
