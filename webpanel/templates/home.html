@@ -18,28 +18,30 @@
     {% endblock %}
 </head>
 
-<body>
-{% block body %}
-    <div >
-        <h1 style="text-align: center">Stop! OAuth please</h1>
-        <p>Jestem botem pilnującym PJATKowych serwerów przed nieporządanymi ludźmi</p>
-        <p style="text-align: center">
-            <a href="https://free.itny.me/join/pjatk2021">
-                <button type="button">Dołącz do serwera PJATK</button>
-            </a>
-        </p>
-        <p style="text-align: center">
-            <a href="{{ invitation }}">
-                <button type="button">Dodaj bota do swojego serwera B-)</button>
-            </a>
-        </p>
+<body style="width: 100vw;height: 100vh;">
+    <div class="container d-flex flex-column w-100 h-100" style="justify-content: space-around;">
+        <div class="card" style="margin: auto">
+        {% block body %}
+            <div class="card-body text-center">
+                <h1>Stop! OAuth please</h1>
+                <p>Jestem botem pilnującym PJATKowych serwerów przed nieporządanymi ludźmi</p>
+                <p>
+                    <a href="https://free.itny.me/join/pjatk2021">
+                        <button class="btn btn-danger" type="button">Dołącz do serwera PJATK</button>
+                    </a>
+                </p>
+                <p>
+                    <a href="{{ invitation }}">
+                        <button class="btn btn-primary" type="button">Dodaj bota do swojego serwera B-)</button>
+                    </a>
+                </p>
+                <small>
+                    {% include 'copyright.html' %}
+                </small>
+            </div>
+            {% endblock %}
+        </div>
     </div>
-    <div >
-        <small>
-            {% include 'copyright.html' %}
-        </small>
-    </div>
-{% endblock %}
 </body>
 
 </html>
