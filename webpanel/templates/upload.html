@@ -1,86 +1,109 @@
 {% extends 'home.html' %}
+{% block head %}
+    {% if vr.state.value == 'id required' %}
+        <style>
+            @media only screen and (max-width: 765px) {
+                .container {
+                    justify-content: start !important;
+                }
+            }
+            @media only screen and (max-width: 340px) {
+                .col {
+                    min-width: 300px !important;
+                }
+            }
+        </style>
+    {% endif %}
+{% endblock %}
 {% block body %}
     <div class="card-header text-center">
         <h1>Dodatkowe formalności</h1>
     </div>
-    <div class="card-body d-flex flex-column align-items-center">
-        <script src="https://accounts.google.com/gsi/client" async defer></script>
-        <div id="g_id_onload" data-client_id="415405805208-n7irpdbl5go8cs5jf15i8005gd53iume.apps.googleusercontent.com"
-            data-context="signup" data-ux_mode="popup" data-state="{{ secret }}" data-login_uri="{{ redirect }}"
-            data-auto_prompt="false">
-        </div>
-        <div>
+    <div class="card-body">
+        <div class="container">
             <p>Status zgłoszenia: <span class="badge bg-primary">{{ vr.state.value }}</span></p>
-            {% if vr.state.value == 'id required' %}
-                <div class="mb-1">
-                    <h3 style="font-weight: bold">Zanim wyślesz</h3>
-                    <a href="https://www.figma.com/file/EHwLOQ7iPOlhORCCF1tx8r/Doodles?node-id=0%3A1">
-                        <button class="btn btn-outline-danger mb-3" type="button">Jak cenzurować legitymację</button>
-                    </a>
-                    <p>Dane, które weryfikujemy</p>
-                    <ul>
-                        <li>numer studenta</li>
-                        <li>imię i nazwisko</li>
-                        <li>ważność legitymacji</li>
-                    </ul>
-                    <div class="alert alert-danger">
-                        <p>Dane, których <b>nie</b> weryfikujemy <small>i powinien*ś ukryć/zamazać</small>
-                        </p>
-                        <ul>
-                            <li>zdjęcie</li>
-                            <li>PESEL</li>
-                        </ul>
-                    </div>
+            <div class="row gap-1">
+                <script src="https://accounts.google.com/gsi/client" async defer></script>
+                <div id="g_id_onload" data-client_id="415405805208-n7irpdbl5go8cs5jf15i8005gd53iume.apps.googleusercontent.com"
+                    data-context="signup" data-ux_mode="popup" data-state="{{ secret }}" data-login_uri="{{ redirect }}"
+                    data-auto_prompt="false">
                 </div>
-                <form method="post" enctype="multipart/form-data">
-                    <h3>Dokumenty</h3>
-                    <p>Wszystkie zdjęcia są usuwane po stwierdzeniu zgodności danych.</p>
-
-                    <div class="mb-3">
-                        <label for="photo-front" class="form-label">
-                            Front legitymacji studenckiej
-                        </label>
-                        {% if vr.photos.front == None %}
-                            <input class="form-control" name="photo-front" type="file" accept="image/*">
-                        {% else %}
-                            ✅ przesłano
-                        {% endif %}
+                {% if vr.state.value == 'id required' %}
+                    <div class="col" style="min-width:315px">
+                        <div>
+                            <h3 style="font-weight: bold">Zanim wyślesz</h3>
+                            <a href="https://www.figma.com/file/EHwLOQ7iPOlhORCCF1tx8r/Doodles?node-id=0%3A1">
+                                <button class="btn btn-outline-danger mb-3" type="button">Jak cenzurować legitymację</button>
+                            </a>
+                            <p>Dane, które weryfikujemy</p>
+                            <ul>
+                                <li>numer studenta</li>
+                                <li>imię i nazwisko</li>
+                                <li>ważność legitymacji</li>
+                            </ul>
+                            <div class="alert alert-danger">
+                                <p>Dane, których <b>nie</b> weryfikujemy <small>i powinien*ś ukryć/zamazać</small>
+                                </p>
+                                <ul>
+                                    <li>zdjęcie</li>
+                                    <li>PESEL</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
+                    <div class="col" style="min-width:315px">
+                        <form method="post" enctype="multipart/form-data">
+                            <h3>Dokumenty</h3>
+                            <p>Wszystkie zdjęcia są usuwane po stwierdzeniu zgodności danych.</p>
 
-                    <div class="mb-3" >
-                        <label for="photo-back" class="form-label">
-                            Tył legitymacji studenckiej
-                        </label>
-                        {% if vr.photos.back == None %}
-                            <input class="form-control" name="photo-back" type="file" accept="image/*">
-                        {% else %}
-                            ✅ przesłano
+                            <div class="mb-3">
+                                <label for="photo-front" class="form-label">
+                                    Front legitymacji studenckiej
+                                </label>
+                                {% if vr.photos.front == None %}
+                                    <input class="form-control" name="photo-front" type="file" accept="image/*">
+                                {% else %}
+                                    ✅ przesłano
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3" >
+                                <label for="photo-back" class="form-label">
+                                    Tył legitymacji studenckiej
+                                </label>
+                                {% if vr.photos.back == None %}
+                                    <input class="form-control" name="photo-back" type="file" accept="image/*">
+                                {% else %}
+                                    ✅ przesłano
+                                {% endif %}
+                            </div>
+                        {% if not vr.photos.ready %}
+                            <button class="btn btn-primary" type="submit">Wyślij</button>
                         {% endif %}
-                    </div>
-                {% if not vr.photos.ready %}
-                    <button class="btn btn-primary" type="submit">Wyślij</button>
-                {% endif %}
-                </form>
-            {% else %}
-            <h3>Konto studenckie</h3>
-            <div >
-                {% if vr.google == None %}
-                    <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_black"
-                        data-text="continue_with"
-                        data-size="large" data-logo_alignment="left">
+                        </form>
                     </div>
                 {% else %}
-                    <label>
-                        Studenckie konto google ✅ przekazano dane
-                    </label>
+                <h3>Konto studenckie</h3>
+                <div>
+                    {% if vr.google == None %}
+                        <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="filled_black"
+                            data-text="continue_with"
+                            data-size="large" data-logo_alignment="left">
+                        </div>
+                    {% else %}
+                        <label>
+                            Studenckie konto Google: <span class="badge bg-success">✅ przekazano dane</span>
+                        </label>
+                    {% endif %}
+                </div>
+                <p>Logując się studenckim kontem Google, akceptujesz <a href="https://github.com/pjatk21/pjatk-cat-guard/blob/main/PRIVACY.md">politykę prywatności</a></p>
                 {% endif %}
-            </div>
-            <p>Logując się studenckim kontem Google, akceptujesz <a href="https://github.com/pjatk21/pjatk-cat-guard/blob/main/PRIVACY.md">politykę prywatności</a></p>
-            {% endif %}
 
-            {% if vr.state.value == 'in review' %}
-                <p style="color: darkgreen">Oczekuj kolejnych wiadomości na mailu/Discord DM</p>
-            {% endif %}
+                {% if vr.state.value == 'in review' %}
+                    <p style="color: darkgreen">Oczekuj kolejnych wiadomości na mailu/Discord DM</p>
+                {% endif %}
+                
+            </div>
         </div>
     </div>
 {% endblock %}
