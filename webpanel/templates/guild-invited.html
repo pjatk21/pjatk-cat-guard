@@ -1,12 +1,12 @@
 {% extends 'home.html' %}
 {% block body %}
-<div >
+<div class="card-body d-flex flex-column align-items-center">
     <p>Oto twoje zaproszenie, będzie działać przez następne 5 minut.</p>
     <a href="{{ invitation_url }}">
         <p id="discord_link">{{ invitation_url }}</p>
     </a>
     <p>
-        <button id="copybtn"
+        <button class="btn btn-primary" id="copybtn"
             onclick="navigator.clipboard.writeText('{{ invitation_url }}'); document.getElementById('copybtn').innerText = 'Skopiowano!'">
             Kopiuj do schowka
         </button>
