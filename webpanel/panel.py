@@ -8,6 +8,7 @@ from starlette.staticfiles import StaticFiles
 
 import webpanel.admin
 import webpanel.verify
+import webpanel.altapi
 from shared.db import init_connection
 from .common import templates
 from .endpoints import invites
@@ -19,7 +20,8 @@ routes = [
     Route("/join/pjatk2021", invites.GuildInviteEndpoint),
     Mount("/static", app=StaticFiles(directory='webpanel/static'), name="static"),
     Mount("/admin", app=webpanel.admin.app, name='admin'),
-    Mount("/verify", app=webpanel.verify.app, name='verify')
+    Mount("/verify", app=webpanel.verify.app, name='verify'),
+    Mount("/altapi", app=webpanel.altapi.app, name='altapi'),
 ]
 
 if not os.getenv('COOKIE_SECRET'):

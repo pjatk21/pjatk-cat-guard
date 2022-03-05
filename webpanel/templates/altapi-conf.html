@@ -1,0 +1,19 @@
+{% extends 'home.html' %}
+{% block body %}
+    <div class="content-frame" style="top: 0; position: absolute"> <!-- ._. -->
+        <h1>Wybierz swoje grupy</h1>
+        <p>Użyj ctrl+f lub cmd+f, sorry.</p>
+
+        <form method="post">
+            {% for group in groups %}
+                <p>
+                    <label>
+                        <input type="checkbox" name="{{ group }}" {{ "checked" if group in gset else ""}}>
+                        {{ group }}
+                    </label>
+                </p>
+            {% endfor %}
+            <button type="submit">Zapisz</button>
+        </form>
+    </div>
+{% endblock %}

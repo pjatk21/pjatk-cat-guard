@@ -186,3 +186,8 @@ class CronHealthCheck(Document):
     identity = EmbeddedDocumentField(UserIdentity, required=True)
     widget_channel_id = LongField(required=True)
     widget_message_id = LongField(required=True)
+
+
+class AltapiConfiguration(Document):
+    identity = EmbeddedDocumentField(UserIdentity, required=True)
+    groups = ListField(StringField(), default=[])
