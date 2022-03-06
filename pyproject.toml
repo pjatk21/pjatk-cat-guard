@@ -7,7 +7,7 @@ authors = ["Krystian Postek <krystian@postek.eu>"]
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"
 # Bot related dependencies
-hikari = {extras = ["speedups"], version = "^2.0.0-alpha.106"}
+hikari = {extras = ["speedups"], version = "^2.0.0.dev107"}
 hikari-lightbulb = {git = "https://github.com/tandemdude/hikari-lightbulb", branch = "development"}
 # Cron related dependencies
 celery = "^5.2.3"
