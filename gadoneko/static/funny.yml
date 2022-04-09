@@ -32,3 +32,7 @@
   reply: "Gratulacje, ten pan/pani/osoba niebinarna wygrała wycieczkę do gułagu."
   dm: "https://cdn.discordapp.com/attachments/891588073668882472/942070714293444709/Welcome_to_the_Gulag_Meme_Template_tzGrB4Km9-I.webm"
   action: kick
+- regex: "^[Ll]ubię (u|U)nuxa?$"
+  reply: "Gratulacje, ten pan/pani/osoba niebinarna wygrała wycieczkę do gułagu."
+  dm: "https://cdn.discordapp.com/attachments/891588073668882472/942070714293444709/Welcome_to_the_Gulag_Meme_Template_tzGrB4Km9-I.webm"
+  action: kick
