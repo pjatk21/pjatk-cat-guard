@@ -13,6 +13,9 @@
   reply: "https://cdn.discordapp.com/attachments/891588026780770344/938439603172544512/53892944_134575062363754_5321002678164690802_n.mp4"
 - regex: "(([Cc]o to)|([Cc]zym)) (jest)? [Pp][Jj][Aa]([Ii][Tt]|[Tt][Kk])"
   reply: "Abra Kadabra, PJATK to makabra!"
+- regex: "[cC]zy (SOP|sop) dzia[lł]a[?]?"
+  reply: "Nie wiem - możesz zadzwonić, ***prawda?***"
+  send: "https://www.dropbox.com/s/46n2w6mqj0mf4n7/samsung_bass_boosted.mp4?raw=1"
 - regex: "yes"
   guild: 872492754821861387 # mega guild
   reaction: 893989851425308693 # yes
@@ -26,6 +29,10 @@
 #     - 891588026780770344
 #   reply: "https://cdn.discordapp.com/attachments/891588073668882472/942069500608663592/1984.mp4"
 - regex: "^[Ll]ubię (TAK|tak)i?$"
-  reply: "Gratulacje, ten pan/pani/osoba niebinrana wygrała wycieczkę do gułagu."
+  reply: "Gratulacje, ten pan/pani/osoba niebinarna wygrała wycieczkę do gułagu."
+  dm: "https://cdn.discordapp.com/attachments/891588073668882472/942070714293444709/Welcome_to_the_Gulag_Meme_Template_tzGrB4Km9-I.webm"
+  action: kick
+- regex: "^[Ll]ubię (u|U)nuxa?$"
+  reply: "Gratulacje, ten pan/pani/osoba niebinarna wygrała wycieczkę do gułagu."
   dm: "https://cdn.discordapp.com/attachments/891588073668882472/942070714293444709/Welcome_to_the_Gulag_Meme_Template_tzGrB4Km9-I.webm"
   action: kick
