@@ -111,6 +111,7 @@
                     <div class="card-body">
                         <h3 class="card-title">{{ vr.google.name }}</h3>
                         <p>{{ vr.identity }}</p>
+                        <p>{{ vr.identity.guild_name or vr.identity.guild_id }}</p>
                         <p>{{ vr.no }}</p>
                         <p>
                             {% if vr.state.value == 'id required' %}
