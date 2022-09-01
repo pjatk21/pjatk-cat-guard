@@ -652,7 +652,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "markdownify"
-version = "0.10.3"
+version = "0.11.5"
 description = "Convert HTML to markdown."
 category = "main"
 optional = false
@@ -1192,7 +1192,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.10,<3.11"
-content-hash = "a317541ee2f87dc0259b1d25f2511377fadedaf089471d5ee4c14a1249b87761"
+content-hash = "f767d532234847bdd30705ff00fbce2ce7d88ca36ecfd0dc8f0ccbec8b299be6"
 
 [metadata.files]
 aiodns = [
@@ -1736,8 +1736,8 @@ lazy-object-proxy = [
     {file = "lazy_object_proxy-1.7.1-pp37.pp38-none-any.whl", hash = "sha256:d66906d5785da8e0be7360912e99c9188b70f52c422f9fc18223347235691a84"},
 ]
 markdownify = [
-    {file = "markdownify-0.10.3-py3-none-any.whl", hash = "sha256:edad0ad3896ec7460d05537ad804bbb3614877c6cd0df27b56dee218236d9ce2"},
-    {file = "markdownify-0.10.3.tar.gz", hash = "sha256:782e310390cd5e4bde7543ceb644598c78b9824ee9f8d7ef9f9f4f8782e46974"},
+    {file = "markdownify-0.11.5-py3-none-any.whl", hash = "sha256:cd39d9e79cba896de242e36b6cb1121b2d7e943f416e501679fd7945b7cbf1ba"},
+    {file = "markdownify-0.11.5.tar.gz", hash = "sha256:b8f99a909f76b41aadfb748f2c3ebe237f41dfb261744645af6712c1ed2bd758"},
 ]
 markupsafe = [
     {file = "MarkupSafe-2.1.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:86b1f75c4e7c2ac2ccdaec2b9022845dbb81880ca318bb7a0a01fbf7813e3812"},
