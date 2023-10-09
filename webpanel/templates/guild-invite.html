@@ -1,6 +1,9 @@
 {% extends 'home.html' %}
 {% block body %}
-<div class="content-frame">
+<div class="card-header text-center">
+    <h3>Dołącz do serwera "PJATK Informatyka 2021-2025"</h3>
+</div>
+<div class="card-body d-flex flex-column align-items-center" >
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script async defer src="https://epacik.github.io/DziekanskaCaptcha/scripts/dzieCaptcha.js"></script>
     <script>
@@ -8,7 +11,6 @@
             document.getElementById("recaptcha-form").submit()
         }
     </script>
-    <h3>Dołącz do serwera "PJATK Informatyka 2021-2025"</h3>
     <div id=captcha>
         <div id="dzieCAPTCHA" data-dziecaptcha="loadHere"></div>
         <form id="recaptcha-form" method="POST">
